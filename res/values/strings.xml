@@ -1,8 +1,10 @@
 <resources>
 
     <string name="app_name">OCParchiTN</string>
-    <string name="hello_world">Hello world!</string>
+    
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">Gestione Parchi</string>
+    <string name="take_snapshot_btn">Fai una foto</string>
+    <string name="snapshot_description">Snapshot dell\'attrezzatura</string>
 
 </resources>

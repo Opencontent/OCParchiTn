@@ -1,15 +1,22 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <TextView
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+    
+    <Button
+        android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:padding="@dimen/padding_medium"
-        android:text="@string/hello_world"
-        tools:context=".MainActivity" />
+        android:onClick="takeSnapshot"
+        android:text="@string/take_snapshot_btn" />
 
-</RelativeLayout>
+    <ImageView
+        android:id="@+id/snapshot"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="fill_vertical"
+        android:background="#eeeeee"
+        android:contentDescription="@string/snapshot_description" />
+
+</LinearLayout>
