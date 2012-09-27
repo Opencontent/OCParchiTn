@@ -6,8 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.ConnectivityManager;
 
 public class PlatformChecks {
+	
+	private static boolean siamoOnline = false;
+	
 	public static boolean isIntentAvailable(Context context, String action) {
 	    final PackageManager packageManager = context.getPackageManager();
 	    final Intent intent = new Intent(action);
@@ -15,4 +19,15 @@ public class PlatformChecks {
 	            packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
 	    return list.size() > 0;
 	}
+	
+    public static boolean siamoOnline(Context context) {
+        ConnectivityManager cm =
+            (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
+
+        siamoOnline = cm.getActiveNetworkInfo() != null &&
+           cm.getActiveNetworkInfo().isConnectedOrConnecting();
+        
+        return siamoOnline;
+    }
+
 }
