@@ -98,9 +98,13 @@ public class MainActivity extends Activity {
     @Override 
     protected void onActivityResult(int requestCode,int returnCode, Intent intent ){
     	    Bundle extras = intent.getExtras();
+    	    try{
     	    mImageBitmap = (Bitmap) extras.get("data");
     	    ImageView mImageView = (ImageView) findViewById(R.id.snapshot);
     	    mImageView.setImageBitmap(mImageBitmap);
+    	    } catch (NullPointerException e){
+    	    	Log.d(TAG,"Immagine nulla");
+    	    }
     }
     
 }
