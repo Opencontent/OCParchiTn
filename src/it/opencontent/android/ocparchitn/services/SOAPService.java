@@ -14,10 +14,15 @@ import android.os.IBinder;
 
 public class SOAPService extends Service implements IRemoteConnection {
 
-	private String METHOD_NAME = "TopGoalScorers";
-	private String SOAP_ACTION = "http://footballpool.dataaccess.eu/data/TopGoalScorers";
-	private String NAMESPACE = "http://footballpool.dataaccess.eu";
-	private String URL = "http://footballpool.dataaccess.eu/data/info.wso?WSDL";
+	private String METHOD_NAME = "getInfo";
+//	private String METHOD_NAME = "getGioco";
+	private String SOAP_ACTION = "https://webapps.comune.trento.it/parcogiochiSrv/";
+	private String NAMESPACE = "http://db.comune.trento.it";
+	private String URL = "https://webapps.comune.trento.it/parcogiochiSrv/services/SrvGioco?wsdl";
+//	private String METHOD_NAME = "TopGoalScorers";
+//	private String SOAP_ACTION = "http://footballpool.dataaccess.eu/data/TopGoalScorers";
+//	private String NAMESPACE = "http://footballpool.dataaccess.eu";
+//	private String URL = "http://footballpool.dataaccess.eu/data/info.wso?WSDL";
 
 	@Override
 	public IBinder onBind(Intent intent) {
