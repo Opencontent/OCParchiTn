@@ -1,22 +1,16 @@
 package it.opencontent.android.ocparchitn.activities;
 
 import it.opencontent.android.ocparchitn.R;
+import it.opencontent.android.ocparchitn.layouts.CameraSurfaceView;
 import it.opencontent.android.ocparchitn.services.SOAPService;
 import it.opencontent.android.ocparchitn.utils.PlatformChecks;
-import it.opencontent.android.ocparchitn.utils.SoapConnector;
-
-import java.io.IOException;
-
-import org.ksoap2.serialization.SoapObject;
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.app.Activity;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.graphics.Bitmap;
+import android.hardware.Camera;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.NfcF;
@@ -25,6 +19,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 public class MainActivity extends Activity {
@@ -58,6 +54,20 @@ public class MainActivity extends Activity {
 		techListsArray = new String[][] { new String[] { NfcF.class.getName() } };
 
 		getTestSOAPRequest();
+		
+		//Setup the FrameLayout with the Camera Preview Screen
+        final CameraSurfaceView cameraSurfaceView = new CameraSurfaceView(this);
+        FrameLayout preview = (FrameLayout) findViewById(R.id.preview); 
+        preview.addView(cameraSurfaceView);
+        preview.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Camera camera = cameraSurfaceView.getCamera();
+				
+			}
+		});
 	}
 
 	@Override
