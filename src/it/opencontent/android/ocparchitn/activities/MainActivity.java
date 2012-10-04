@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -55,19 +56,6 @@ public class MainActivity extends Activity {
 
 		getTestSOAPRequest();
 		
-		//Setup the FrameLayout with the Camera Preview Screen
-        final CameraSurfaceView cameraSurfaceView = new CameraSurfaceView(this);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.preview); 
-        preview.addView(cameraSurfaceView);
-        preview.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Camera camera = cameraSurfaceView.getCamera();
-				
-			}
-		});
 	}
 
 	@Override
@@ -79,13 +67,13 @@ public class MainActivity extends Activity {
 	@Override
 	public void onPause() {
 		super.onPause();
-		//nfca.disableForegroundDispatch(this);
+		nfca.disableForegroundDispatch(this);
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		//nfca.enableForegroundDispatch(this, pi, ifa, techListsArray);
+		nfca.enableForegroundDispatch(this, pi, ifa, techListsArray);
 		if (mImageBitmap != null) {
 			ImageView mImageView = (ImageView) findViewById(R.id.snapshot);
 			mImageView.setImageBitmap(mImageBitmap);
@@ -99,23 +87,10 @@ public class MainActivity extends Activity {
 	}
 
 	public void takeSnapshot(View button) {
-		int actionCode = 0;
-		if (button.getTag(0) != null) {
-			actionCode = Integer.parseInt((String) button.getTag(0));
-
-			if (actionCode < 0) {
-				actionCode = 0;
-			}
-		}
-		if (PlatformChecks.isIntentAvailable(this,
-				MediaStore.ACTION_IMAGE_CAPTURE)) {
-
-			Intent takePictureIntent = new Intent(
-					MediaStore.ACTION_IMAGE_CAPTURE);
-			startActivityForResult(takePictureIntent, actionCode);
-		} else {
-			Log.d(TAG, "Nessuna App disponibile per fare fotografie");
-		}
+		Intent customCamera = new Intent("it.opencontent.android.ocparchitn.Intents.TAKE_SNAPSHOT");
+		customCamera.setClass(getApplicationContext(), CameraActivity.class);
+		Log.d(TAG,customCamera.getAction());
+		startActivityForResult(customCamera,0);
 	}
 
 	@Override
@@ -123,9 +98,11 @@ public class MainActivity extends Activity {
 			Intent intent) {
 		Bundle extras = intent.getExtras();
 		try {
-			mImageBitmap = (Bitmap) extras.get("data");
+			mImageBitmap = CameraActivity.getImage();
+			if(mImageBitmap != null){
 			ImageView mImageView = (ImageView) findViewById(R.id.snapshot);
 			mImageView.setImageBitmap(mImageBitmap);
+			}
 		} catch (NullPointerException e) {
 			Log.d(TAG, "Immagine nulla");
 		}
@@ -134,11 +111,9 @@ public class MainActivity extends Activity {
 
 
 	public void getTestSOAPRequest() {
-
                 Intent serviceIntent=new Intent();
                 serviceIntent.setClass(getApplicationContext(), SOAPService.class);
                 startService(serviceIntent);
-
 	}
 
 }

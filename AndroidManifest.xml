@@ -37,6 +37,12 @@
             <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/nfc_filters"/>
         </activity>
+        <activity
+            android:name=".activities.CameraActivity">
+            <intent-filter>
+                <action android:name="it.opencontent.android.ocparchitn.intents.TAKE_SNAPSHOT"></action>
+            </intent-filter>
+        </activity>
         
     </application>
     
