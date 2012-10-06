@@ -1,4 +1,5 @@
 ﻿Todo app parchi
+
 Mettere nel setup la scelta della fotocamera se ce n'è più di una
 Mettere nel setup username/password
 Decidere le dimensioni della foto da mandare su
@@ -7,3 +8,5 @@ Decidere le dimensioni della foto da mandare su
 Mappe:
 Chiedere se l'integrazione con google va bene
 
+Foto:
+Migliorarre il passaggio dell'intent e del ritorno: rimuovere la chiamata alla foto statica e passare un URI come etxra dalla main alla camera

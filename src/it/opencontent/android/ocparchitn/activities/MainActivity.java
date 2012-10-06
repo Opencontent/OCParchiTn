@@ -1,27 +1,20 @@
 package it.opencontent.android.ocparchitn.activities;
 
 import it.opencontent.android.ocparchitn.R;
-import it.opencontent.android.ocparchitn.layouts.CameraSurfaceView;
 import it.opencontent.android.ocparchitn.services.SOAPService;
-import it.opencontent.android.ocparchitn.utils.PlatformChecks;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.hardware.Camera;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.NfcF;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 public class MainActivity extends Activity {
@@ -96,7 +89,6 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int returnCode,
 			Intent intent) {
-		Bundle extras = intent.getExtras();
 		try {
 			mImageBitmap = CameraActivity.getImage();
 			if(mImageBitmap != null){
