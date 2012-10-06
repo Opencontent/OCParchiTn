@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:key="username"
+        android:id="@+id/setting_username"
+        android:title="@string/settings_field_username"
+        />
+    <EditTextPreference
+        android:key="password"
+        android:id="@+id/setting_password"
+        android:inputType="textPassword"
+        android:title="@string/settings_field_password"
+        />
+    <EditTextPreference
+        android:key="password2"
+        android:id="@+id/setting_password2"
+        android:inputType="textPassword"
+        android:title="@string/settings_field_password2"
+        />
+</PreferenceScreen>

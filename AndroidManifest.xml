@@ -43,6 +43,9 @@
                 <action android:name="it.opencontent.android.ocparchitn.intents.TAKE_SNAPSHOT"></action>
             </intent-filter>
         </activity>
+        <activity android:name=".activities.SettingsActivity">
+            
+        </activity>
         
     </application>
     

@@ -14,10 +14,11 @@ import android.nfc.tech.NfcF;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 
 	private static final String TAG = MainActivity.class.getSimpleName();
 	private static PendingIntent pi;
@@ -51,11 +52,7 @@ public class MainActivity extends Activity {
 		
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
-	}
+
 
 	@Override
 	public void onPause() {
@@ -102,6 +99,9 @@ public class MainActivity extends Activity {
 
 
 
+
+
+	
 	public void getTestSOAPRequest() {
                 Intent serviceIntent=new Intent();
                 serviceIntent.setClass(getApplicationContext(), SOAPService.class);

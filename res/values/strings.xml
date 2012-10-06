@@ -7,5 +7,7 @@
     <string name="take_snapshot_btn">Fai una foto</string>
     <string name="snapshot_description">Snapshot dell\'attrezzatura</string>
     <string name="camera_unavailable">La fotocamera è occupata da un\'altra applicazione.\nChiudila o attendi che il sistema la liberi</string>
-
+	<string name="settings_field_username">Username</string>
+	<string name="settings_field_password">Password</string>
+	<string name="settings_field_password2">(ripeti)</string>
 </resources>

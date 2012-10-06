@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 
-public class CameraActivity extends Activity {
+public class CameraActivity extends BaseActivity {
 
 	private static final String TAG = CameraActivity.class.getSimpleName();
 
