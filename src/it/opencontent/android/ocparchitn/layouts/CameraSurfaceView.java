@@ -4,10 +4,7 @@ import it.opencontent.android.ocparchitn.R;
 
 import java.io.IOException;
 
-
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.util.Log;
@@ -24,9 +21,15 @@ public class CameraSurfaceView extends SurfaceView implements
 	private SurfaceHolder holder;
 	private Camera camera;
 	private int numberOfCameras;
+	private int orientation = 0;
+	private int degrees = 0;
 
 	public Camera getCamera() {
 		return camera;
+	}
+	
+	public int getOrientation(){
+		return degrees;
 	}
 
 	public CameraSurfaceView(Context context) {
@@ -44,8 +47,8 @@ public class CameraSurfaceView extends SurfaceView implements
 
 			CameraInfo cameraInfo = new CameraInfo();
 			Camera.getCameraInfo(numberOfCameras - 1, cameraInfo);
-		     int degrees = 0;
-		     int orientation = ((WindowManager) this.getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
+		     degrees = 0;
+		     orientation = ((WindowManager) this.getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
 		     switch (orientation) {
 		         case Surface.ROTATION_0: degrees = 0; break;
 		         case Surface.ROTATION_90: degrees = 90; break;
@@ -62,6 +65,7 @@ public class CameraSurfaceView extends SurfaceView implements
 		         result = (cameraInfo.orientation - degrees + 360) % 360;
 		     }
 		     camera.setDisplayOrientation(result);
+		     orientation = result;
 		     
 			Camera.Parameters parameters = camera.getParameters();
 			
@@ -118,29 +122,6 @@ public class CameraSurfaceView extends SurfaceView implements
 			camera = null;
 		}
 		
-	}
-
-	public void takePictureAsRaw() {
-		CustomCameraCallback raw = new CustomCameraCallback(); 
-		camera.takePicture(null, null, raw);
-		//return raw.getRawData();
-	}
-	
-	class CustomCameraCallback implements Camera.PictureCallback{
-		private byte[] rawdata;
-
-		@Override
-		public void onPictureTaken(byte[] data, Camera camera) {
-			rawdata = data;
-			Intent result = new Intent();
-			result.putExtra("snapshot", rawdata);
-//			setResult(RESULT_OK, result);
-//			finish();
-		}
-		public byte[] getRawData(){
-			return rawdata;
-		}
-	}
-	
+	}	
 
 }

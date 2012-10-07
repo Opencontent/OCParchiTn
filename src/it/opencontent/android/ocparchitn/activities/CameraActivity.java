@@ -2,10 +2,10 @@ package it.opencontent.android.ocparchitn.activities;
 
 import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.layouts.CameraSurfaceView;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,7 +43,18 @@ public class CameraActivity extends BaseActivity {
 						@Override
 						public void onPictureTaken(byte[] data, Camera camera) {
 							System.out.println("data length=" + data.length);
-							mImageBitmap  = BitmapFactory.decodeByteArray(data, 0, data.length);
+							
+							BitmapFactory.Options options = new BitmapFactory.Options();
+							options.inSampleSize = 4; //1/4 of the original image
+							mImageBitmap = BitmapFactory.decodeByteArray(data, 0, data.length,options);
+							int tempW = mImageBitmap.getWidth();
+							int tempH = mImageBitmap.getHeight();
+
+							Matrix mtx = new Matrix();
+							mtx.postRotate(cameraSurfaceView.getOrientation()-90);
+							mImageBitmap = Bitmap.createBitmap(mImageBitmap, 0,0,tempW, tempH, mtx, true);
+							//mImageBitmap  = BitmapFactory.decodeByteArray(data, 0, data.length);
+							
 							sendBackSnapshot();
 						}
 					});
