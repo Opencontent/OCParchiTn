@@ -15,4 +15,8 @@
 	<string name="display_gioco_id">ID:</string>
 	<string name="display_gioco_seriale">SER:</string>
 	
+	<!--  filtering dell'intent -->
+	<string name="schema_struttura">parchi</string>
+	<string name="host_struttura">struttura</string>
+		
 </resources>

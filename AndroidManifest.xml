@@ -2,7 +2,6 @@
     package="it.opencontent.android.ocparchitn"
     android:versionCode="1"
     android:versionName="0.1" >
-
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="16" />
@@ -24,30 +23,33 @@
         
         <activity
             android:name=".activities.MainActivity"
-            
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.nfc.action.TECH_DISCOVERED"/>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <!-- action android:name="android.nfc.action.TECH_DISCOVERED"/ -->
+				<data android:host="struttura"></data>
+				<data android:scheme="parchi"></data>
             </intent-filter>
             <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/nfc_filters"/>
         </activity>
+        
         <activity
             android:name=".activities.CameraActivity">
             <intent-filter>
                 <action android:name="it.opencontent.android.ocparchitn.intents.TAKE_SNAPSHOT"></action>
             </intent-filter>
         </activity>
+        
         <activity android:name=".activities.SettingsActivity">
             
         </activity>
         
     </application>
-    
 
 </manifest>
