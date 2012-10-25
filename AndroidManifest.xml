@@ -49,6 +49,18 @@
         <activity android:name=".activities.SettingsActivity">
             
         </activity>
+        <activity android:name=".activities.RendicontazioneActivity">
+            
+        </activity>
+        <activity android:name=".activities.SpostamentoActivity">
+            
+        </activity>
+        <activity android:name=".activities.RilevazioneActivity">
+            
+        </activity>
+        <activity android:name=".activities.AttivitaPeriodicaActivity">
+            
+        </activity>
         
     </application>
 
