@@ -38,26 +38,38 @@ public class CameraActivity extends BaseActivity {
 				Log.d(TAG, "CustomCamera surfaceview cliccata");
 				Camera camera = cameraSurfaceView.getCamera();
 				if (camera != null) {
-					camera.takePicture(null,null, new Camera.PictureCallback() {
+					camera.takePicture(null, null,
+							new Camera.PictureCallback() {
 
-						@Override
-						public void onPictureTaken(byte[] data, Camera camera) {
-							System.out.println("data length=" + data.length);
-							
-							BitmapFactory.Options options = new BitmapFactory.Options();
-							options.inSampleSize = 4; //1/4 of the original image
-							mImageBitmap = BitmapFactory.decodeByteArray(data, 0, data.length,options);
-							int tempW = mImageBitmap.getWidth();
-							int tempH = mImageBitmap.getHeight();
+								@Override
+								public void onPictureTaken(byte[] data,
+										Camera camera) {
+									System.out.println("data length="
+											+ data.length);
 
-							Matrix mtx = new Matrix();
-							mtx.postRotate(cameraSurfaceView.getOrientation()-90);
-							mImageBitmap = Bitmap.createBitmap(mImageBitmap, 0,0,tempW, tempH, mtx, true);
-							//mImageBitmap  = BitmapFactory.decodeByteArray(data, 0, data.length);
-							
-							sendBackSnapshot();
-						}
-					});
+									BitmapFactory.Options options = new BitmapFactory.Options();
+									options.inSampleSize = 4; // 1/4 of the
+																// original
+																// image
+									mImageBitmap = BitmapFactory
+											.decodeByteArray(data, 0,
+													data.length, options);
+									int tempW = mImageBitmap.getWidth();
+									int tempH = mImageBitmap.getHeight();
+
+									Matrix mtx = new Matrix();
+									mtx.postRotate(cameraSurfaceView
+											.getOrientation() - 90);
+									mImageBitmap = Bitmap.createBitmap(
+											mImageBitmap, 0, 0, tempW, tempH,
+											mtx, true);
+									// mImageBitmap =
+									// BitmapFactory.decodeByteArray(data, 0,
+									// data.length);
+
+									sendBackSnapshot();
+								}
+							});
 				}
 
 			}
@@ -70,10 +82,10 @@ public class CameraActivity extends BaseActivity {
 		finish();
 	}
 
-	public static Bitmap getImage(){
+	public static Bitmap getImage() {
 		return mImageBitmap;
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);

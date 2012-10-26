@@ -10,21 +10,21 @@ public class BaseActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
-	
+
 		switch (item.getItemId()) {
-        case R.id.menu_item_manage_settings:
-            Intent i = new Intent(this, SettingsActivity.class);
-            startActivity(i);
-            return true;
-        
-        default:
-            return super.onOptionsItemSelected(item);
+		case R.id.menu_item_manage_settings:
+			Intent i = new Intent(this, SettingsActivity.class);
+			startActivity(i);
+			return true;
+
+		default:
+			return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
-	}	
+	}
 }

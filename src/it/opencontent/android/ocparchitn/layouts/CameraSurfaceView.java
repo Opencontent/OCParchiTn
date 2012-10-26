@@ -27,15 +27,15 @@ public class CameraSurfaceView extends SurfaceView implements
 	public Camera getCamera() {
 		return camera;
 	}
-	
-	public int getOrientation(){
+
+	public int getOrientation() {
 		return degrees;
 	}
 
 	public CameraSurfaceView(Context context) {
 		super(context);
 		numberOfCameras = Camera.getNumberOfCameras();
-		Log.d(TAG,"Trovate: "+numberOfCameras+" fotocamere");
+		Log.d(TAG, "Trovate: " + numberOfCameras + " fotocamere");
 		this.holder = this.getHolder();
 		this.holder.addCallback(this);
 	}
@@ -43,40 +43,49 @@ public class CameraSurfaceView extends SurfaceView implements
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
-		if(camera != null){
+		if (camera != null) {
 
 			CameraInfo cameraInfo = new CameraInfo();
 			Camera.getCameraInfo(numberOfCameras - 1, cameraInfo);
-		     degrees = 0;
-		     orientation = ((WindowManager) this.getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
-		     switch (orientation) {
-		         case Surface.ROTATION_0: degrees = 0; break;
-		         case Surface.ROTATION_90: degrees = 90; break;
-		         case Surface.ROTATION_180: degrees = 180; break;
-		         case Surface.ROTATION_270: degrees = 270; break;
+			degrees = 0;
+			orientation = ((WindowManager) this.getContext().getSystemService(
+					Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
+			switch (orientation) {
+			case Surface.ROTATION_0:
+				degrees = 0;
+				break;
+			case Surface.ROTATION_90:
+				degrees = 90;
+				break;
+			case Surface.ROTATION_180:
+				degrees = 180;
+				break;
+			case Surface.ROTATION_270:
+				degrees = 270;
+				break;
 
-		     }
-
-		     int result;
-		     if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-		         result = (cameraInfo.orientation + degrees) % 360;
-		         result = (360 - result) % 360;  // compensate the mirror
-		     } else {  // back-facing
-		         result = (cameraInfo.orientation - degrees + 360) % 360;
-		     }
-		     camera.setDisplayOrientation(result);
-		     orientation = result;
-		     
-			Camera.Parameters parameters = camera.getParameters();
-			
-			int cameraPictureHeight =parameters.getPictureSize().height;  
-			int cameraPictureWidth =parameters.getPictureSize().width;  
-			
-			if(cameraPictureHeight < height){
-				height = cameraPictureHeight; 
 			}
-			if(cameraPictureWidth < width){
-				width = cameraPictureWidth; 
+
+			int result;
+			if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+				result = (cameraInfo.orientation + degrees) % 360;
+				result = (360 - result) % 360; // compensate the mirror
+			} else { // back-facing
+				result = (cameraInfo.orientation - degrees + 360) % 360;
+			}
+			camera.setDisplayOrientation(result);
+			orientation = result;
+
+			Camera.Parameters parameters = camera.getParameters();
+
+			int cameraPictureHeight = parameters.getPictureSize().height;
+			int cameraPictureWidth = parameters.getPictureSize().width;
+
+			if (cameraPictureHeight < height) {
+				height = cameraPictureHeight;
+			}
+			if (cameraPictureWidth < width) {
+				width = cameraPictureWidth;
 			}
 			parameters.setPreviewSize(width, height);
 			// camera.setParameters(parameters);
@@ -109,19 +118,21 @@ public class CameraSurfaceView extends SurfaceView implements
 		}
 	}
 
-	private void warnCameraNotAvailable(){
-		Toast toast = Toast.makeText(getContext(), R.string.camera_unavailable, Toast.LENGTH_SHORT);
-		toast.show();		
+	private void warnCameraNotAvailable() {
+		Toast toast = Toast.makeText(getContext(), R.string.camera_unavailable,
+				Toast.LENGTH_SHORT);
+		toast.show();
 	}
+
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
-		if(camera != null){
+		if (camera != null) {
 			camera.stopPreview();
 			camera.release();
 			camera = null;
 		}
-		
-	}	
+
+	}
 
 }

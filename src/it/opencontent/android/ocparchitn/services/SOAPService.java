@@ -15,15 +15,18 @@ import android.os.IBinder;
 
 public class SOAPService extends Service implements IRemoteConnection {
 
-//	private String METHOD_NAME = "getInfo";
+	// private String METHOD_NAME = "getInfo";
 	private String METHOD_NAME = "getGioco";
 	private String SOAP_ACTION = "https://webapps.comune.trento.it/parcogiochiSrv/";
 	private String NAMESPACE = "http://db.comune.trento.it";
 	private String URL = "https://webapps.comune.trento.it/parcogiochiSrv/services/SrvGioco?wsdl";
-//	private String METHOD_NAME = "TopGoalScorers";
-//	private String SOAP_ACTION = "http://footballpool.dataaccess.eu/data/TopGoalScorers";
-//	private String NAMESPACE = "http://footballpool.dataaccess.eu";
-//	private String URL = "http://footballpool.dataaccess.eu/data/info.wso?WSDL";
+
+	// private String METHOD_NAME = "TopGoalScorers";
+	// private String SOAP_ACTION =
+	// "http://footballpool.dataaccess.eu/data/TopGoalScorers";
+	// private String NAMESPACE = "http://footballpool.dataaccess.eu";
+	// private String URL =
+	// "http://footballpool.dataaccess.eu/data/info.wso?WSDL";
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -49,7 +52,7 @@ public class SOAPService extends Service implements IRemoteConnection {
 		PropertyInfo pi = new PropertyInfo();
 		pi.setName("rfid");
 		pi.setValue("2");
-		final PropertyInfo[] properties = {pi};
+		final PropertyInfo[] properties = { pi };
 		// TODO Auto-generated method stub
 		if (PlatformChecks.siamoOnline(this.getApplicationContext())) {
 			Runnable runnable = new Runnable() {
@@ -58,8 +61,10 @@ public class SOAPService extends Service implements IRemoteConnection {
 					SoapObject res = null;
 					SoapConnector sc = new SoapConnector();
 					try {
-						res = sc.soap(METHOD_NAME, SOAP_ACTION, NAMESPACE, URL,properties);
-						//TODO: creare l'handler nel servizio e ritornargli il risultato
+						res = sc.soap(METHOD_NAME, SOAP_ACTION, NAMESPACE, URL,
+								properties);
+						// TODO: creare l'handler nel servizio e ritornargli il
+						// risultato
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
