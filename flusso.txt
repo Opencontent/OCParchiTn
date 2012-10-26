@@ -1,0 +1,13 @@
+Caso a: avvio dell'applicazione da launcher
+1 controllo di quante entità dobbiamo ancora sincronizzare col server
+2 controllo di connettività
+3 invio eventuali entità pending
+4 renderizzazione interfaccia
+
+Caso b: attivazione tramite scansione di tag
+1 controllo  connettività
+2 recupero info della struttura a partire dall'id
+3 controllo del livello di autenticazione dell'utente
+4 renderizzazione dell'interfaccia in base alle azioni permesse al livello
+
+Altre funzioni

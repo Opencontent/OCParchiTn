@@ -7,6 +7,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class BaseActivity extends Activity {
+	
+	public static final int FOTO_REQUEST_CODE = 1;
+	public static final int SOAP_REQUEST_CODE = 2;
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub

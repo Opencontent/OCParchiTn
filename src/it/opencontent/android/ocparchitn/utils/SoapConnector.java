@@ -2,6 +2,7 @@ package it.opencontent.android.ocparchitn.utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.ksoap2.HeaderProperty;
@@ -22,24 +23,23 @@ public class SoapConnector {
 
 	// you can get these values from the wsdl file^
 
-	public SoapObject soap(String METHOD_NAME, String SOAP_ACTION,
+	public HashMap<String,Object> soap(String METHOD_NAME, String SOAP_ACTION,
 			String NAMESPACE, String URL, PropertyInfo[] properties)
 			throws IOException, XmlPullParserException {
+		
+		HashMap<String,Object> map = new HashMap<String, Object>();
+		
 		SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME); // set up
 																		// request
-		// request.addProperty("rfid", 2);
-
 		if (properties != null && properties.length > 0) {
 			for (PropertyInfo p : properties) {
 				request.addProperty(p);
 			}
 		}
 
-		// request.addProperty("iTopN", "5"); //variable name, value. I got the
-		// variable name, from the wsdl file!
 		SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
 				SoapEnvelope.VER11); // put all required data into a soap
-										// envelope
+									 // envelope
 		envelope.setOutputSoapObject(request); // prepare request
 		HttpTransportSE httpTransport = new HttpTransportSE(URL);
 
@@ -60,24 +60,25 @@ public class SoapConnector {
 		try {
 			httpTransport.call(SOAP_ACTION, envelope, headers); // send request
 			result = (SoapObject) envelope.getResponse(); // get response
-
-			for (int i = 0; i < result.getPropertyCount(); i++) {
-
-				Log.v(TAG, "Proprietà :"
-						+ result.getProperty(i).getClass().getSimpleName());
+			int props = result. getPropertyCount();
+			Log.d(TAG," risultano "+props+" proprietà");
+			
+			
+			for (int i = 0; i < props ; i++) {
+				
+				
+				PropertyInfo pi = new PropertyInfo();
+				result.getPropertyInfo(i, pi);
+				map.put(pi.name, pi.getValue());
+				
 			}
 
 		} catch (Exception e) {
 			// Log.e(TAG,e.getMessage());
 			e.printStackTrace();
-			result = null;
 		}
-		;
-		return result;
+		return map;
 	}
 
-	// usage:
-	// SoapObject result=soap(METHOD_NAME, SOAP_ACTION, NAMESPACE, URL);
-	// don't forget to catch the exceptions!!
 
 }

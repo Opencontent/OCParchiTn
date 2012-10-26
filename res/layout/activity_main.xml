@@ -42,5 +42,8 @@
             android:background="#eeeeee"
             android:contentDescription="@string/snapshot_description" />
     </LinearLayout>
+    <TextView android:id="@+id/external_data_out"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"/>
 
 </LinearLayout>
