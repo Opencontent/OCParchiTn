@@ -18,5 +18,7 @@
 	<!--  filtering dell'intent -->
 	<string name="schema_struttura">parchi</string>
 	<string name="host_struttura">struttura</string>
+	
+	<string name="remote_loading_dialog_text">Carico</string>
 		
 </resources>

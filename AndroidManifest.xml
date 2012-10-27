@@ -61,7 +61,7 @@
         <activity android:name=".activities.AttivitaPeriodicaActivity">
             
         </activity>
-        <activity android:name=".activities.SynchroSoapActivity">
+        <activity android:name=".activities.SynchroSoapActivity" android:theme="@style/Theme.Transparent">
             
         </activity>
         

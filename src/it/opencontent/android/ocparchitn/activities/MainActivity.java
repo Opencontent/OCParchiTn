@@ -137,18 +137,20 @@ public class MainActivity extends BaseActivity {
 			HashMap<String, Object> res = SynchroSoapActivity.getRes();
 			TextView externalData = (TextView) findViewById(R.id.external_data_out);
 			externalData.setText("");
-			
-			Iterator<Entry<String, Object>> i = res.entrySet().iterator();
-			while(i.hasNext()) {
-				Entry<String,Object> e = i.next();
-				if(e.getValue() != null){
-					externalData.append("\n"+e.getKey()+" "+e.getValue().toString());
-				} else {
-					externalData.append("\n"+e.getKey());
+			if (res != null) {
+				Iterator<Entry<String, Object>> i = res.entrySet().iterator();
+				while (i.hasNext()) {
+					Entry<String, Object> e = i.next();
+					if (e.getValue() != null) {
+						externalData.append("\n" + e.getKey() + " "
+								+ e.getValue().toString());
+					} else {
+						externalData.append("\n" + e.getKey());
+					}
+
 				}
-				
 			}
-			
+
 			break;
 		case FOTO_REQUEST_CODE:
 			try {
