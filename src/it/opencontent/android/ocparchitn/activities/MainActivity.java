@@ -122,10 +122,11 @@ public class MainActivity extends BaseActivity {
 			String[] actualValues = pieces[1].split("/");
 			currentRFID = Integer.parseInt(actualValues[1]);
 
-			getStructureData(currentRFID);
+			db.readGiocoLocally(currentRFID);
 
 			String name = getString(R.string.display_gioco_id) + currentRFID;
 			String ser = getString(R.string.display_gioco_seriale) + out;
+			getStructureData(currentRFID);
 
 			TextView giocoId = (TextView) findViewById(R.id.display_gioco_id);
 			giocoId.setText(name);
@@ -142,6 +143,7 @@ public class MainActivity extends BaseActivity {
 		Intent customCamera = new Intent(Intents.TAKE_SNAPSHOT);
 		int whichOne = (Integer) button.getTag();
 		customCamera.putExtra(Intents.EXTRAKEY_FOTO_NUMBER, whichOne);
+		customCamera.putExtra(Intents.EXTRAKEY_RFID, currentRFID);
 		customCamera.setClass(getApplicationContext(), CameraActivity.class);
 		Log.d(TAG, customCamera.getAction());
 		startActivityForResult(customCamera, FOTO_REQUEST_CODE);
@@ -152,8 +154,12 @@ public class MainActivity extends BaseActivity {
 			Intent intent) {
 		switch (requestCode) {
 		case SOAP_GET_GIOCO_REQUEST_CODE:
+			
+			//TODO: preferiamo locale o remoto come update?
+			//Quale timestamp usiamo?
+			
 			HashMap<String, Object> res = SynchroSoapActivity.getRes();
-
+			
 			LinearLayout externalData = (LinearLayout) findViewById(R.id.external_data_out);
 			externalData.removeAllViews();
 			if (res != null && res.size() > 0) {
@@ -192,13 +198,18 @@ public class MainActivity extends BaseActivity {
 			try {
 				mImageBitmap = CameraActivity.getImage();
 
-				int whichOne = intent.getExtras().getInt(
-						Intents.EXTRAKEY_FOTO_NUMBER);
+				int whichOne = intent.getIntExtra(Intents.EXTRAKEY_FOTO_NUMBER,0);
+				int rfid = intent.getIntExtra(Intents.EXTRAKEY_RFID, 0);
 				ImageView mImageView =(ImageView) findViewById(whichOne);
 
-				if (mImageBitmap != null && mImageView != null) {
+				if (mImageBitmap != null) {
 					snapshots[whichOne] = mImageBitmap;
-					mImageView.setImageBitmap(mImageBitmap);
+					db.addFotoToGioco(rfid,whichOne);
+					if( mImageView != null ){
+						mImageView.setImageBitmap(mImageBitmap);
+					} else  {
+						setupSnapshots();
+					}
 				}
 			} catch (NullPointerException e) {
 				Log.d(TAG, "Immagine nulla");

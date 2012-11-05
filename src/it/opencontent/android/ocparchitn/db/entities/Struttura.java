@@ -13,6 +13,8 @@ public class Struttura {
 	public boolean sincronizzato;
 	public int ultimaSincronizzazione;
 	
+	public String dirtyElements;
+	
 	public String descrizione_gioco;
 	public String marca_1;
 	public String dt_acquisto;
@@ -20,8 +22,13 @@ public class Struttura {
 	public String dt_prossimointervento;
 	public float gpsx;
 	public float gpsy;
-	public String[] note;
-	public String[] posizioneRfid;
+	public String note;
+	public String posizioneRfid;
 	public String tipoGioco;
+	public String foto0;
+	public String foto1;
+	public String foto2;
+	public String foto3;
+	public String foto4;
 
 }

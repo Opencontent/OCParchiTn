@@ -2,12 +2,14 @@ package it.opencontent.android.ocparchitn.db;
 
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.db.entities.StruttureEnum;
+import it.opencontent.android.ocparchitn.utils.FileNameCreator;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -98,6 +100,36 @@ public class OCParchiDB {
 			return null;
 		}
 		return cursor;
+	}
+	
+	public int readGiocoLocally(int rfid){
+		String selection = " rfid  = ? ";
+		String[] selectionArgs = new String[]{rfid+""};
+		
+		Cursor c  = mDatabaseOpenHelper.getReadableDatabase().query(StruttureEnum.GIOCHI.tipo, null, selection, selectionArgs, null, null, null);
+		
+		
+		
+//		return c.getColumnIndex(StruttureEnum.GIOCHI.istanza.rfid); 
+		return 10; 
+	}
+	
+	public long insertScannedGioco(int rfid){
+		ContentValues cv = new ContentValues();
+		cv.put("rfid", rfid);
+		
+		return mDatabaseOpenHelper.getWritableDatabase().insert(StruttureEnum.GIOCHI.tipo,null,cv);
+	}
+	
+	public void addFotoToGioco(int rfid,int whichOne){
+		ContentValues cv = new ContentValues();
+		cv.put("foto"+whichOne, FileNameCreator.getSnapshotFullPath(rfid, whichOne) );
+		cv.put("sincronizzato",false);
+		
+		String whereClause = " rfid = ? ";
+		
+		String[] whereArgs = new String[]{rfid+""};
+		mDatabaseOpenHelper.getWritableDatabase().update(StruttureEnum.GIOCHI.tipo,cv,whereClause,whereArgs );
 	}
 
 	/**
