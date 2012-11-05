@@ -1,5 +1,7 @@
 package it.opencontent.android.ocparchitn.utils;
 
+import it.opencontent.android.ocparchitn.activities.BaseActivity;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.content.Context;
 import android.util.Log;
 
 public class SoapConnector {
@@ -20,9 +23,7 @@ public class SoapConnector {
 	private static final String USERNAME = "PG_CED";
 	private static final String PASSWORD = "euforia";
 	private static final String TAG = SoapConnector.class.getSimpleName();
-
-	// you can get these values from the wsdl file^
-
+	
 	public HashMap<String,Object> soap(String METHOD_NAME, String SOAP_ACTION,
 			String NAMESPACE, String URL, PropertyInfo[] properties)
 			throws IOException, XmlPullParserException {
@@ -60,21 +61,25 @@ public class SoapConnector {
 		try {
 			httpTransport.call(SOAP_ACTION, envelope, headers); // send request
 			result = (SoapObject) envelope.getResponse(); // get response
-			int props = result. getPropertyCount();
-			Log.d(TAG," risultano "+props+" proprietà");
-			
-			
-			for (int i = 0; i < props ; i++) {
+			if(result != null){
+				int props = result. getPropertyCount();
+				Log.d(TAG," risultano "+props+" proprietà");
 				
 				
-				PropertyInfo pi = new PropertyInfo();
-				result.getPropertyInfo(i, pi);
-				map.put(pi.name, pi.getValue());
-				
+				for (int i = 0; i < props ; i++) {
+					
+					
+					PropertyInfo pi = new PropertyInfo();
+					result.getPropertyInfo(i, pi);
+					map.put(pi.name, pi.getValue());
+					
+				}
+			} else {
+				Log.d(TAG,envelope.bodyOut.toString());
 			}
 
 		} catch (Exception e) {
-			// Log.e(TAG,e.getMessage());
+			Log.e(TAG,"SOAP ERROR:");
 			e.printStackTrace();
 		}
 		return map;

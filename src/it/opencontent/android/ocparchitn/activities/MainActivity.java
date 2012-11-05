@@ -16,13 +16,14 @@ import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
-import android.nfc.tech.MifareClassic;
-import android.nfc.tech.MifareUltralight;
-import android.nfc.tech.NfcF;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainActivity extends BaseActivity {
@@ -33,21 +34,34 @@ public class MainActivity extends BaseActivity {
 	private static IntentFilter[] ifa;
 	private static String[][] techListsArray;
 	private static Bitmap mImageBitmap;
+	private static int currentRFID = 0;
+	private static Bitmap[] snapshots = new Bitmap[Intents.MAX_SNAPSHOTS_AMOUNT];
+	
+	private static boolean serviceInfoTaken = false;
+	private static HashMap<String, Object> serviceInfo;
+	
 
 	private OCParchiDB db;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		db = new OCParchiDB(getApplicationContext());
+
 		Intent intent = getIntent();
 		parseIntent(intent);
-		db = new OCParchiDB(getApplicationContext());
-		int pending = db.getPendingSynchronizations();
+
 
 		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 		List<String> locationProviders = locationManager.getProviders(true);
 
-		setContentView(R.layout.activity_main);
+		
+		int pending = db.getPendingSynchronizations();
+		TextView pending_text = (TextView) findViewById(R.id.pending_synchronizations);
+		pending_text.setText(pending+" pending");		
+		
+		
 		nfca = NfcAdapter.getDefaultAdapter(this);
 		pi = PendingIntent.getActivity(this, 0, new Intent(this, getClass())
 				.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
@@ -61,9 +75,16 @@ public class MainActivity extends BaseActivity {
 			throw new RuntimeException("fail", e);
 		}
 		ifa = new IntentFilter[] { ndef, };
-		techListsArray = new String[][] { new String[] { NfcF.class.getName(),
-				MifareUltralight.class.getName(), MifareClassic.class.getName() } };
-
+		
+		
+		if(!serviceInfoTaken){
+			getServiceInfo();
+			serviceInfoTaken = true;
+		}
+		// La techListArray per il momento la tengo vuota, così filtro per
+		// qualsiasi
+		// TODO: definire un set di techList specifiche e corrette per il
+		// progetto
 	}
 
 	@Override
@@ -76,11 +97,7 @@ public class MainActivity extends BaseActivity {
 	public void onResume() {
 		super.onResume();
 		nfca.enableForegroundDispatch(this, pi, ifa, techListsArray);
-
-		if (mImageBitmap != null) {
-			ImageView mImageView = (ImageView) findViewById(R.id.snapshot);
-			mImageView.setImageBitmap(mImageBitmap);
-		}
+		setupSnapshots();
 	}
 
 	@Override
@@ -103,12 +120,12 @@ public class MainActivity extends BaseActivity {
 			String[] pieces = out.split("://");
 
 			String[] actualValues = pieces[1].split("/");
-			int id = Integer.parseInt(actualValues[1]);
+			currentRFID = Integer.parseInt(actualValues[1]);
 
-			getStructureData(id);
+			getStructureData(currentRFID);
 
-			String name = "Id: " + id;
-			String ser = "Originale: " + out;
+			String name = getString(R.string.display_gioco_id) + currentRFID;
+			String ser = getString(R.string.display_gioco_seriale) + out;
 
 			TextView giocoId = (TextView) findViewById(R.id.display_gioco_id);
 			giocoId.setText(name);
@@ -122,8 +139,9 @@ public class MainActivity extends BaseActivity {
 	}
 
 	public void takeSnapshot(View button) {
-		Intent customCamera = new Intent(
-				"it.opencontent.android.ocparchitn.Intents.TAKE_SNAPSHOT");
+		Intent customCamera = new Intent(Intents.TAKE_SNAPSHOT);
+		int whichOne = (Integer) button.getTag();
+		customCamera.putExtra(Intents.EXTRAKEY_FOTO_NUMBER, whichOne);
 		customCamera.setClass(getApplicationContext(), CameraActivity.class);
 		Log.d(TAG, customCamera.getAction());
 		startActivityForResult(customCamera, FOTO_REQUEST_CODE);
@@ -133,30 +151,53 @@ public class MainActivity extends BaseActivity {
 	protected void onActivityResult(int requestCode, int returnCode,
 			Intent intent) {
 		switch (requestCode) {
-		case SOAP_REQUEST_CODE:
+		case SOAP_GET_GIOCO_REQUEST_CODE:
 			HashMap<String, Object> res = SynchroSoapActivity.getRes();
-			TextView externalData = (TextView) findViewById(R.id.external_data_out);
-			externalData.setText("");
-			if (res != null) {
+
+			LinearLayout externalData = (LinearLayout) findViewById(R.id.external_data_out);
+			externalData.removeAllViews();
+			if (res != null && res.size() > 0) {
 				Iterator<Entry<String, Object>> i = res.entrySet().iterator();
 				while (i.hasNext()) {
 					Entry<String, Object> e = i.next();
+					TextView key = new TextView(getApplicationContext());
+					key.setText(e.getKey());
+					externalData.addView(key);
+
 					if (e.getValue() != null) {
-						externalData.append("\n" + e.getKey() + " "
-								+ e.getValue().toString());
-					} else {
-						externalData.append("\n" + e.getKey());
+						if (e.getValue().getClass().equals(String.class)) {
+							TextView val = new TextView(getApplicationContext());
+							val.setText(e.getKey());
+							externalData.addView(val);
+						} else if (e.getValue().getClass().equals(Button.class)) {
+							externalData.addView((Button) e.getValue());
+						}
+
 					}
 
 				}
+			} else {
+				TextView generic = new TextView(getApplicationContext());
+				generic.setText(getString(R.string.errore_generico_soap)
+						+ currentRFID);
+				externalData.addView(generic);
+
 			}
 
+			break;
+		case SOAP_SERVICE_INFO_REQUEST_CODE:
+			serviceInfo = SynchroSoapActivity.getRes();
 			break;
 		case FOTO_REQUEST_CODE:
 			try {
 				mImageBitmap = CameraActivity.getImage();
-				if (mImageBitmap != null) {
-					ImageView mImageView = (ImageView) findViewById(R.id.snapshot);
+
+				int whichOne = intent.getExtras().getInt(
+						Intents.EXTRAKEY_FOTO_NUMBER);
+				ImageView mImageView =(ImageView) findViewById(whichOne);
+
+				if (mImageBitmap != null && mImageView != null) {
+					snapshots[whichOne] = mImageBitmap;
 					mImageView.setImageBitmap(mImageBitmap);
 				}
 			} catch (NullPointerException e) {
@@ -168,7 +209,15 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 
-	public void getStructureData(int id) {
+	private void getServiceInfo() {
+		Intent serviceIntent = new Intent();
+		serviceIntent.setClass(getApplicationContext(),
+				SynchroSoapActivity.class);
+		serviceIntent.putExtra(Intents.EXTRAKEY_METHOD_NAME, "getInfo");
+		startActivityForResult(serviceIntent, SOAP_SERVICE_INFO_REQUEST_CODE);
+	}
+
+	private void getStructureData(int id) {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
@@ -176,7 +225,41 @@ public class MainActivity extends BaseActivity {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("rfid", id);
 		serviceIntent.putExtra(Intents.EXTRAKEY_DATAMAP, map);
-		startActivityForResult(serviceIntent, SOAP_REQUEST_CODE);
+		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE);
+	}
+	
+	private void setupSnapshots(){
+		LinearLayout wrapper = (LinearLayout) findViewById(R.id.snapshot_wrapper);
+		wrapper.removeAllViews();
+		
+		for(int i =0 ; i < Intents.MAX_SNAPSHOTS_AMOUNT; i++){
+			ImageView img = new ImageView(getApplicationContext());
+			img.setTag(i);
+			img.setId(i);
+			img.setLayoutParams(new LayoutParams (150, 150));
+			img.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					takeSnapshot(v);
+				}
+			});
+			if(snapshots[i]!=null){
+				img.setImageBitmap(snapshots[i]);
+			}
+			wrapper.addView(img);
+		}
+		
+        /*<ImageView
+        android:id="@+id/snapshot1"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="right"
+        android:layout_weight="1"
+        android:background="#eeeeee"
+        android:contentDescription="@string/snapshot_description"
+        android:onClick="takeSnapshot"
+        android:tag="1" />*/
+		
 	}
 
 }

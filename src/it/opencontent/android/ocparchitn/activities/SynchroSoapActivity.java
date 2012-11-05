@@ -15,14 +15,18 @@ import org.ksoap2.serialization.PropertyInfo;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.Button;
 
 public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 
+	private static final String TAG = SynchroSoapActivity.class.getSimpleName();
 	private static String methodName;
 	private static HashMap<String, Object> requestParameters;
 	private static HashMap<String, Object> res;
@@ -67,6 +71,11 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 	@Override
 	public void returnResponse(String method, HashMap<String, Object> data) {
 		methodName = method;
+		
+		if(data == null){
+			data = new HashMap<String,Object>();
+		}
+		
 		final PropertyInfo[] properties = new PropertyInfo[data.entrySet()
 				.size()];
 		int i = 0;
@@ -107,6 +116,28 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 			remoteThread = new Thread(runnable);
 			remoteThread.start();
 
+		} else {
+			if(res == null){
+				res = new  HashMap<String, Object>();
+			}
+			res.put("Errore", "Network non connesso");
+			
+			Button wirelessConfig = new Button(getApplicationContext());
+			wirelessConfig.setText("Vai al centro connessioni");
+			wirelessConfig.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					startActivityForResult(new Intent(Settings.ACTION_WIRELESS_SETTINGS),BaseActivity.SETUP_NETWORK);		
+				}
+			});
+			
+			res.put("Azioni possibili:" , wirelessConfig);
+			
+			
+			Log.d(TAG,"Network non connesso");
+			setResult(RESULT_CANCELED, getIntent());
+			finish();			
 		}
 	}
 

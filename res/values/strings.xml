@@ -12,13 +12,19 @@
 	<string name="settings_field_password2">(ripeti)</string>
 	
 	<!--  schermata main della struttura -->
-	<string name="display_gioco_id">ID:</string>
-	<string name="display_gioco_seriale">SER:</string>
+	<string name="display_gioco_id">ID: </string>
+	<string name="display_gioco_seriale">Seriale: </string>
+	<string name="display_gioco_gps">Coordinate GPS: </string>
+	<string name="display_gioco_marca">Marca: </string>
+	<string name="display_gioco_nota">Nota: </string>
 	
 	<!--  filtering dell'intent -->
 	<string name="schema_struttura">parchi</string>
 	<string name="host_struttura">struttura</string>
 	
 	<string name="remote_loading_dialog_text">Carico</string>
+	
+	<string name="errore_generico_soap">Errore nel recupero dei dati del gioco Id: </string>
+	
 		
 </resources>

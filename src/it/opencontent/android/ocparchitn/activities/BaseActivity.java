@@ -3,13 +3,20 @@ package it.opencontent.android.ocparchitn.activities;
 import it.opencontent.android.ocparchitn.R;
 import android.app.Activity;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class BaseActivity extends Activity {
 	
 	public static final int FOTO_REQUEST_CODE = 1;
-	public static final int SOAP_REQUEST_CODE = 2;
+	public static final int SOAP_GET_GIOCO_REQUEST_CODE = 2;
+	public static final int SOAP_SERVICE_INFO_REQUEST_CODE = 3;
+	
+	public static final int SETUP_NETWORK = 100;
+	
+	public static boolean networkIsAvailable = false;
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -24,6 +31,22 @@ public class BaseActivity extends Activity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	public void onCreate(Bundle savedinstance){
+		super.onCreate(savedinstance);
+		ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
+		networkIsAvailable = cm.getActiveNetworkInfo() != null
+                && cm.getActiveNetworkInfo().isConnectedOrConnecting();
+
+	}
+	
+	public boolean getNetworkIsAvailable(){
+		ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
+		networkIsAvailable = cm.getActiveNetworkInfo() != null
+                && cm.getActiveNetworkInfo().isConnectedOrConnecting();
+		return networkIsAvailable;
 	}
 
 	@Override
