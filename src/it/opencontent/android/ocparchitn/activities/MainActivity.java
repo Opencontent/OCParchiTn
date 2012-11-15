@@ -152,12 +152,14 @@ public class MainActivity extends BaseActivity {
 			
 			String[] actualValues = pieces[1].split("/");
 			currentRFID = Integer.parseInt(actualValues[1]);
+
 			
 			getStructureData(currentRFID);
 			
 			String name = getString(R.string.display_gioco_id) + currentRFID;
 			String ser = getString(R.string.display_gioco_seriale) + out;
 			
+
 			TextView giocoId = (TextView) findViewById(R.id.display_gioco_id);
 			giocoId.setText(name);
 			TextView giocoSeriale = (TextView) findViewById(R.id.display_gioco_seriale);
@@ -170,7 +172,9 @@ public class MainActivity extends BaseActivity {
 	}
 
 
+
 	private void parseIntent(Intent intent) {
+
 	}
 
 	private void getServiceInfo() {
