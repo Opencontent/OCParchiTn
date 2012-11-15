@@ -1,15 +1,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/wrapper_main_fragment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
         <LinearLayout
+            android:id="@+id/wrapper_dati_gioco"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
@@ -54,11 +56,18 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
-            <TextView android:id="@+id/pending_synchronizations"
+
+            <TextView
+                android:id="@+id/pending_synchronizations"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
-                android:background="#eebbaa"
-                />
+                android:background="#eebbaa" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/external_data_out"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent" >
         </LinearLayout>
     </LinearLayout>
 
@@ -66,15 +75,7 @@
         android:id="@+id/snapshot_wrapper"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" >
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/external_data_out"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent" >
+        android:background="@color/dialog_text" >
     </LinearLayout>
 
 </LinearLayout>

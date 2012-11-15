@@ -3,64 +3,87 @@ package it.opencontent.android.ocparchitn.activities;
 import it.opencontent.android.ocparchitn.Intents;
 import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
+import it.opencontent.android.ocparchitn.fragments.MainFragment;
+import it.opencontent.android.ocparchitn.fragments.PeriodicaFragment;
+import it.opencontent.android.ocparchitn.fragments.RendicontazioneFragment;
+import it.opencontent.android.ocparchitn.fragments.SpostamentoFragment;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
 
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.location.LocationManager;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainActivity extends BaseActivity {
 
+	
 	private static final String TAG = MainActivity.class.getSimpleName();
-	private static PendingIntent pi;
+	
 	private static NfcAdapter nfca;
+	private static PendingIntent pi;
 	private static IntentFilter[] ifa;
 	private static String[][] techListsArray;
-	private static Bitmap mImageBitmap;
-	private static int currentRFID = 0;
-	private static Bitmap[] snapshots = new Bitmap[Intents.MAX_SNAPSHOTS_AMOUNT];
-	
 	private static boolean serviceInfoTaken = false;
-	private static HashMap<String, Object> serviceInfo;
-	
-
 	private OCParchiDB db;
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		db = new OCParchiDB(getApplicationContext());
+//		setContentView(R.layout.activity_main_fragments);
 
+		db = new OCParchiDB(getApplicationContext());
+		int pending = db.getPendingSynchronizations();
+
+		ActionBar actionBar = getActionBar();
+	    actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+	    actionBar.setDisplayShowTitleEnabled(true);
+	    actionBar.setTitle(getString(R.string.title_activity_main)+" ("+pending+")");
+
+	    Tab tab;
+	    tab = actionBar.newTab()
+	            .setText(getString(R.string.fragment_title_rilevazione))
+	            .setTabListener(new CustomTabListener<MainFragment>(
+	                    this, "main", MainFragment.class));
+	    actionBar.addTab(tab);
+	    tab = actionBar.newTab()
+	    		.setText(getString(R.string.fragment_title_attivita_periodica))
+	    		.setTabListener(new CustomTabListener<PeriodicaFragment>(
+	    				this, "main", PeriodicaFragment.class));
+	    actionBar.addTab(tab);
+	    tab = actionBar.newTab()
+	    		.setText(getString(R.string.fragment_title_rendicontazione_manutenzione))
+	    		.setTabListener(new CustomTabListener<RendicontazioneFragment>(
+	    				this, "main", RendicontazioneFragment.class));
+	    actionBar.addTab(tab);
+	    tab = actionBar.newTab()
+	    		.setText(getString(R.string.fragment_title_spostamento_gioco))
+	    		.setTabListener(new CustomTabListener<SpostamentoFragment>(
+	    				this, "main", SpostamentoFragment.class));
+	    actionBar.addTab(tab);
+
+
+
+
+//		setContentView(R.layout.activity_main);
+		
 		Intent intent = getIntent();
 		parseIntent(intent);
 
 
-		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-		List<String> locationProviders = locationManager.getProviders(true);
-
-		
-		int pending = db.getPendingSynchronizations();
-		TextView pending_text = (TextView) findViewById(R.id.pending_synchronizations);
-		pending_text.setText(pending+" pending");		
-		
+//		LocationManager locationManager = (LocationManager) getSystemService(BaseActivity.LOCATION_SERVICE);
+//		List<String> locationProviders = locationManager.getProviders(true);
+//
+//		
 		
 		nfca = NfcAdapter.getDefaultAdapter(this);
 		pi = PendingIntent.getActivity(this, 0, new Intent(this, getClass())
@@ -85,8 +108,10 @@ public class MainActivity extends BaseActivity {
 		// qualsiasi
 		// TODO: definire un set di techList specifiche e corrette per il
 		// progetto
+		
 	}
-
+	
+	
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -97,20 +122,26 @@ public class MainActivity extends BaseActivity {
 	public void onResume() {
 		super.onResume();
 		nfca.enableForegroundDispatch(this, pi, ifa, techListsArray);
-		setupSnapshots();
+//		nfca.enableForegroundDispatch(this, pi, null, null);
+	}	
+	
+	@Override 
+	public void onStart(){
+		super.onStart();
+		//nfca.disableForegroundDispatch(this);
 	}
-
+	
+	
+	
+	
 	@Override
-	public void onNewIntent(Intent intent) {
-		parseIntent(intent);
-		// do something with tagFromIntent
-	}
-
-	private void parseIntent(Intent intent) {
+	protected void onNewIntent(Intent intent) {
+		// TODO Auto-generated method stub
+		super.onNewIntent(intent);
 		try {
 			NdefMessage rawMsg = (NdefMessage) intent
 					.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)[0];
-
+			
 			int length = rawMsg.toByteArray().length;
 			byte[] res = new byte[length - 5];
 			for (int i = 5; i < length; i++) {
@@ -118,95 +149,28 @@ public class MainActivity extends BaseActivity {
 			}
 			String out = new String(res);
 			String[] pieces = out.split("://");
-
+			
 			String[] actualValues = pieces[1].split("/");
 			currentRFID = Integer.parseInt(actualValues[1]);
-
+			
 			getStructureData(currentRFID);
-
+			
 			String name = getString(R.string.display_gioco_id) + currentRFID;
 			String ser = getString(R.string.display_gioco_seriale) + out;
-
+			
 			TextView giocoId = (TextView) findViewById(R.id.display_gioco_id);
 			giocoId.setText(name);
 			TextView giocoSeriale = (TextView) findViewById(R.id.display_gioco_seriale);
 			giocoSeriale.setText(ser);
-
+			
 			Log.d(TAG, "Qualcosa è successo " + name + " " + res);
 		} catch (Exception e) {
 			// Non è un intent che ci interessa in questo caso
 		}
 	}
 
-	public void takeSnapshot(View button) {
-		Intent customCamera = new Intent(Intents.TAKE_SNAPSHOT);
-		int whichOne = (Integer) button.getTag();
-		customCamera.putExtra(Intents.EXTRAKEY_FOTO_NUMBER, whichOne);
-		customCamera.setClass(getApplicationContext(), CameraActivity.class);
-		Log.d(TAG, customCamera.getAction());
-		startActivityForResult(customCamera, FOTO_REQUEST_CODE);
-	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int returnCode,
-			Intent intent) {
-		switch (requestCode) {
-		case SOAP_GET_GIOCO_REQUEST_CODE:
-			HashMap<String, Object> res = SynchroSoapActivity.getRes();
-
-			LinearLayout externalData = (LinearLayout) findViewById(R.id.external_data_out);
-			externalData.removeAllViews();
-			if (res != null && res.size() > 0) {
-				Iterator<Entry<String, Object>> i = res.entrySet().iterator();
-				while (i.hasNext()) {
-					Entry<String, Object> e = i.next();
-					TextView key = new TextView(getApplicationContext());
-					key.setText(e.getKey());
-					externalData.addView(key);
-
-					if (e.getValue() != null) {
-						if (e.getValue().getClass().equals(String.class)) {
-							TextView val = new TextView(getApplicationContext());
-							val.setText(e.getKey());
-							externalData.addView(val);
-						} else if (e.getValue().getClass().equals(Button.class)) {
-							externalData.addView((Button) e.getValue());
-						}
-
-					}
-
-				}
-			} else {
-				TextView generic = new TextView(getApplicationContext());
-				generic.setText(getString(R.string.errore_generico_soap)
-						+ currentRFID);
-				externalData.addView(generic);
-
-			}
-
-			break;
-		case SOAP_SERVICE_INFO_REQUEST_CODE:
-			serviceInfo = SynchroSoapActivity.getRes();
-			break;
-		case FOTO_REQUEST_CODE:
-			try {
-				mImageBitmap = CameraActivity.getImage();
-
-				int whichOne = intent.getExtras().getInt(
-						Intents.EXTRAKEY_FOTO_NUMBER);
-				ImageView mImageView =(ImageView) findViewById(whichOne);
-
-				if (mImageBitmap != null && mImageView != null) {
-					snapshots[whichOne] = mImageBitmap;
-					mImageView.setImageBitmap(mImageBitmap);
-				}
-			} catch (NullPointerException e) {
-				Log.d(TAG, "Immagine nulla");
-			}
-			break;
-		default:
-			break;
-		}
+	private void parseIntent(Intent intent) {
 	}
 
 	private void getServiceInfo() {
@@ -226,40 +190,53 @@ public class MainActivity extends BaseActivity {
 		map.put("rfid", id);
 		serviceIntent.putExtra(Intents.EXTRAKEY_DATAMAP, map);
 		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE);
-	}
+	}	
 	
-	private void setupSnapshots(){
-		LinearLayout wrapper = (LinearLayout) findViewById(R.id.snapshot_wrapper);
-		wrapper.removeAllViews();
+
+	
+	public static class CustomTabListener<T extends Fragment> implements ActionBar.TabListener {
+		private Fragment mFragment;
+		private final Activity mActivity;
+		private final String mTag;
+		private final Class<T> mClass;
 		
-		for(int i =0 ; i < Intents.MAX_SNAPSHOTS_AMOUNT; i++){
-			ImageView img = new ImageView(getApplicationContext());
-			img.setTag(i);
-			img.setId(i);
-			img.setLayoutParams(new LayoutParams (150, 150));
-			img.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					takeSnapshot(v);
-				}
-			});
-			if(snapshots[i]!=null){
-				img.setImageBitmap(snapshots[i]);
-			}
-			wrapper.addView(img);
+		/** Constructor used each time a new tab is created.
+		 * @param activity  The host Activity, used to instantiate the fragment
+		 * @param tag  The identifier tag for the fragment
+		 * @param clz  The fragment's Class, used to instantiate the fragment
+		 */
+		public CustomTabListener(Activity activity, String tag, Class<T> clz) {
+			mActivity = activity;
+			mTag = tag;
+			mClass = clz;
 		}
 		
-        /*<ImageView
-        android:id="@+id/snapshot1"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_gravity="right"
-        android:layout_weight="1"
-        android:background="#eeeeee"
-        android:contentDescription="@string/snapshot_description"
-        android:onClick="takeSnapshot"
-        android:tag="1" />*/
+		/* The following are each of the ActionBar.TabListener callbacks */
 		
+		public void onTabSelected(Tab tab, FragmentTransaction ft) {
+			// Check if the fragment is already initialized
+			if (mFragment == null) {
+				// If not, instantiate and add it to the activity
+				mFragment = Fragment.instantiate(mActivity, mClass.getName());
+				ft.add(android.R.id.content, mFragment, mTag);
+			} else {
+				// If it exists, simply attach it in order to show it
+				ft.attach(mFragment);
+			}
+		}
+		
+		public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+			if (mFragment != null) {
+				// Detach the fragment, because another one is being attached
+				ft.detach(mFragment);
+			}
+		}
+		
+		public void onTabReselected(Tab tab, FragmentTransaction ft) {
+			// User selected the already selected tab. Usually do nothing.
+		}
 	}
-
 }
+
+
+

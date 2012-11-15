@@ -18,6 +18,8 @@ public class BaseActivity extends Activity {
 	
 	public static boolean networkIsAvailable = false;
 	
+	protected static int currentRFID = 0;
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
@@ -54,4 +56,8 @@ public class BaseActivity extends Activity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
+	
+	public int getCurrentRfid(){
+		return currentRFID;
+	}	
 }
