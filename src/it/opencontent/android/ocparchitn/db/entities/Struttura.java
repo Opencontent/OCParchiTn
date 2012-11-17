@@ -7,11 +7,14 @@ import java.util.Set;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 public class Struttura {
 
 	private static final String TAG = Struttura.class.getSimpleName();
+	
 
 	public Struttura() {
 
@@ -88,7 +91,9 @@ public class Struttura {
 						e.getKey());
 			}
 			if (e.getKey().equals("foto0")) {
-				foto0 = bindStringToProperty(foto0, e.getValue(), e.getKey());
+				String image = (String) e.getValue();
+				byte[] imageAsBytes = image.getBytes();
+				foto0 = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
 			}
 
 		}
@@ -165,6 +170,7 @@ public class Struttura {
 	public String tipo;
 
 	public boolean sincronizzato;
+	public boolean hasDirtyData;
 	public int ultimaSincronizzazione;
 
 	public String dirtyElements;
@@ -185,10 +191,10 @@ public class Struttura {
 	public String posizione_rfid;
 	public String rfid;
 	public String rfid_area;
-	public String foto0;
-	public String foto1;
-	public String foto2;
-	public String foto3;
-	public String foto4;
+	public Bitmap foto0;
+	public Bitmap foto1;
+	public Bitmap foto2;
+	public Bitmap foto3;
+	public Bitmap foto4;
 
 }

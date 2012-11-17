@@ -11,5 +11,7 @@ public class Intents {
 	public final static String EXTRAKEY_RFID = "rfid";
 
 	public final static int MAX_SNAPSHOTS_AMOUNT = 5;
+	
+	public final static int MAX_UNSYNCHRONIZED_LOCAL_ENTITIES = 10;
 
 }

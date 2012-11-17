@@ -8,8 +8,8 @@ public class FileNameCreator {
 	}
 
 	public static String getSnapshotFullPath(int rfid, int whichOne) {
-		return Constants.BASE_PATH + Constants.IMAGE_SUBDIRECTORY + rfid + "_"
-				+ whichOne + ".jpg";
+		return Constants.IMAGE_SUBDIRECTORY + "_" + rfid + "_" + whichOne
+				+ ".jpg";
 	}
 
 }

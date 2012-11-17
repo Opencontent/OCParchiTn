@@ -1,5 +1,6 @@
 package it.opencontent.android.ocparchitn.db;
 
+import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.db.entities.StruttureEnum;
 import it.opencontent.android.ocparchitn.utils.FileNameCreator;
@@ -102,6 +103,10 @@ public class OCParchiDB {
 		return cursor;
 	}
 
+	public int storeGiocoLocally(Gioco gioco){
+		return 0;
+	}
+	
 	public int readGiocoLocally(int rfid) {
 		String selection = " rfid  = ? ";
 		String[] selectionArgs = new String[] { rfid + "" };

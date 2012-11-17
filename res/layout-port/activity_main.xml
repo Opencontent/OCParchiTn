@@ -1,28 +1,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:id="@+id/activity_main"
+    android:gravity="left"
     android:orientation="horizontal" >
 
-    <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1" >
-
-        <LinearLayout
-            android:id="@+id/snapshot_wrapper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/dialog_text"
-            android:orientation="vertical" >
-        </LinearLayout>
-    </ScrollView>
+	<include layout="@layout/snapshot_holder" />
 
     <include
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="4"
+        android:layout_gravity="right"
         layout="@layout/gioco_main_fragment" />
 
 </LinearLayout>
