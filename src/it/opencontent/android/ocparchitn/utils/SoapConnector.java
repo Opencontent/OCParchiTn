@@ -23,13 +23,13 @@ public class SoapConnector {
 	private static final String USERNAME = "PG_CED";
 	private static final String PASSWORD = "euforia";
 	private static final String TAG = SoapConnector.class.getSimpleName();
-	
-	public HashMap<String,Object> soap(String METHOD_NAME, String SOAP_ACTION,
+
+	public HashMap<String, Object> soap(String METHOD_NAME, String SOAP_ACTION,
 			String NAMESPACE, String URL, PropertyInfo[] properties)
 			throws IOException, XmlPullParserException {
-		
-		HashMap<String,Object> map = new HashMap<String, Object>();
-		
+
+		HashMap<String, Object> map = new HashMap<String, Object>();
+
 		SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME); // set up
 																		// request
 		if (properties != null && properties.length > 0) {
@@ -40,7 +40,7 @@ public class SoapConnector {
 
 		SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
 				SoapEnvelope.VER11); // put all required data into a soap
-									 // envelope
+										// envelope
 		envelope.setOutputSoapObject(request); // prepare request
 		HttpTransportSE httpTransport = new HttpTransportSE(URL);
 
@@ -61,29 +61,26 @@ public class SoapConnector {
 		try {
 			httpTransport.call(SOAP_ACTION, envelope, headers); // send request
 			result = (SoapObject) envelope.getResponse(); // get response
-			if(result != null){
-				int props = result. getPropertyCount();
-				Log.d(TAG," risultano "+props+" proprietà");
-				
-				
-				for (int i = 0; i < props ; i++) {
-					
-					
+			if (result != null) {
+				int props = result.getPropertyCount();
+				Log.d(TAG, " risultano " + props + " proprietà");
+
+				for (int i = 0; i < props; i++) {
+
 					PropertyInfo pi = new PropertyInfo();
 					result.getPropertyInfo(i, pi);
 					map.put(pi.name, pi.getValue());
-					
+
 				}
 			} else {
-				Log.d(TAG,envelope.bodyOut.toString());
+				Log.d(TAG, envelope.bodyOut.toString());
 			}
 
 		} catch (Exception e) {
-			Log.e(TAG,"SOAP ERROR:");
+			Log.e(TAG, "SOAP ERROR:");
 			e.printStackTrace();
 		}
 		return map;
 	}
-
 
 }

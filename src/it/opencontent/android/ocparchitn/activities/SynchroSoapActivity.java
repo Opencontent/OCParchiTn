@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 
@@ -38,9 +39,9 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		super.onCreate(savedInstanceState);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		
+
 		setContentView(R.layout.remote_loading_dialog);
-		
+
 		Intent intent = getIntent();
 		methodName = (String) intent.getExtras().get(
 				Intents.EXTRAKEY_METHOD_NAME);
@@ -71,11 +72,11 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 	@Override
 	public void returnResponse(String method, HashMap<String, Object> data) {
 		methodName = method;
-		
-		if(data == null){
-			data = new HashMap<String,Object>();
+
+		if (data == null) {
+			data = new HashMap<String, Object>();
 		}
-		
+
 		final PropertyInfo[] properties = new PropertyInfo[data.entrySet()
 				.size()];
 		int i = 0;
@@ -105,9 +106,9 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 						e.printStackTrace();
 					} catch (XmlPullParserException e) {
 						e.printStackTrace();
-					} catch (Exception e){
+					} catch (Exception e) {
 						e.printStackTrace();
-					}finally {
+					} finally {
 						setResult(RESULT_CANCELED, getIntent());
 						finish();
 					}
@@ -117,27 +118,28 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 			remoteThread.start();
 
 		} else {
-			if(res == null){
-				res = new  HashMap<String, Object>();
+			if (res == null) {
+				res = new HashMap<String, Object>();
 			}
 			res.put("Errore", "Network non connesso");
-			
+
 			Button wirelessConfig = new Button(getApplicationContext());
 			wirelessConfig.setText("Vai al centro connessioni");
 			wirelessConfig.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
-					startActivityForResult(new Intent(Settings.ACTION_WIRELESS_SETTINGS),BaseActivity.SETUP_NETWORK);		
+					startActivityForResult(new Intent(
+							Settings.ACTION_WIRELESS_SETTINGS),
+							BaseActivity.SETUP_NETWORK);
 				}
 			});
-			
-			res.put("Azioni possibili:" , wirelessConfig);
-			
-			
-			Log.d(TAG,"Network non connesso");
+
+			res.put("Azioni possibili:", wirelessConfig);
+
+			Log.d(TAG, "Network non connesso");
 			setResult(RESULT_CANCELED, getIntent());
-			finish();			
+			finish();
 		}
 	}
 

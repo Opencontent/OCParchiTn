@@ -101,35 +101,38 @@ public class OCParchiDB {
 		}
 		return cursor;
 	}
-	
-	public int readGiocoLocally(int rfid){
+
+	public int readGiocoLocally(int rfid) {
 		String selection = " rfid  = ? ";
-		String[] selectionArgs = new String[]{rfid+""};
-		
-		Cursor c  = mDatabaseOpenHelper.getReadableDatabase().query(StruttureEnum.GIOCHI.tipo, null, selection, selectionArgs, null, null, null);
-		
-		
-		
-//		return c.getColumnIndex(StruttureEnum.GIOCHI.istanza.rfid); 
-		return 10; 
+		String[] selectionArgs = new String[] { rfid + "" };
+
+		Cursor c = mDatabaseOpenHelper.getReadableDatabase().query(
+				StruttureEnum.GIOCHI.tipo, null, selection, selectionArgs,
+				null, null, null);
+
+		// return c.getColumnIndex(StruttureEnum.GIOCHI.istanza.rfid);
+		return 10;
 	}
-	
-	public long insertScannedGioco(int rfid){
+
+	public long insertScannedGioco(int rfid) {
 		ContentValues cv = new ContentValues();
 		cv.put("rfid", rfid);
-		
-		return mDatabaseOpenHelper.getWritableDatabase().insert(StruttureEnum.GIOCHI.tipo,null,cv);
+
+		return mDatabaseOpenHelper.getWritableDatabase().insert(
+				StruttureEnum.GIOCHI.tipo, null, cv);
 	}
-	
-	public void addFotoToGioco(int rfid,int whichOne){
+
+	public void addFotoToGioco(int rfid, int whichOne) {
 		ContentValues cv = new ContentValues();
-		cv.put("foto"+whichOne, FileNameCreator.getSnapshotFullPath(rfid, whichOne) );
-		cv.put("sincronizzato",false);
-		
+		cv.put("foto" + whichOne,
+				FileNameCreator.getSnapshotFullPath(rfid, whichOne));
+		cv.put("sincronizzato", false);
+
 		String whereClause = " rfid = ? ";
-		
-		String[] whereArgs = new String[]{rfid+""};
-		mDatabaseOpenHelper.getWritableDatabase().update(StruttureEnum.GIOCHI.tipo,cv,whereClause,whereArgs );
+
+		String[] whereArgs = new String[] { rfid + "" };
+		mDatabaseOpenHelper.getWritableDatabase().update(
+				StruttureEnum.GIOCHI.tipo, cv, whereClause, whereArgs);
 	}
 
 	/**
@@ -153,10 +156,14 @@ public class OCParchiDB {
 			Entry<String, Struttura> entry = strutture.next();
 			String[] columns = new String[] { " sincronizzato as sincronizzato " };
 			String tableName = entry.getKey();
-			String selection = " sincronizzato = ? "; //TODO: trovare un modo per metterli in qualche costante, probabilmente in values
+			String selection = " sincronizzato = ? "; // TODO: trovare un modo
+														// per metterli in
+														// qualche costante,
+														// probabilmente in
+														// values
 
 			Cursor c = query(tableName, selection, selectionArgs, columns, null);
-			if(c!=null && c.moveToFirst()){
+			if (c != null && c.moveToFirst()) {
 				result += c.getColumnCount();
 			}
 		}

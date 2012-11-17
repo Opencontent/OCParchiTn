@@ -12,7 +12,7 @@ public enum StruttureEnum {
 	}
 
 	@Override
-	public String toString(){
+	public String toString() {
 		return this.name();
 	}
 }

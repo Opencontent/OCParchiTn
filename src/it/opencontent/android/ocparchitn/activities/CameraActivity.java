@@ -77,7 +77,7 @@ public class CameraActivity extends BaseActivity {
 	}
 
 	public void sendBackSnapshot() {
-//		Intent result = new Intent();
+		// Intent result = new Intent();
 		Intent result = getIntent();
 		setResult(RESULT_OK, result);
 		finish();

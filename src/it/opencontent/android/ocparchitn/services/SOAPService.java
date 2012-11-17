@@ -16,17 +16,21 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.widget.Toast;
 
 public class SOAPService extends Service implements IRemoteConnection {
 
 	// private String METHOD_NAME = "getInfo";
 	private static String methodName;
-	/*private String SOAP_ACTION = "https://webapps.comune.trento.it/parcogiochiSrv/";
-	private String NAMESPACE = "http://db.comune.trento.it";
-	private String URL = "https://webapps.comune.trento.it/parcogiochiSrv/services/SrvGioco?wsdl";*/
-	
-	private static HashMap<String,Object> res = null;
-	private static HashMap<String,Object> requestParameters = null;
+	/*
+	 * private String SOAP_ACTION =
+	 * "https://webapps.comune.trento.it/parcogiochiSrv/"; private String
+	 * NAMESPACE = "http://db.comune.trento.it"; private String URL =
+	 * "https://webapps.comune.trento.it/parcogiochiSrv/services/SrvGioco?wsdl";
+	 */
+
+	private static HashMap<String, Object> res = null;
+	private static HashMap<String, Object> requestParameters = null;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -37,10 +41,12 @@ public class SOAPService extends Service implements IRemoteConnection {
 	@SuppressWarnings("unchecked")
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		methodName = (String) intent.getExtras().get(Intents.EXTRAKEY_METHOD_NAME);
-		requestParameters = (HashMap<String,Object>) intent.getExtras().get(Intents.EXTRAKEY_DATAMAP);
+		methodName = (String) intent.getExtras().get(
+				Intents.EXTRAKEY_METHOD_NAME);
+		requestParameters = (HashMap<String, Object>) intent.getExtras().get(
+				Intents.EXTRAKEY_DATAMAP);
 		returnResponse(methodName, requestParameters);
-		
+
 		return super.onStartCommand(intent, flags, startId);
 	}
 
@@ -51,13 +57,14 @@ public class SOAPService extends Service implements IRemoteConnection {
 	}
 
 	@Override
-	public void returnResponse(String method, HashMap<String,Object> data) {
+	public void returnResponse(String method, HashMap<String, Object> data) {
 		methodName = method;
-		final PropertyInfo[] properties = new PropertyInfo[data.entrySet().size()];
-		int i =0 ;
-		Iterator<Entry<String, Object>> iterator =data.entrySet().iterator(); 
-		while( iterator.hasNext()){
-			Entry<String,Object> entry = iterator.next();
+		final PropertyInfo[] properties = new PropertyInfo[data.entrySet()
+				.size()];
+		int i = 0;
+		Iterator<Entry<String, Object>> iterator = data.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Entry<String, Object> entry = iterator.next();
 			PropertyInfo pi = new PropertyInfo();
 			pi.setName(entry.getKey());
 			pi.setValue(entry.getValue().toString());
@@ -71,11 +78,10 @@ public class SOAPService extends Service implements IRemoteConnection {
 				public void run() {
 					SoapConnector sc = new SoapConnector();
 					try {
-						res = sc.soap(methodName, 
-								getString(R.string.soap_endpoint), 
-								getString(R.string.soap_namespace), 
-								getString(R.string.soap_url),
-								properties);
+						res = sc.soap(methodName,
+								getString(R.string.soap_endpoint),
+								getString(R.string.soap_namespace),
+								getString(R.string.soap_url), properties);
 						return;
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -85,6 +91,8 @@ public class SOAPService extends Service implements IRemoteConnection {
 				}
 			};
 			new Thread(runnable).start();
+		} else {
+
 		}
 
 	}
