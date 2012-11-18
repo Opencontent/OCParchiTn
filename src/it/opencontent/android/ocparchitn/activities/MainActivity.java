@@ -8,7 +8,6 @@ import it.opencontent.android.ocparchitn.fragments.MainFragment;
 import it.opencontent.android.ocparchitn.fragments.PeriodicaFragment;
 import it.opencontent.android.ocparchitn.fragments.RendicontazioneFragment;
 import it.opencontent.android.ocparchitn.fragments.SpostamentoFragment;
-import it.opencontent.android.ocparchitn.utils.FileManagement;
 import it.opencontent.android.ocparchitn.utils.FileNameCreator;
 
 import java.io.FileNotFoundException;
@@ -20,7 +19,6 @@ import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -63,7 +61,7 @@ public class MainActivity extends BaseActivity {
 		db = new OCParchiDB(getApplicationContext());
 		int pending = db.getPendingSynchronizations();
 
-		ActionBar actionBar = getActionBar();
+		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayShowTitleEnabled(true);
 		actionBar.setTitle(getString(R.string.title_activity_main) + " ("
@@ -100,6 +98,10 @@ public class MainActivity extends BaseActivity {
 						new CustomTabListener<SpostamentoFragment>(this,
 								"spostamento", SpostamentoFragment.class));
 		actionBar.addTab(tab);
+		
+		if (savedInstanceState != null) {
+            actionBar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
+        }
 
 		if (!serviceInfoTaken) {
 			getServiceInfo();
@@ -138,6 +140,12 @@ public class MainActivity extends BaseActivity {
 
 	}
 
+	@Override 
+	public void onSaveInstanceState(Bundle outState){
+		super.onSaveInstanceState(outState);
+		outState.putInt("tab", getActionBar().getSelectedNavigationIndex());
+	}
+	
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -389,21 +397,11 @@ public class MainActivity extends BaseActivity {
 			mTag = tag;
 			mClass = clz;
 		}
-
-		/* The following are each of the ActionBar.TabListener callbacks */
-
 		public void onTabSelected(Tab tab, FragmentTransaction ft) {
-			// Check if the fragment is already initialized
 			if (mFragment == null) {
-				// If not, instantiate and add it to the activity
-				
-				mFragment = mActivity.getFragmentManager().findFragmentByTag(mTag);
-				if(mFragment == null){
 					mFragment = Fragment.instantiate(mActivity, mClass.getName());
 					ft.add(android.R.id.content, mFragment, mTag);
-				}
 			} else {
-				// If it exists, simply attach it in order to show it
 				ft.attach(mFragment);
 			}
 		}
