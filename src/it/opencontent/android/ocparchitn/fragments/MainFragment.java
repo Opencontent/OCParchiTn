@@ -86,43 +86,45 @@ public class MainFragment extends Fragment {
 		TextView v;
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_id);
 		v.setText(gioco.id_gioco + "");
-		v = (TextView) getActivity().findViewById(R.id.display_gioco_modello);
-		v.setText(gioco.id_modello + "");
-		v = (TextView) getActivity().findViewById(R.id.display_gioco_tipo);
-		v.setText(gioco.id_tipogioco + "");
-		v = (TextView) getActivity()
-				.findViewById(R.id.display_descrizione_area);
-		v.setText(gioco.descrizione_area);
-		v = (TextView) getActivity().findViewById(
-				R.id.display_gioco_descrizione);
-		v.setText(gioco.descrizione_gioco);
-		v = (TextView) getActivity().findViewById(
-				R.id.display_gioco_data_acquisto);
-		v.setText(gioco.dt_acquisto);
-		v = (TextView) getActivity().findViewById(
-				R.id.display_gioco_data_installazione);
-		v.setText(gioco.dt_installazione);
-		v = (TextView) getActivity().findViewById(
-				R.id.display_gioco_data_posizionamento);
-		v.setText(gioco.dt_posizionamento);
-		v = (TextView) getActivity().findViewById(
-				R.id.display_gioco_data_prossimo_intervento);
-		v.setText(gioco.dt_prossimointervento);
+//		v = (TextView) getActivity().findViewById(R.id.display_gioco_modello);
+//		v.setText(gioco.id_modello + "");
+//		v = (TextView) getActivity().findViewById(R.id.display_gioco_tipo);
+//		v.setText(gioco.id_tipogioco + "");
+//		v = (TextView) getActivity()
+//				.findViewById(R.id.display_descrizione_area);
+//		v.setText(gioco.descrizione_area);
+//		v = (TextView) getActivity().findViewById(
+//				R.id.display_gioco_descrizione);
+//		v.setText(gioco.descrizione_gioco);
+//		v = (TextView) getActivity().findViewById(
+//				R.id.display_gioco_data_acquisto);
+//		v.setText(gioco.dt_acquisto);
+//		v = (TextView) getActivity().findViewById(
+//				R.id.display_gioco_data_installazione);
+//		v.setText(gioco.dt_installazione);
+//		v = (TextView) getActivity().findViewById(
+//				R.id.display_gioco_data_posizionamento);
+//		v.setText(gioco.dt_posizionamento);
+//		v = (TextView) getActivity().findViewById(
+//				R.id.display_gioco_data_prossimo_intervento);
+//		v.setText(gioco.dt_prossimointervento);
+//		v = (TextView) getActivity().findViewById(
+//				R.id.display_gioco_posizione_rfid);
+//		v.setText(gioco.posizione_rfid);
+//		v = (TextView) getActivity().findViewById(R.id.display_gioco_tipo);
+//		v.setText(gioco.tipo);
+		
+		
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_marca);
 		v.setText(gioco.marca_1);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_nota);
 		v.setText(gioco.note);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_seriale);
 		v.setText(gioco.numeroserie);
-		v = (TextView) getActivity().findViewById(
-				R.id.display_gioco_posizione_rfid);
-		v.setText(gioco.posizione_rfid);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_rfid);
-		v.setText(gioco.rfid);
+		v.setText(gioco.rfid+"");
 		v = (TextView) getActivity().findViewById(R.id.display_area_rfid);
 		v.setText(gioco.rfid_area);
-		v = (TextView) getActivity().findViewById(R.id.display_gioco_tipo);
-		v.setText(gioco.tipo);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsx);
 		v.setText(gioco.gpsx + "");
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsy);

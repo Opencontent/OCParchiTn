@@ -1,7 +1,5 @@
 package it.opencontent.android.ocparchitn.utils;
 
-import it.opencontent.android.ocparchitn.activities.BaseActivity;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +13,6 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
 
-import android.content.Context;
 import android.util.Log;
 
 public class SoapConnector {
@@ -79,6 +76,9 @@ public class SoapConnector {
 		} catch (Exception e) {
 			Log.e(TAG, "SOAP ERROR:");
 			e.printStackTrace();
+
+			map.put("dump", httpTransport.responseDump);
+			
 		}
 		return map;
 	}

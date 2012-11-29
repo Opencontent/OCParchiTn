@@ -14,6 +14,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
@@ -220,9 +222,19 @@ public class MainActivity extends BaseActivity {
 				SynchroSoapActivity.class);
 		serviceIntent.putExtra(Intents.EXTRAKEY_METHOD_NAME, "getGioco");
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("rfid", id);
+		map.put("rfid", ""+id);
 		serviceIntent.putExtra(Intents.EXTRAKEY_DATAMAP, map);
 		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE);
+	}
+	private void getStructureFoto(int id) {
+		Intent serviceIntent = new Intent();
+		serviceIntent.setClass(getApplicationContext(),
+				SynchroSoapActivity.class);
+		serviceIntent.putExtra(Intents.EXTRAKEY_METHOD_NAME, "getFoto");
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("rfid", ""+id);
+		serviceIntent.putExtra(Intents.EXTRAKEY_DATAMAP, map);
+		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_FOTO_REQUEST_CODE);
 	}
 
 	@Override
@@ -236,10 +248,11 @@ public class MainActivity extends BaseActivity {
 				MainFragment mf = (MainFragment) getFragmentManager()
 						.findFragmentByTag("rilevazione");// (R.id.activity_main);
 
+				
 				if (res != null && res.size() > 0) {
-					currentGioco = new Gioco(res.entrySet());
+					currentGioco = new Gioco(res.entrySet(),currentRFID,getApplicationContext());
 					Bitmap bmp = null;
-					for(int i = 0;i< Intents.MAX_SNAPSHOTS_AMOUNT; i++){
+					/*for(int i = 0;i< Intents.MAX_SNAPSHOTS_AMOUNT; i++){
 						String filename = FileNameCreator.getSnapshotFullPath(currentRFID, i);
 						try {
 							bmp = BitmapFactory.decodeStream(openFileInput(filename));
@@ -265,8 +278,10 @@ public class MainActivity extends BaseActivity {
 							currentGioco.foto4 = bmp;
 							break;
 						}
-					}
+					}*/
+					
 					mf.showGiocoData(currentGioco);
+					getStructureFoto(currentRFID);
 				} else {
 					mf.showGiocoData(new Gioco());
 					Toast.makeText(
@@ -282,7 +297,16 @@ public class MainActivity extends BaseActivity {
 						Toast.LENGTH_SHORT).show();
 			}
 			break;
-		case BaseActivity.FOTO_REQUEST_CODE:
+		case SOAP_GET_GIOCO_FOTO_REQUEST_CODE:
+			if (returnCode == RESULT_OK) {
+				HashMap<String, Object> res = SynchroSoapActivity.getRes();
+				currentGioco.addImmagine(0,res.entrySet());
+				MainFragment mf = (MainFragment) getFragmentManager()
+						.findFragmentByTag("rilevazione");// (R.id.activity_main);
+				mf.showGiocoData(currentGioco);
+			}
+			break;
+		case FOTO_REQUEST_CODE:
 			try {
 				snapshot = CameraActivity.getImage();
 				if (currentGioco == null) {
@@ -398,6 +422,7 @@ public class MainActivity extends BaseActivity {
 			mClass = clz;
 		}
 		public void onTabSelected(Tab tab, FragmentTransaction ft) {
+			mFragment = mActivity.getFragmentManager().findFragmentByTag(mTag);
 			if (mFragment == null) {
 					mFragment = Fragment.instantiate(mActivity, mClass.getName());
 					ft.add(android.R.id.content, mFragment, mTag);

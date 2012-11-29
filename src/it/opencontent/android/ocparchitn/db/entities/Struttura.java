@@ -1,5 +1,12 @@
 package it.opencontent.android.ocparchitn.db.entities;
 
+import it.opencontent.android.ocparchitn.Intents;
+import it.opencontent.android.ocparchitn.utils.FileNameCreator;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -7,100 +14,163 @@ import java.util.Set;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
+import android.util.Base64;
 import android.util.Log;
 
 public class Struttura {
 
 	private static final String TAG = Struttura.class.getSimpleName();
-	
 
 	public Struttura() {
 
 	}
 
-	public Struttura(Set<Entry<String, Object>> set) {
+	public void addImmagine(int index, Set<Entry<String, Object>> set) {
+		Iterator<Entry<String, Object>> i = set.iterator();
+		Bitmap bmp = null;
+		while (i.hasNext()) {
+			Entry<String, Object> e = i.next();
+			Log.d(TAG, e.getKey());
+			if (e.getKey().equals("immagine")) {
+				String raw = bindStringToProperty(e.getValue(), e.getKey());
+				Log.d(TAG, raw);
+				byte[] decoded = Base64.decode(raw, Base64.DEFAULT);
+				
+				
+
+				bmp = BitmapFactory.decodeByteArray(decoded, 0, decoded.length);
+//				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//				bmp.compress(CompressFormat.PNG, 0, baos);
+//				String out = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+			} else {
+				Log.d(TAG,
+						e.getKey()
+								+ " "
+								+ bindStringToProperty(e.getValue(), e.getKey()));
+			}
+		}
+		if (bmp != null) {
+			switch (index) {
+			case 0:
+				foto0 = bmp;
+				break;
+			}
+		}
+
+	}
+
+	public Struttura(Set<Entry<String, Object>> set, int rfid,Context context) {
+		Bitmap bmp = null;
+		if (rfid > 0) {
+			for (int i = 0; i < Intents.MAX_SNAPSHOTS_AMOUNT; i++) {
+				try {
+					String filename = FileNameCreator.getSnapshotFullPath(rfid, i);
+					bmp = BitmapFactory.decodeStream(context.openFileInput(filename));
+					switch (i) {
+					case 0:
+						foto0 = bmp;
+						break;
+					case 1:
+						foto1 = bmp;
+						break;
+					case 2:
+						foto2 = bmp;
+						break;
+					case 3:
+						foto3 = bmp;
+						break;
+					case 4:
+						foto4 = bmp;
+						break;
+					}
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					bmp = null;
+					e.printStackTrace();
+				}
+			}
+		}
+
 		Iterator<Entry<String, Object>> i = set.iterator();
 
 		while (i.hasNext()) {
 			Entry<String, Object> e = i.next();
 			Log.d(TAG, e.getKey());
-			if (e.getKey().equals("descrizione_gioco")) {
-				descrizione_gioco = bindStringToProperty(descrizione_gioco,
-						e.getValue(), e.getKey());
-			}
-			if (e.getKey().equals("descrizione_area")) {
-				descrizione_area = bindStringToProperty(descrizione_area,
-						e.getValue(), e.getKey());
-			}
 			if (e.getKey().equals("marca_1")) {
-				marca_1 = bindStringToProperty(marca_1, e.getValue(),
-						e.getKey());
-			}
-			if (e.getKey().equals("dt_acquisto")) {
-				dt_acquisto = bindStringToProperty(dt_acquisto, e.getValue(),
-						e.getKey());
-			}
-			if (e.getKey().equals("dt_installazione")) {
-				dt_installazione = bindStringToProperty(dt_installazione,
-						e.getValue(), e.getKey());
-			}
-			if (e.getKey().equals("dt_posizionamento")) {
-				dt_posizionamento = bindStringToProperty(dt_posizionamento,
-						e.getValue(), e.getKey());
-			}
-			if (e.getKey().equals("dt_prossimointervento")) {
-				dt_prossimointervento = bindStringToProperty(
-						dt_prossimointervento, e.getValue(), e.getKey());
+				marca_1 = bindStringToProperty(e.getValue(), e.getKey());
 			}
 			if (e.getKey().equals("gpsx") && e.getValue() != null) {
-				gpsx = bindFloatToProperty(gpsx, e.getValue(), e.getKey());
+				gpsx = bindFloatToProperty(e.getValue(), e.getKey());
 			}
 			if (e.getKey().equals("gpsy") && e.getValue() != null) {
-				gpsy = bindFloatToProperty(gpsy, e.getValue(), e.getKey());
+				gpsy = bindFloatToProperty(e.getValue(), e.getKey());
 			}
-			if (e.getKey().equals("id_gioco") && e.getValue() != null) {
-				id_gioco = bindIntToProperty(id_gioco, e.getValue(), e.getKey());
-			}
-			if (e.getKey().equals("id_modello") && e.getValue() != null) {
-				id_modello = bindIntToProperty(id_modello, e.getValue(),
-						e.getKey());
-			}
-			if (e.getKey().equals("id_tipogioco") && e.getValue() != null) {
-				id_tipogioco = bindIntToProperty(id_tipogioco, e.getValue(),
-						e.getKey());
-			}
+
 			if (e.getKey().equals("note")) {
-				note = bindStringToProperty(note, e.getValue(), e.getKey());
+				note = bindStringToProperty(e.getValue(), e.getKey());
 			}
 			if (e.getKey().equals("numeroserie")) {
-				numeroserie = bindStringToProperty(numeroserie, e.getValue(),
-						e.getKey());
-			}
-			if (e.getKey().equals("posizione_rfid")) {
-				posizione_rfid = bindStringToProperty(posizione_rfid,
-						e.getValue(), e.getKey());
-
+				numeroserie = bindStringToProperty(e.getValue(), e.getKey());
 			}
 			if (e.getKey().equals("rfid")) {
-				rfid = bindStringToProperty(rfid, e.getValue(), e.getKey());
+				rfid = bindIntToProperty(e.getValue(), e.getKey());
 			}
 			if (e.getKey().equals("rfid_area")) {
-				rfid_area = bindStringToProperty(rfid_area, e.getValue(),
-						e.getKey());
+				rfid_area = bindStringToProperty(e.getValue(), e.getKey());
 			}
-			if (e.getKey().equals("foto0")) {
-				String image = (String) e.getValue();
-				byte[] imageAsBytes = image.getBytes();
-				foto0 = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+			if (e.getKey().equals("id_gioco") && e.getValue() != null) {
+				id_gioco = bindIntToProperty(e.getValue(), e.getKey());
 			}
+
+			// Campi inutilizzati per il momento
+
+			// if (e.getKey().equals("descrizione_gioco")) {
+			// descrizione_gioco = bindStringToProperty(
+			// e.getValue(), e.getKey());
+			// }
+			// if (e.getKey().equals("descrizione_area")) {
+			// descrizione_area = bindStringToProperty(
+			// e.getValue(), e.getKey());
+			// }
+			// if (e.getKey().equals("dt_acquisto")) {
+			// dt_acquisto = bindStringToProperty( e.getValue(),
+			// e.getKey());
+			// }
+			// if (e.getKey().equals("dt_installazione")) {
+			// dt_installazione = bindStringToProperty(
+			// e.getValue(), e.getKey());
+			// }
+			// if (e.getKey().equals("dt_posizionamento")) {
+			// dt_posizionamento = bindStringToProperty(
+			// e.getValue(), e.getKey());
+			// }
+			// if (e.getKey().equals("dt_prossimointervento")) {
+			// dt_prossimointervento = bindStringToProperty(
+			// e.getValue(), e.getKey());
+			// }
+			// if (e.getKey().equals("id_modello") && e.getValue() != null) {
+			// id_modello = bindIntToProperty( e.getValue(),
+			// e.getKey());
+			// }
+			// if (e.getKey().equals("id_tipogioco") && e.getValue() != null) {
+			// id_tipogioco = bindIntToProperty( e.getValue(),
+			// e.getKey());
+			// }
+			// if (e.getKey().equals("posizione_rfid")) {
+			// posizione_rfid = bindStringToProperty(
+			// e.getValue(), e.getKey());
+			//
+			// }
 
 		}
 
 	}
 
-	private int bindIntToProperty(Object property, Object value, String key) {
+	private int bindIntToProperty(Object value, String key) {
 		if (value != null) {
 			if (value.getClass().equals(SoapObject.class)) {
 				Log.d(TAG, "Arrivato un valore non gestibile, " + key);
@@ -122,8 +192,7 @@ public class Struttura {
 		}
 	}
 
-	private String bindStringToProperty(Object property, Object value,
-			String key) {
+	private String bindStringToProperty(Object value, String key) {
 		if (value != null) {
 			if (value.getClass().equals(SoapObject.class)) {
 				Log.d(TAG, "Arrivato un valore non gestibile, " + key);
@@ -135,7 +204,8 @@ public class Struttura {
 				if (v.getAttributeCount() > 0) {
 					return v.toString();
 				} else {
-					return "INDEFINITO";
+					return value.toString();
+					//return "INDEFINITO";
 				}
 			} else {
 				return (String) value;
@@ -145,7 +215,7 @@ public class Struttura {
 		}
 	}
 
-	private float bindFloatToProperty(Object property, Object value, String key) {
+	private float bindFloatToProperty(Object value, String key) {
 		if (value != null) {
 			if (value.getClass().equals(SoapObject.class)) {
 				Log.d(TAG, "Arrivato un valore non gestibile, " + key);
@@ -174,27 +244,31 @@ public class Struttura {
 	public int ultimaSincronizzazione;
 
 	public String dirtyElements;
-	public String descrizione_gioco;
-	public String descrizione_area;
-	public String marca_1;
-	public String dt_acquisto;
-	public String dt_installazione;
-	public String dt_posizionamento;
-	public String dt_prossimointervento;
+	public int rfid;
+	public String rfid_area;
+	public int id_gioco;
+
 	public float gpsx;
 	public float gpsy;
-	public int id_gioco;
-	public int id_modello;
-	public int id_tipogioco;
-	public String note;
+
 	public String numeroserie;
-	public String posizione_rfid;
-	public String rfid;
-	public String rfid_area;
+	public String marca_1;
+
+	public String note;
 	public Bitmap foto0;
 	public Bitmap foto1;
 	public Bitmap foto2;
 	public Bitmap foto3;
 	public Bitmap foto4;
+
+	// public String descrizione_gioco;
+	// public String descrizione_area;
+	// public String dt_acquisto;
+	// public String dt_installazione;
+	// public String dt_posizionamento;
+	// public String dt_prossimointervento;
+	// public int id_modello;
+	// public int id_tipogioco;
+	// public String posizione_rfid;
 
 }

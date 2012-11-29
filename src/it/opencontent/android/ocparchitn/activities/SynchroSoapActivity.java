@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.Toast;
 
 public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 
@@ -85,7 +84,8 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 			Entry<String, Object> entry = iterator.next();
 			PropertyInfo pi = new PropertyInfo();
 			pi.setName(entry.getKey());
-			pi.setValue(entry.getValue().toString());
+			pi.setType(entry.getValue().getClass());
+			pi.setValue(entry.getValue());
 			properties[i] = pi;
 			i++;
 		}
