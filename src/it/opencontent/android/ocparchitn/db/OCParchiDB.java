@@ -1,5 +1,6 @@
 package it.opencontent.android.ocparchitn.db;
 
+import it.opencontent.android.ocparchitn.db.entities.Area;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.db.entities.StruttureEnum;
@@ -8,11 +9,13 @@ import it.opencontent.android.ocparchitn.utils.FileNameCreator;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -20,6 +23,7 @@ import android.util.Log;
 
 public class OCParchiDB {
 
+	private final static String TAG  = OCParchiDB.class.getSimpleName();
 	private static final int DATABASE_VERSION = 1;
 	private static final String DATABASE_NAME = "parchitn";
 	private final OCParchiOpenHelper mDatabaseOpenHelper;
@@ -103,20 +107,16 @@ public class OCParchiDB {
 		return cursor;
 	}
 
-	public int storeGiocoLocally(Gioco gioco){
-		return 0;
-	}
-	
-	public int readGiocoLocally(int rfid) {
+
+	public Gioco readGiocoLocallyByRFID(int rfid) {
 		String selection = " rfid  = ? ";
 		String[] selectionArgs = new String[] { rfid + "" };
-
 		Cursor c = mDatabaseOpenHelper.getReadableDatabase().query(
 				StruttureEnum.GIOCHI.tipo, null, selection, selectionArgs,
 				null, null, null);
-
-		// return c.getColumnIndex(StruttureEnum.GIOCHI.istanza.rfid);
-		return 10;
+		Gioco g = new Gioco();
+		//TODO: deserializzare
+		return g;
 	}
 
 	public long insertScannedGioco(int rfid) {
@@ -139,6 +139,29 @@ public class OCParchiDB {
 		mDatabaseOpenHelper.getWritableDatabase().update(
 				StruttureEnum.GIOCHI.tipo, cv, whereClause, whereArgs);
 	}
+	
+	public long salvaGiocoLocally(Gioco gioco){
+		ContentValues cv = new ContentValues();
+			
+		cv.put("sincronizzato", false);
+		cv.put("rfid", gioco.rfid);
+		cv.put("marca_1", gioco.marca_1);
+		cv.put("id_gioco", gioco.id_gioco);
+		cv.put("numeroserie", gioco.numeroserie);
+		cv.put("gpsx", gioco.gpsx);
+		cv.put("gpsy", gioco.gpsy);
+		cv.put("note", gioco.note);
+		
+		long id = -1;
+		try{
+		id = mDatabaseOpenHelper.getWritableDatabase().insert(
+				StruttureEnum.GIOCHI.tipo, null, cv);
+		}catch(SQLiteConstraintException e){
+			Log.e(TAG,e.getMessage());
+			id = -2;
+		}
+		return id;
+	}
 
 	/**
 	 * Returns a Cursor over all words that match the given query
@@ -153,7 +176,7 @@ public class OCParchiDB {
 		Iterator<Entry<String, Struttura>> strutture = mSchemaMap.entrySet()
 				.iterator();
 
-		String[] selectionArgs = new String[] { "1" };
+		String[] selectionArgs = new String[] { "0" };
 		int result = 0;
 
 		while (strutture.hasNext()) {
@@ -169,12 +192,57 @@ public class OCParchiDB {
 
 			Cursor c = query(tableName, selection, selectionArgs, columns, null);
 			if (c != null && c.moveToFirst()) {
-				result += c.getColumnCount();
+				result += c.getCount();
 			}
 		}
 		return result;
 	}
 
+	public LinkedHashMap getStruttureDaSincronizzare(){
+		LinkedHashMap<String,Struttura> res = new LinkedHashMap<String, Struttura>();
+		
+		
+		Iterator<Entry<String, Struttura>> strutture = mSchemaMap.entrySet()
+				.iterator();
+
+		String[] selectionArgs = new String[] { "0" };
+		
+
+		while (strutture.hasNext()) {
+
+			Entry<String, Struttura> entry = strutture.next();
+			String[] columns = new String[] { " id_gioco as id_gioco, rfid as rfid, marca_1 as marca_1, numeroserie as numeroserie, gpsx as gpsx, gpsy as gpsy, note as note" };
+			String tableName = entry.getKey();
+			String selection = " sincronizzato = ? "; // TODO: trovare un modo
+														// per metterli in
+														// qualche costante,
+														// probabilmente in
+														// values
+
+			Cursor c = query(tableName, selection, selectionArgs, columns, null);
+			if (c != null && c.moveToFirst()) {
+				do{
+					Struttura s;
+					if(tableName.equals(StruttureEnum.GIOCHI.tipo)){
+						s = new Gioco();
+					} else {
+						s = new Area();
+					}
+					s.gpsx = Float.parseFloat(c.getString(c.getColumnIndex("gpsx")));
+					s.gpsy = Float.parseFloat(c.getString(c.getColumnIndex("gpsy")));
+					s.note = c.getString(c.getColumnIndex("note"));
+					s.id_gioco = c.getInt(c.getColumnIndex("id_gioco"));
+					s.rfid = c.getInt(c.getColumnIndex("id_gioco"));
+					res.put(tableName+"_"+s.id_gioco, s);
+					
+				}while(c.moveToNext());
+			}
+		}
+		
+		
+		return res;
+	}
+	
 	private class OCParchiOpenHelper extends SQLiteOpenHelper {
 
 		private final String TAG = OCParchiOpenHelper.class.getSimpleName();
@@ -218,6 +286,7 @@ public class OCParchiDB {
 						}
 					}
 				}
+				sqlCreateCode += ",UNIQUE (id_gioco,rfid) "; //TODO fare qualcosa per non hardcodarli
 				sqlCreateCode += ")";
 				Log.d(TAG, sqlCreateCode);
 				mDatabase.execSQL(sqlCreateCode);

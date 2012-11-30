@@ -9,6 +9,7 @@ public class Intents {
 
 	public final static String EXTRAKEY_FOTO_NUMBER = "fotoNumber";
 	public final static String EXTRAKEY_RFID = "rfid";
+	public final static String EXTRAKEY_SYNC_ALL = "sync_all";
 
 	public final static int MAX_SNAPSHOTS_AMOUNT = 5;
 	

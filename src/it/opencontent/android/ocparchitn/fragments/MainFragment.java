@@ -1,30 +1,22 @@
 package it.opencontent.android.ocparchitn.fragments;
 
-import java.util.zip.Inflater;
-
 import it.opencontent.android.ocparchitn.Intents;
 import it.opencontent.android.ocparchitn.R;
-import it.opencontent.android.ocparchitn.activities.BaseActivity;
-import it.opencontent.android.ocparchitn.activities.CameraActivity;
 import it.opencontent.android.ocparchitn.activities.MainActivity;
+import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.utils.DrawableOverlayWriter;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * 
@@ -39,7 +31,7 @@ import android.widget.TextView;
  *         posizione_rfid=anyType{}; rfid=5; rfid_area=anyType{}; }; }
  */
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements ICustomFragment{
 
 	private static final String TAG = MainFragment.class.getSimpleName();
 
@@ -71,6 +63,15 @@ public class MainFragment extends Fragment {
 	}
 
 
+	public void salvaModifiche(View v){
+		Log.d(TAG,"salvamodifiche nel fragment");
+		saveLocal(MainActivity.getCurrentGioco());
+	}
+	
+	public void editMe(View v){
+		Log.d(TAG,"editme nel fragment");		
+	}
+	
 
 	@Override
 	public void onActivityResult(int requestCode, int returnCode, Intent intent) {
@@ -81,40 +82,26 @@ public class MainFragment extends Fragment {
 			break;
 		}
 	}
+	
+	
+	private long saveLocal(Gioco gioco){
+		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
+		long id = db.salvaGiocoLocally(gioco);
+		if(id > 0){
+			Toast.makeText(getActivity().getApplicationContext(),"Gioco salvato localmente", Toast.LENGTH_SHORT).show();
+			MainActivity ma = (MainActivity) getActivity();
+			ma.updateCountDaSincronizzare();
+		} else if (id == -2){
+			//constraint error
+		}
+		return id;
+	}
+	
 
 	public void showGiocoData(Gioco gioco) {
 		TextView v;
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_id);
-		v.setText(gioco.id_gioco + "");
-//		v = (TextView) getActivity().findViewById(R.id.display_gioco_modello);
-//		v.setText(gioco.id_modello + "");
-//		v = (TextView) getActivity().findViewById(R.id.display_gioco_tipo);
-//		v.setText(gioco.id_tipogioco + "");
-//		v = (TextView) getActivity()
-//				.findViewById(R.id.display_descrizione_area);
-//		v.setText(gioco.descrizione_area);
-//		v = (TextView) getActivity().findViewById(
-//				R.id.display_gioco_descrizione);
-//		v.setText(gioco.descrizione_gioco);
-//		v = (TextView) getActivity().findViewById(
-//				R.id.display_gioco_data_acquisto);
-//		v.setText(gioco.dt_acquisto);
-//		v = (TextView) getActivity().findViewById(
-//				R.id.display_gioco_data_installazione);
-//		v.setText(gioco.dt_installazione);
-//		v = (TextView) getActivity().findViewById(
-//				R.id.display_gioco_data_posizionamento);
-//		v.setText(gioco.dt_posizionamento);
-//		v = (TextView) getActivity().findViewById(
-//				R.id.display_gioco_data_prossimo_intervento);
-//		v.setText(gioco.dt_prossimointervento);
-//		v = (TextView) getActivity().findViewById(
-//				R.id.display_gioco_posizione_rfid);
-//		v.setText(gioco.posizione_rfid);
-//		v = (TextView) getActivity().findViewById(R.id.display_gioco_tipo);
-//		v.setText(gioco.tipo);
-		
-		
+		v.setText(gioco.id_gioco + "");	
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_marca);
 		v.setText(gioco.marca_1);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_nota);
@@ -132,6 +119,7 @@ public class MainFragment extends Fragment {
 		setupSnapshots(gioco);
 	}
 	
+
 	private void setupSnapshots(Gioco gioco) {
 		Bitmap bmp;
 		ImageView v;

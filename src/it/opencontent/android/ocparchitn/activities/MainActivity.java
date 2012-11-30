@@ -4,6 +4,7 @@ import it.opencontent.android.ocparchitn.Intents;
 import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
+import it.opencontent.android.ocparchitn.fragments.ICustomFragment;
 import it.opencontent.android.ocparchitn.fragments.MainFragment;
 import it.opencontent.android.ocparchitn.fragments.PeriodicaFragment;
 import it.opencontent.android.ocparchitn.fragments.RendicontazioneFragment;
@@ -14,27 +15,26 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends BaseActivity {
@@ -55,30 +55,35 @@ public class MainActivity extends BaseActivity {
 	private static Gioco currentGioco;
 	private static Bitmap[] snapshots = new Bitmap[Intents.MAX_SNAPSHOTS_AMOUNT];
 
+	private static boolean partitiDaID = false;
+	private static boolean partitiDaRFID = false;
+	private static ActionBar actionBar;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// setContentView(R.layout.activity_main_fragments);
 
 		db = new OCParchiDB(getApplicationContext());
-		int pending = db.getPendingSynchronizations();
 
-		final ActionBar actionBar = getActionBar();
+		
+		actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setTitle(getString(R.string.title_activity_main) + " ("
-				+ pending + ")");
+
 
 		Tab tab;
 		tab = actionBar
 				.newTab()
 				.setText(getString(R.string.fragment_title_rilevazione))
+				.setTag("rilevazione")
 				.setTabListener(
 						new CustomTabListener<MainFragment>(this,
 								"rilevazione", MainFragment.class));
 		actionBar.addTab(tab);
 		tab = actionBar
 				.newTab()
+				.setTag("periodica")
 				.setText(getString(R.string.fragment_title_attivita_periodica))
 				.setTabListener(
 						new CustomTabListener<PeriodicaFragment>(this,
@@ -86,6 +91,7 @@ public class MainActivity extends BaseActivity {
 		actionBar.addTab(tab);
 		tab = actionBar
 				.newTab()
+				.setTag("rendicontazione")
 				.setText(
 						getString(R.string.fragment_title_rendicontazione_manutenzione))
 				.setTabListener(
@@ -95,15 +101,17 @@ public class MainActivity extends BaseActivity {
 		actionBar.addTab(tab);
 		tab = actionBar
 				.newTab()
+				.setTag("spostamento")
 				.setText(getString(R.string.fragment_title_spostamento_gioco))
 				.setTabListener(
 						new CustomTabListener<SpostamentoFragment>(this,
 								"spostamento", SpostamentoFragment.class));
 		actionBar.addTab(tab);
-		
+
 		if (savedInstanceState != null) {
-            actionBar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
-        }
+			actionBar.setSelectedNavigationItem(savedInstanceState.getInt(
+					"tab", 0));
+		}
 
 		if (!serviceInfoTaken) {
 			getServiceInfo();
@@ -134,6 +142,8 @@ public class MainActivity extends BaseActivity {
 			throw new RuntimeException("fail", e);
 		}
 		ifa = new IntentFilter[] { ndef, };
+		
+		updateCountDaSincronizzare();
 
 		// La techListArray per il momento la tengo vuota, così filtro per
 		// qualsiasi
@@ -142,12 +152,19 @@ public class MainActivity extends BaseActivity {
 
 	}
 
-	@Override 
-	public void onSaveInstanceState(Bundle outState){
+	public void updateCountDaSincronizzare(){
+		
+		int pending = db.getPendingSynchronizations();
+		actionBar.setTitle(getString(R.string.title_activity_main) + " ("
+				+ pending + ")");		
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putInt("tab", getActionBar().getSelectedNavigationIndex());
 	}
-	
+
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -167,6 +184,81 @@ public class MainActivity extends BaseActivity {
 		// nfca.disableForegroundDispatch(this);
 	}
 
+	private boolean legaRFIDGioco(int rfid, Gioco gioco) {
+		gioco.rfid = rfid;
+		gioco.hasDirtyData = true;
+		currentGioco = gioco;
+		return true;
+	}
+
+	private void feedback(String message) {
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Risultato");
+		alert.setMessage(message);
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+
+			}
+		});
+		
+		alert.show();
+	}
+	
+	public void sincronizzaModifiche(View v){
+		Intent serviceIntent = new Intent();
+		serviceIntent.setClass(getApplicationContext(),
+				SynchroSoapActivity.class);
+		serviceIntent.putExtra(Intents.EXTRAKEY_METHOD_NAME, Intents.EXTRAKEY_SYNC_ALL);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("all", true);
+		serviceIntent.putExtra(Intents.EXTRAKEY_DATAMAP, map);
+		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE);		
+		
+	}
+	
+	
+
+	private void confirmLegaRFIDGioco(int rfid, Gioco gioco) {
+		final int mrfid = rfid;
+		final Gioco mgioco = gioco;
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+		alert.setTitle("Vuoi associare l'RFID " + rfid + " al Gioco "
+				+ gioco.id_gioco+" ?");
+		if(gioco.rfid> 0){
+			alert.setMessage("il Gioco "+ gioco.id_gioco+" attualmente ha l'RFID "+ gioco.rfid);
+		} else {
+			alert.setMessage("il Gioco "+ gioco.id_gioco+" attualmente non ha RFID associati");	
+		}
+
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				
+				if(legaRFIDGioco(mrfid, mgioco)){
+					feedback("Ok, ora il gioco "+mgioco.id_gioco+" è associato all'RFID "+mgioco.rfid);
+					MainFragment mf = (MainFragment) getFragmentManager()
+							.findFragmentByTag("rilevazione");
+					mf.showGiocoData(currentGioco);	
+					//TODO: triggerare il salvataggio dei dati locali che poi scatena a sua volta il salvataggio remoto
+				} else {
+					feedback("Qualcosa non ha funzionato, ritentare l'operazione");
+				}
+			}
+		});
+
+		alert.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+
+					}
+				});
+
+		alert.show();
+
+	}
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
@@ -183,25 +275,62 @@ public class MainActivity extends BaseActivity {
 			String[] pieces = out.split("://");
 
 			String[] actualValues = pieces[1].split("/");
-			currentRFID = Integer.parseInt(actualValues[1]);
 
-			if(currentGioco != null && !currentGioco.hasDirtyData){
-				db.storeGiocoLocally(currentGioco);
+			int rfid = Integer.parseInt(actualValues[1]);
+			// currentRFID = rfid;
+			if (partitiDaID) {
+				confirmLegaRFIDGioco(rfid, currentGioco);
+			} else {
+
+				if (currentGioco != null && currentGioco.hasDirtyData) {
+					db.salvaGiocoLocally(currentGioco);
+				}
+
+//				String name = getString(R.string.display_gioco_id)
+//						+ currentRFID;
+//				String ser = getString(R.string.display_gioco_seriale) + out;
+//
+//				TextView giocoId = (TextView) findViewById(R.id.display_gioco_id);
+//				giocoId.setText(name);
+//				TextView giocoSeriale = (TextView) findViewById(R.id.display_gioco_seriale);
+//				giocoSeriale.setText(ser);
+//				Log.d(TAG, "Qualcosa è successo " + name + " " + res);
 			}
-			getStructureData(currentRFID);
-
-			String name = getString(R.string.display_gioco_id) + currentRFID;
-			String ser = getString(R.string.display_gioco_seriale) + out;
-
-			TextView giocoId = (TextView) findViewById(R.id.display_gioco_id);
-			giocoId.setText(name);
-			TextView giocoSeriale = (TextView) findViewById(R.id.display_gioco_seriale);
-			giocoSeriale.setText(ser);
-
-			Log.d(TAG, "Qualcosa è successo " + name + " " + res);
 		} catch (Exception e) {
 			// Non è un intent che ci interessa in questo caso
 		}
+	}
+
+	public void startRilevazioneDaID(View v) {
+		Log.d(TAG, "Partiamo da id");
+
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+		alert.setTitle("Inserisci l'ID di un gioco");
+		alert.setMessage("ID");
+
+		// Set an EditText view to get user input
+		final EditText input = new EditText(this);
+		alert.setView(input);
+
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				String value = input.getText().toString();
+				partitiDaID = true;
+				getStructureDataByID(Integer.parseInt(value));// Do something
+																// with value!
+			}
+		});
+
+		alert.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+
+					}
+				});
+
+		alert.show();
+
 	}
 
 	private void parseIntent(Intent intent) {
@@ -216,23 +345,35 @@ public class MainActivity extends BaseActivity {
 		startActivityForResult(serviceIntent, SOAP_SERVICE_INFO_REQUEST_CODE);
 	}
 
-	private void getStructureData(int id) {
+	private void getStructureDataByID(int id) {
+		Intent serviceIntent = new Intent();
+		serviceIntent.setClass(getApplicationContext(),
+				SynchroSoapActivity.class);
+		serviceIntent.putExtra(Intents.EXTRAKEY_METHOD_NAME, "getGioco_id");
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("idgioco", "" + id);
+		serviceIntent.putExtra(Intents.EXTRAKEY_DATAMAP, map);
+		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE);
+	}
+
+	private void getStructureDataByRFID(int id) {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
 		serviceIntent.putExtra(Intents.EXTRAKEY_METHOD_NAME, "getGioco");
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("rfid", ""+id);
+		map.put("rfid", "" + id);
 		serviceIntent.putExtra(Intents.EXTRAKEY_DATAMAP, map);
 		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE);
 	}
+
 	private void getStructureFoto(int id) {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
 		serviceIntent.putExtra(Intents.EXTRAKEY_METHOD_NAME, "getFoto");
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("rfid", ""+id);
+		map.put("rfid", "" + id);
 		serviceIntent.putExtra(Intents.EXTRAKEY_DATAMAP, map);
 		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_FOTO_REQUEST_CODE);
 	}
@@ -248,38 +389,25 @@ public class MainActivity extends BaseActivity {
 				MainFragment mf = (MainFragment) getFragmentManager()
 						.findFragmentByTag("rilevazione");// (R.id.activity_main);
 
-				
 				if (res != null && res.size() > 0) {
-					currentGioco = new Gioco(res.entrySet(),currentRFID,getApplicationContext());
+					currentGioco = new Gioco(res.entrySet(), currentRFID,
+							getApplicationContext());
 					Bitmap bmp = null;
-					/*for(int i = 0;i< Intents.MAX_SNAPSHOTS_AMOUNT; i++){
-						String filename = FileNameCreator.getSnapshotFullPath(currentRFID, i);
-						try {
-							bmp = BitmapFactory.decodeStream(openFileInput(filename));
-						} catch (FileNotFoundException e) {
-							// TODO Auto-generated catch block
-							bmp = null;
-							e.printStackTrace();
-						} 
-						switch(i){
-						case 0:
-							currentGioco.foto0 = bmp;
-							break;
-						case 1:
-							currentGioco.foto1 = bmp;
-							break;
-						case 2:
-							currentGioco.foto2 = bmp;
-							break;
-						case 3:
-							currentGioco.foto3 = bmp;
-							break;
-						case 4:
-							currentGioco.foto4 = bmp;
-							break;
-						}
-					}*/
-					
+					/*
+					 * for(int i = 0;i< Intents.MAX_SNAPSHOTS_AMOUNT; i++){
+					 * String filename =
+					 * FileNameCreator.getSnapshotFullPath(currentRFID, i); try
+					 * { bmp =
+					 * BitmapFactory.decodeStream(openFileInput(filename)); }
+					 * catch (FileNotFoundException e) { // TODO Auto-generated
+					 * catch block bmp = null; e.printStackTrace(); } switch(i){
+					 * case 0: currentGioco.foto0 = bmp; break; case 1:
+					 * currentGioco.foto1 = bmp; break; case 2:
+					 * currentGioco.foto2 = bmp; break; case 3:
+					 * currentGioco.foto3 = bmp; break; case 4:
+					 * currentGioco.foto4 = bmp; break; } }
+					 */
+
 					mf.showGiocoData(currentGioco);
 					getStructureFoto(currentRFID);
 				} else {
@@ -300,7 +428,8 @@ public class MainActivity extends BaseActivity {
 		case SOAP_GET_GIOCO_FOTO_REQUEST_CODE:
 			if (returnCode == RESULT_OK) {
 				HashMap<String, Object> res = SynchroSoapActivity.getRes();
-				currentGioco.addImmagine(0,res.entrySet());
+				currentGioco.addImmagine(0, res.entrySet());
+				
 				MainFragment mf = (MainFragment) getFragmentManager()
 						.findFragmentByTag("rilevazione");// (R.id.activity_main);
 				mf.showGiocoData(currentGioco);
@@ -315,15 +444,16 @@ public class MainActivity extends BaseActivity {
 					currentGioco.hasDirtyData = true;
 					currentRFID = 0;
 				}
-				
 
 				int whichOne = intent.getExtras().getInt(
 						Intents.EXTRAKEY_FOTO_NUMBER);
-				String filename = FileNameCreator.getSnapshotFullPath(currentRFID, whichOne);
-				FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
+				String filename = FileNameCreator.getSnapshotFullPath(
+						currentRFID, whichOne);
+				FileOutputStream fos = openFileOutput(filename,
+						Context.MODE_PRIVATE);
 				snapshot.compress(Bitmap.CompressFormat.PNG, 80, fos);
 				fos.close();
-		
+
 				ImageView mImageView = null;
 				switch (whichOne) {
 				case 0:
@@ -383,10 +513,20 @@ public class MainActivity extends BaseActivity {
 
 	public static Gioco getCurrentGioco() {
 		return currentGioco;
+		
 	}
 
-	public void test(View v) {
-		Log.d(TAG, "cliccata " + v.getId());
+	public void editMe(View v){
+		String currentTag =(String) actionBar.getSelectedTab().getTag();
+		Log.d(TAG,"proxiamo la richiesta al tag: "+currentTag);
+		ICustomFragment f = (ICustomFragment) getFragmentManager().findFragmentByTag(currentTag);
+		f.editMe(v);
+	}
+	public void salvaModifiche(View v){
+		String currentTag =(String) actionBar.getSelectedTab().getTag();
+		Log.d(TAG,"proxiamo la richiesta al tag: "+currentTag);
+		ICustomFragment f = (ICustomFragment) getFragmentManager().findFragmentByTag(currentTag);
+		f.salvaModifiche(v);
 	}
 
 	public void takeSnapshot(View button) {
@@ -404,7 +544,6 @@ public class MainActivity extends BaseActivity {
 		private final Activity mActivity;
 		private final String mTag;
 		private final Class<T> mClass;
-		
 
 		/**
 		 * Constructor used each time a new tab is created.
@@ -421,11 +560,12 @@ public class MainActivity extends BaseActivity {
 			mTag = tag;
 			mClass = clz;
 		}
+
 		public void onTabSelected(Tab tab, FragmentTransaction ft) {
 			mFragment = mActivity.getFragmentManager().findFragmentByTag(mTag);
 			if (mFragment == null) {
-					mFragment = Fragment.instantiate(mActivity, mClass.getName());
-					ft.add(android.R.id.content, mFragment, mTag);
+				mFragment = Fragment.instantiate(mActivity, mClass.getName());
+				ft.add(android.R.id.content, mFragment, mTag);
 			} else {
 				ft.attach(mFragment);
 			}

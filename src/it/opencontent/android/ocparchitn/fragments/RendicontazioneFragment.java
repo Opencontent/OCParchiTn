@@ -1,7 +1,20 @@
 package it.opencontent.android.ocparchitn.fragments;
 
 import android.app.Fragment;
+import android.view.View;
 
-public class RendicontazioneFragment extends Fragment {
+public class RendicontazioneFragment extends Fragment implements ICustomFragment {
+
+	@Override
+	public void salvaModifiche(View v) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void editMe(View v) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

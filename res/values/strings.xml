@@ -42,6 +42,11 @@
 	<string name="display_gioco_gpsy">GPSY:</string>
 	<string name="display_gioco_posizione_rfid">Posizione RFID</string>
 	
+	<string name="pulsante_start_by_rfid_testo">Parti da un RFID</string>
+	<string name="pulsante_start_by_id_testo">Parti da un ID</string>
+	<string name="pulsante_salva_modifiche_gioco_testo">Salva le modifiche</string>
+	<string name="pulsante_sincronizza_modifiche_gioco_testo">Sincronizza le modifiche</string>
+	
 	
 	
 	<!--  filtering dell'intent -->

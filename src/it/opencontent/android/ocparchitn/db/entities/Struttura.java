@@ -3,9 +3,6 @@ package it.opencontent.android.ocparchitn.db.entities;
 import it.opencontent.android.ocparchitn.Intents;
 import it.opencontent.android.ocparchitn.utils.FileNameCreator;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -17,7 +14,6 @@ import org.ksoap2.serialization.SoapPrimitive;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Bitmap.CompressFormat;
 import android.util.Base64;
 import android.util.Log;
 
@@ -39,13 +35,12 @@ public class Struttura {
 				String raw = bindStringToProperty(e.getValue(), e.getKey());
 				Log.d(TAG, raw);
 				byte[] decoded = Base64.decode(raw, Base64.DEFAULT);
-				
-				
 
 				bmp = BitmapFactory.decodeByteArray(decoded, 0, decoded.length);
-//				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//				bmp.compress(CompressFormat.PNG, 0, baos);
-//				String out = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+				// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				// bmp.compress(CompressFormat.PNG, 0, baos);
+				// String out = Base64.encodeToString(baos.toByteArray(),
+				// Base64.DEFAULT);
 			} else {
 				Log.d(TAG,
 						e.getKey()
@@ -63,13 +58,15 @@ public class Struttura {
 
 	}
 
-	public Struttura(Set<Entry<String, Object>> set, int rfid,Context context) {
+	public Struttura(Set<Entry<String, Object>> set, int rfid, Context context) {
 		Bitmap bmp = null;
 		if (rfid > 0) {
 			for (int i = 0; i < Intents.MAX_SNAPSHOTS_AMOUNT; i++) {
 				try {
-					String filename = FileNameCreator.getSnapshotFullPath(rfid, i);
-					bmp = BitmapFactory.decodeStream(context.openFileInput(filename));
+					String filename = FileNameCreator.getSnapshotFullPath(rfid,
+							i);
+					bmp = BitmapFactory.decodeStream(context
+							.openFileInput(filename));
 					switch (i) {
 					case 0:
 						foto0 = bmp;
@@ -171,70 +168,61 @@ public class Struttura {
 	}
 
 	private int bindIntToProperty(Object value, String key) {
-		if (value != null) {
+		int res = 0;
+		try {
+			res = Integer.parseInt((String) value);
+
+		} catch (Exception e) {
+			Log.e(TAG, "integer not parsed");
 			if (value.getClass().equals(SoapObject.class)) {
 				Log.d(TAG, "Arrivato un valore non gestibile, " + key);
-				return 0;
 			} else if (value.getClass().equals(SoapPrimitive.class)) {
 				SoapPrimitive v = (SoapPrimitive) value;
 				Log.d(TAG, v.getAttributeCount()
 						+ " sottoelementi da sbobinare per " + key);
-				if (v.getAttributeCount() > 0) {
-					return Integer.parseInt(v.toString());
-				} else {
-					return 0;
-				}
-			} else {
-				return Integer.parseInt((String) value);
+				res = Integer.parseInt(v.toString());
 			}
-		} else {
-			return 0;
 		}
+		return res;
 	}
 
 	private String bindStringToProperty(Object value, String key) {
-		if (value != null) {
-			if (value.getClass().equals(SoapObject.class)) {
-				Log.d(TAG, "Arrivato un valore non gestibile, " + key);
-				return "";
-			} else if (value.getClass().equals(SoapPrimitive.class)) {
-				SoapPrimitive v = (SoapPrimitive) value;
-				Log.d(TAG, v.getAttributeCount()
-						+ " sottoelementi da sbobinare per " + key);
-				if (v.getAttributeCount() > 0) {
-					return v.toString();
-				} else {
-					return value.toString();
-					//return "INDEFINITO";
-				}
+		String res = "";
+		if (value.getClass().equals(SoapObject.class)) {
+			Log.d(TAG, "Arrivato un valore non gestibile, " + key);
+		} else if (value.getClass().equals(SoapPrimitive.class)) {
+			SoapPrimitive v = (SoapPrimitive) value;
+			Log.d(TAG, v.getAttributeCount()
+					+ " sottoelementi da sbobinare per " + key);
+			if (v.getAttributeCount() > 0) {
+				res = v.toString();
 			} else {
-				return (String) value;
+				res = value.toString();
+				// return "INDEFINITO";
 			}
 		} else {
-			return "INDEFINITO";
+			res = (String) value;
 		}
+		return res;
 	}
 
 	private float bindFloatToProperty(Object value, String key) {
-		if (value != null) {
+		float res = 0;
+		try {
+			res = Float.parseFloat((String) value);
+
+		} catch (Exception e) {
+			Log.e(TAG, "integer not parsed");
 			if (value.getClass().equals(SoapObject.class)) {
 				Log.d(TAG, "Arrivato un valore non gestibile, " + key);
-				return 0;
 			} else if (value.getClass().equals(SoapPrimitive.class)) {
 				SoapPrimitive v = (SoapPrimitive) value;
 				Log.d(TAG, v.getAttributeCount()
 						+ " sottoelementi da sbobinare per " + key);
-				if (v.getAttributeCount() > 0) {
-					return Float.parseFloat(v.toString());
-				} else {
-					return 0;
-				}
-			} else {
-				return Float.parseFloat((String) value);
+				res = Float.parseFloat(v.toString());
 			}
-		} else {
-			return 0;
 		}
+		return res;
 	}
 
 	public String tipo;

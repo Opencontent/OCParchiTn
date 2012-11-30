@@ -2,6 +2,7 @@ package it.opencontent.android.ocparchitn.activities;
 
 import it.opencontent.android.ocparchitn.Intents;
 import it.opencontent.android.ocparchitn.R;
+import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.services.IRemoteConnection;
 import it.opencontent.android.ocparchitn.utils.PlatformChecks;
 import it.opencontent.android.ocparchitn.utils.SoapConnector;
@@ -9,6 +10,7 @@ import it.opencontent.android.ocparchitn.utils.SoapConnector;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import org.ksoap2.serialization.PropertyInfo;
@@ -42,11 +44,18 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		setContentView(R.layout.remote_loading_dialog);
 
 		Intent intent = getIntent();
+		
 		methodName = (String) intent.getExtras().get(
 				Intents.EXTRAKEY_METHOD_NAME);
 		requestParameters = (HashMap<String, Object>) intent.getExtras().get(
 				Intents.EXTRAKEY_DATAMAP);
-		returnResponse(methodName, requestParameters);
+		if(methodName.equals(Intents.EXTRAKEY_SYNC_ALL)){
+			OCParchiDB db = new OCParchiDB(getApplicationContext());
+			LinkedHashMap set = db.getStruttureDaSincronizzare();
+			String a = "";
+		} else {		
+			returnResponse(methodName, requestParameters);
+		}
 	}
 
 	@Override
@@ -67,7 +76,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 			remoteThread.interrupt();
 		}
 	}
-
+	
 	@Override
 	public void returnResponse(String method, HashMap<String, Object> data) {
 		methodName = method;
