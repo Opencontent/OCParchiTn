@@ -353,7 +353,7 @@ public class MainActivity extends BaseActivity {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("idgioco", "" + id);
 		serviceIntent.putExtra(Intents.EXTRAKEY_DATAMAP, map);
-		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE);
+		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE_BY_ID);
 	}
 
 	private void getStructureDataByRFID(int id) {
@@ -380,12 +380,25 @@ public class MainActivity extends BaseActivity {
 
 	@Override
 	public void onActivityResult(int requestCode, int returnCode, Intent intent) {
+		HashMap<String, Object> res ;
 		switch (requestCode) {
+		case BaseActivity.SOAP_GET_GIOCO_REQUEST_CODE_BY_ID:
+			res = SynchroSoapActivity.getRes();
+			Gioco remoteGioco = new Gioco(res.entrySet(), getApplicationContext());		
+			Gioco localGioco = db.readGiocoLocallyByID(remoteGioco.id_gioco);
+			
+			if(localGioco != null){
+				//if(!localGioco.sincronizzato || localGioco.hasDirtyData){
+					Toast.makeText(getApplicationContext(), "Gioco "+localGioco.id_gioco+" ha modifiche ancora non salvate", Toast.LENGTH_SHORT).show();
+				//}
+			}
+			
+			break;
 		case BaseActivity.SOAP_GET_GIOCO_REQUEST_CODE:
 
 			if (returnCode == RESULT_OK) {
 
-				HashMap<String, Object> res = SynchroSoapActivity.getRes();
+				res = SynchroSoapActivity.getRes();
 				MainFragment mf = (MainFragment) getFragmentManager()
 						.findFragmentByTag("rilevazione");// (R.id.activity_main);
 
@@ -427,7 +440,7 @@ public class MainActivity extends BaseActivity {
 			break;
 		case SOAP_GET_GIOCO_FOTO_REQUEST_CODE:
 			if (returnCode == RESULT_OK) {
-				HashMap<String, Object> res = SynchroSoapActivity.getRes();
+				res = SynchroSoapActivity.getRes();
 				currentGioco.addImmagine(0, res.entrySet());
 				
 				MainFragment mf = (MainFragment) getFragmentManager()

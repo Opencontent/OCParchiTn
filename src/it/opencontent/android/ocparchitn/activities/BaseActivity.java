@@ -12,6 +12,8 @@ public class BaseActivity extends Activity {
 
 	public static final int FOTO_REQUEST_CODE = 1;
 	public static final int SOAP_GET_GIOCO_REQUEST_CODE = 2;
+	public static final int SOAP_GET_GIOCO_REQUEST_CODE_BY_ID = 101;
+	public static final int SOAP_GET_GIOCO_REQUEST_CODE_BY_RFID = 102;
 	public static final int SOAP_GET_GIOCO_FOTO_REQUEST_CODE = 3;
 	public static final int SOAP_SERVICE_INFO_REQUEST_CODE = 100;
 

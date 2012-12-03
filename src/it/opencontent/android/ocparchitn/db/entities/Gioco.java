@@ -16,4 +16,9 @@ public class Gioco extends Struttura {
 		super(entrySet,rfid,context);
 		this.tipo = "gioco";
 	}
+	public Gioco(Set<Entry<String, Object>> entrySet,Context context) {
+		// TODO Auto-generated constructor stub
+		super(entrySet,context);
+		this.tipo = "gioco";
+	}
 }

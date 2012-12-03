@@ -53,6 +53,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 			OCParchiDB db = new OCParchiDB(getApplicationContext());
 			LinkedHashMap set = db.getStruttureDaSincronizzare();
 			String a = "";
+			finish();
 		} else {		
 			returnResponse(methodName, requestParameters);
 		}

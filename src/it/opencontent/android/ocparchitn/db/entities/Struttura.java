@@ -58,9 +58,13 @@ public class Struttura {
 
 	}
 
+	public Struttura(Set<Entry<String, Object>> set, Context context) {
+		this(set, -1, context);
+	}
+
 	public Struttura(Set<Entry<String, Object>> set, int rfid, Context context) {
 		Bitmap bmp = null;
-		if (rfid > 0) {
+		if (rfid > 0 && context != null) {
 			for (int i = 0; i < Intents.MAX_SNAPSHOTS_AMOUNT; i++) {
 				try {
 					String filename = FileNameCreator.getSnapshotFullPath(rfid,
@@ -169,18 +173,23 @@ public class Struttura {
 
 	private int bindIntToProperty(Object value, String key) {
 		int res = 0;
-		try {
-			res = Integer.parseInt((String) value);
+		if (value.getClass().equals(Integer.class)) {
+			res = ((Integer) value).intValue();
+		} else {
 
-		} catch (Exception e) {
-			Log.e(TAG, "integer not parsed");
-			if (value.getClass().equals(SoapObject.class)) {
-				Log.d(TAG, "Arrivato un valore non gestibile, " + key);
-			} else if (value.getClass().equals(SoapPrimitive.class)) {
-				SoapPrimitive v = (SoapPrimitive) value;
-				Log.d(TAG, v.getAttributeCount()
-						+ " sottoelementi da sbobinare per " + key);
-				res = Integer.parseInt(v.toString());
+			try {
+				res = Integer.parseInt((String) value);
+
+			} catch (Exception e) {
+				Log.e(TAG, "integer not parsed");
+				if (value.getClass().equals(SoapObject.class)) {
+					Log.d(TAG, "Arrivato un valore non gestibile, " + key);
+				} else if (value.getClass().equals(SoapPrimitive.class)) {
+					SoapPrimitive v = (SoapPrimitive) value;
+					Log.d(TAG, v.getAttributeCount()
+							+ " sottoelementi da sbobinare per " + key);
+					res = Integer.parseInt(v.toString());
+				}
 			}
 		}
 		return res;
@@ -188,9 +197,10 @@ public class Struttura {
 
 	private String bindStringToProperty(Object value, String key) {
 		String res = "";
-		if (value.getClass().equals(SoapObject.class)) {
+		if (value != null && value.getClass().equals(SoapObject.class)) {
 			Log.d(TAG, "Arrivato un valore non gestibile, " + key);
-		} else if (value.getClass().equals(SoapPrimitive.class)) {
+		} else if (value != null
+				&& value.getClass().equals(SoapPrimitive.class)) {
 			SoapPrimitive v = (SoapPrimitive) value;
 			Log.d(TAG, v.getAttributeCount()
 					+ " sottoelementi da sbobinare per " + key);
@@ -208,18 +218,22 @@ public class Struttura {
 
 	private float bindFloatToProperty(Object value, String key) {
 		float res = 0;
-		try {
-			res = Float.parseFloat((String) value);
+		if (value.getClass().equals(Integer.class)) {
+			res = ((Integer) value).floatValue();
+		} else {
+			try {
+				res = Float.parseFloat((String) value);
 
-		} catch (Exception e) {
-			Log.e(TAG, "integer not parsed");
-			if (value.getClass().equals(SoapObject.class)) {
-				Log.d(TAG, "Arrivato un valore non gestibile, " + key);
-			} else if (value.getClass().equals(SoapPrimitive.class)) {
-				SoapPrimitive v = (SoapPrimitive) value;
-				Log.d(TAG, v.getAttributeCount()
-						+ " sottoelementi da sbobinare per " + key);
-				res = Float.parseFloat(v.toString());
+			} catch (Exception e) {
+				Log.e(TAG, "integer not parsed");
+				if (value.getClass().equals(SoapObject.class)) {
+					Log.d(TAG, "Arrivato un valore non gestibile, " + key);
+				} else if (value.getClass().equals(SoapPrimitive.class)) {
+					SoapPrimitive v = (SoapPrimitive) value;
+					Log.d(TAG, v.getAttributeCount()
+							+ " sottoelementi da sbobinare per " + key);
+					res = Float.parseFloat(v.toString());
+				}
 			}
 		}
 		return res;
