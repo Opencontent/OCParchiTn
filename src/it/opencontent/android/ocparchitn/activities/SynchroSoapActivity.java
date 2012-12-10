@@ -1,6 +1,6 @@
 package it.opencontent.android.ocparchitn.activities;
 
-import it.opencontent.android.ocparchitn.Intents;
+import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.services.IRemoteConnection;
@@ -46,10 +46,10 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		Intent intent = getIntent();
 		
 		methodName = (String) intent.getExtras().get(
-				Intents.EXTRAKEY_METHOD_NAME);
+				Constants.EXTRAKEY_METHOD_NAME);
 		requestParameters = (HashMap<String, Object>) intent.getExtras().get(
-				Intents.EXTRAKEY_DATAMAP);
-		if(methodName.equals(Intents.EXTRAKEY_SYNC_ALL)){
+				Constants.EXTRAKEY_DATAMAP);
+		if(methodName.equals(Constants.EXTRAKEY_SYNC_ALL)){
 			OCParchiDB db = new OCParchiDB(getApplicationContext());
 			LinkedHashMap set = db.getStruttureDaSincronizzare();
 			String a = "";

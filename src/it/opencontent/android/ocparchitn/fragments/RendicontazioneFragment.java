@@ -1,5 +1,7 @@
 package it.opencontent.android.ocparchitn.fragments;
 
+import java.util.HashMap;
+
 import android.app.Fragment;
 import android.view.View;
 
@@ -16,5 +18,7 @@ public class RendicontazioneFragment extends Fragment implements ICustomFragment
 		// TODO Auto-generated method stub
 		
 	}
-
+	public void showError(HashMap<String,String> map){
+		
+	}	
 }

@@ -1,6 +1,9 @@
 package it.opencontent.android.ocparchitn.fragments;
 
 import it.opencontent.android.ocparchitn.R;
+
+import java.util.HashMap;
+
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,4 +32,8 @@ public class PeriodicaFragment extends Fragment implements ICustomFragment {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void showError(HashMap<String,String> map){
+		
+	}	
 }

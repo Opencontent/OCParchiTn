@@ -1,11 +1,16 @@
 package it.opencontent.android.ocparchitn.fragments;
 
-import it.opencontent.android.ocparchitn.Intents;
+import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.activities.MainActivity;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.utils.DrawableOverlayWriter;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -71,7 +76,23 @@ public class MainFragment extends Fragment implements ICustomFragment{
 	public void editMe(View v){
 		Log.d(TAG,"editme nel fragment");		
 	}
-	
+	public void placeMe(View v){
+		Gioco g = MainActivity.getCurrentGioco();
+		g.gpsx = MainActivity.getCurrentLon();
+		g.gpsy = MainActivity.getCurrentLat();
+		g.hasDirtyData=true;
+		g.sincronizzato = false;
+		saveLocal(g);
+	}
+	public void showError(HashMap<String,String> map){
+		TextView errorView = (TextView) getActivity().findViewById(R.id.display_gioco_warning);
+		errorView.setText("");
+		Iterator<Entry<String,String>> i = map.entrySet().iterator();
+		while(i.hasNext()){
+			Entry<String,String> n = (Entry<String, String>) i.next();
+			errorView.append(n.getValue());
+		}
+	}
 
 	@Override
 	public void onActivityResult(int requestCode, int returnCode, Intent intent) {
@@ -82,7 +103,6 @@ public class MainFragment extends Fragment implements ICustomFragment{
 			break;
 		}
 	}
-	
 	
 	private long saveLocal(Gioco gioco){
 		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
@@ -124,7 +144,7 @@ public class MainFragment extends Fragment implements ICustomFragment{
 		Bitmap bmp;
 		ImageView v;
 		String text;
-		for (int i = 0; i < Intents.MAX_SNAPSHOTS_AMOUNT; i++) {
+		for (int i = 0; i < Constants.MAX_SNAPSHOTS_AMOUNT; i++) {
 			text = "Foto "+(i+1);
 			switch(i){
 			case 0:

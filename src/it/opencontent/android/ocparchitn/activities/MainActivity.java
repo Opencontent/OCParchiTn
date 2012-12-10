@@ -1,6 +1,6 @@
 package it.opencontent.android.ocparchitn.activities;
 
-import it.opencontent.android.ocparchitn.Intents;
+import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
@@ -28,6 +28,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.location.GpsStatus;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.location.GpsStatus.Listener;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
@@ -41,10 +46,7 @@ public class MainActivity extends BaseActivity {
 
 	private static final String TAG = MainActivity.class.getSimpleName();
 
-	private static NfcAdapter nfca;
-	private static PendingIntent pi;
-	private static IntentFilter[] ifa;
-	private static String[][] techListsArray;
+
 	private static boolean serviceInfoTaken = false;
 
 	private Bitmap snapshot;
@@ -53,11 +55,24 @@ public class MainActivity extends BaseActivity {
 	private static HashMap<String, Object> serviceInfo;
 
 	private static Gioco currentGioco;
-	private static Bitmap[] snapshots = new Bitmap[Intents.MAX_SNAPSHOTS_AMOUNT];
+	private static Bitmap[] snapshots = new Bitmap[Constants.MAX_SNAPSHOTS_AMOUNT];
 
 	private static boolean partitiDaID = false;
 	private static boolean partitiDaRFID = false;
 	private static ActionBar actionBar;
+
+	
+
+	private static NfcAdapter nfca;
+	private static PendingIntent pi;
+	private static IntentFilter[] ifa;
+	private static String[][] techListsArray;	
+	
+	private static float currentLat =0;
+	private static float currentLon =0;
+	
+	private static HashMap<String,String> errorMessages = new HashMap<String, String>();
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -113,27 +128,27 @@ public class MainActivity extends BaseActivity {
 					"tab", 0));
 		}
 
-		if (!serviceInfoTaken) {
-			getServiceInfo();
-			serviceInfoTaken = true;
+		
+		LocationManager locationManager = (LocationManager) getSystemService(BaseActivity.LOCATION_SERVICE);
+		
+		if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			
+			locationManager.addGpsStatusListener(gpsListener);
+			locationManager.requestLocationUpdates(
+					LocationManager.GPS_PROVIDER, Constants.GPS_BEACON_INTERVAL, Constants.GPS_METER_THRESHOLD, locationListener);
+			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS, Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_OK);
+			
+			
+		} else {
+			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS, Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_INACTIVE);
+			
 		}
-
-		// setContentView(R.layout.activity_main);
-
-		Intent intent = getIntent();
-		parseIntent(intent);
-
-		// LocationManager locationManager = (LocationManager)
-		// getSystemService(BaseActivity.LOCATION_SERVICE);
-		// List<String> locationProviders = locationManager.getProviders(true);
-		//
-		//
-
+		
 		nfca = NfcAdapter.getDefaultAdapter(this);
 		pi = PendingIntent.getActivity(this, 0, new Intent(this, getClass())
-				.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-				PendingIntent.FLAG_CANCEL_CURRENT);
-
+		.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+		PendingIntent.FLAG_CANCEL_CURRENT);
+		
 		IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 		try {
 			ndef.addDataScheme(getString(R.string.schema_struttura));
@@ -141,7 +156,20 @@ public class MainActivity extends BaseActivity {
 		} catch (Exception e) {
 			throw new RuntimeException("fail", e);
 		}
-		ifa = new IntentFilter[] { ndef, };
+		ifa = new IntentFilter[] { ndef, };		
+		
+		
+		// setContentView(R.layout.activity_main);
+		
+		Intent intent = getIntent();
+		parseIntent(intent);
+		
+		if (!serviceInfoTaken) {
+			getServiceInfo();
+			serviceInfoTaken = true;
+		}
+		
+
 		
 		updateCountDaSincronizzare();
 
@@ -151,7 +179,19 @@ public class MainActivity extends BaseActivity {
 		// progetto
 
 	}
+	@Override
+	public void onPause() {
+		super.onPause();
+		nfca.disableForegroundDispatch(this);
+	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		nfca.enableForegroundDispatch(this, pi, ifa, techListsArray);
+		showError(errorMessages);
+		// nfca.enableForegroundDispatch(this, pi, null, null);
+	}
 	public void updateCountDaSincronizzare(){
 		
 		int pending = db.getPendingSynchronizations();
@@ -165,18 +205,7 @@ public class MainActivity extends BaseActivity {
 		outState.putInt("tab", getActionBar().getSelectedNavigationIndex());
 	}
 
-	@Override
-	public void onPause() {
-		super.onPause();
-		nfca.disableForegroundDispatch(this);
-	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		nfca.enableForegroundDispatch(this, pi, ifa, techListsArray);
-		// nfca.enableForegroundDispatch(this, pi, null, null);
-	}
 
 	@Override
 	public void onStart() {
@@ -210,10 +239,10 @@ public class MainActivity extends BaseActivity {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
-		serviceIntent.putExtra(Intents.EXTRAKEY_METHOD_NAME, Intents.EXTRAKEY_SYNC_ALL);
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.EXTRAKEY_SYNC_ALL);
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("all", true);
-		serviceIntent.putExtra(Intents.EXTRAKEY_DATAMAP, map);
+		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
 		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE);		
 		
 	}
@@ -341,7 +370,7 @@ public class MainActivity extends BaseActivity {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
-		serviceIntent.putExtra(Intents.EXTRAKEY_METHOD_NAME, "getInfo");
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, "getInfo");
 		startActivityForResult(serviceIntent, SOAP_SERVICE_INFO_REQUEST_CODE);
 	}
 
@@ -349,10 +378,10 @@ public class MainActivity extends BaseActivity {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
-		serviceIntent.putExtra(Intents.EXTRAKEY_METHOD_NAME, "getGioco_id");
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, "getGioco_id");
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("idgioco", "" + id);
-		serviceIntent.putExtra(Intents.EXTRAKEY_DATAMAP, map);
+		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
 		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE_BY_ID);
 	}
 
@@ -360,10 +389,10 @@ public class MainActivity extends BaseActivity {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
-		serviceIntent.putExtra(Intents.EXTRAKEY_METHOD_NAME, "getGioco");
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, "getGioco");
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("rfid", "" + id);
-		serviceIntent.putExtra(Intents.EXTRAKEY_DATAMAP, map);
+		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
 		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE);
 	}
 
@@ -371,10 +400,10 @@ public class MainActivity extends BaseActivity {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
-		serviceIntent.putExtra(Intents.EXTRAKEY_METHOD_NAME, "getFoto");
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, "getFoto");
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("rfid", "" + id);
-		serviceIntent.putExtra(Intents.EXTRAKEY_DATAMAP, map);
+		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
 		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_FOTO_REQUEST_CODE);
 	}
 
@@ -407,7 +436,7 @@ public class MainActivity extends BaseActivity {
 							getApplicationContext());
 					Bitmap bmp = null;
 					/*
-					 * for(int i = 0;i< Intents.MAX_SNAPSHOTS_AMOUNT; i++){
+					 * for(int i = 0;i< Constants.MAX_SNAPSHOTS_AMOUNT; i++){
 					 * String filename =
 					 * FileNameCreator.getSnapshotFullPath(currentRFID, i); try
 					 * { bmp =
@@ -459,7 +488,7 @@ public class MainActivity extends BaseActivity {
 				}
 
 				int whichOne = intent.getExtras().getInt(
-						Intents.EXTRAKEY_FOTO_NUMBER);
+						Constants.EXTRAKEY_FOTO_NUMBER);
 				String filename = FileNameCreator.getSnapshotFullPath(
 						currentRFID, whichOne);
 				FileOutputStream fos = openFileOutput(filename,
@@ -518,6 +547,8 @@ public class MainActivity extends BaseActivity {
 		case BaseActivity.SOAP_SERVICE_INFO_REQUEST_CODE:
 			serviceInfo = SynchroSoapActivity.getRes();
 			serviceInfoTaken = true;
+			errorMessages.put(Constants.STATUS_MESSAGE_SERVER_STATUS, "Connessione al server: OK");
+			showError(errorMessages);
 			break;
 
 		}
@@ -531,24 +562,33 @@ public class MainActivity extends BaseActivity {
 
 	public void editMe(View v){
 		String currentTag =(String) actionBar.getSelectedTab().getTag();
-		Log.d(TAG,"proxiamo la richiesta al tag: "+currentTag);
 		ICustomFragment f = (ICustomFragment) getFragmentManager().findFragmentByTag(currentTag);
 		f.editMe(v);
 	}
 	public void salvaModifiche(View v){
 		String currentTag =(String) actionBar.getSelectedTab().getTag();
-		Log.d(TAG,"proxiamo la richiesta al tag: "+currentTag);
 		ICustomFragment f = (ICustomFragment) getFragmentManager().findFragmentByTag(currentTag);
 		f.salvaModifiche(v);
 	}
-
+	public void showError(HashMap<String,String> map){
+		String currentTag =(String) actionBar.getSelectedTab().getTag();
+		ICustomFragment f = (ICustomFragment) getFragmentManager().findFragmentByTag(currentTag);
+		f.showError(map);		
+	}
 	public void takeSnapshot(View button) {
-		Intent customCamera = new Intent(Intents.TAKE_SNAPSHOT);
+		Intent customCamera = new Intent(Constants.TAKE_SNAPSHOT);
 		int whichOne = Integer.parseInt((String) button.getTag());
-		customCamera.putExtra(Intents.EXTRAKEY_FOTO_NUMBER, whichOne);
+		customCamera.putExtra(Constants.EXTRAKEY_FOTO_NUMBER, whichOne);
 		customCamera.setClass(getApplicationContext(), CameraActivity.class);
 		Log.d(TAG, customCamera.getAction());
 		startActivityForResult(customCamera, BaseActivity.FOTO_REQUEST_CODE);
+	}
+
+	public static float getCurrentLon() {
+		return currentLon;
+	}
+	public static float getCurrentLat() {
+		return currentLat;
 	}
 
 	public static class CustomTabListener<T extends Fragment> implements
@@ -595,4 +635,73 @@ public class MainActivity extends BaseActivity {
 			// User selected the already selected tab. Usually do nothing.
 		}
 	}
+	
+	private Listener gpsListener = new Listener() {
+
+		@Override
+		public void onGpsStatusChanged(int event) {
+			switch (event) {
+
+			case GpsStatus.GPS_EVENT_FIRST_FIX:
+
+				Log.d(TAG, "onGpsStatusChanged First Fix");
+				errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS, Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXED);
+				showError(errorMessages);
+				break;
+
+			case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
+
+				Log.d(TAG, "onGpsStatusChanged Satellite");
+				break;
+
+			case GpsStatus.GPS_EVENT_STARTED:
+
+				Log.d(TAG, "onGpsStatusChanged Started");
+				errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS, Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXING);
+				showError(errorMessages);
+				break;
+
+			case GpsStatus.GPS_EVENT_STOPPED:
+
+				Log.d(TAG, "onGpsStatusChanged Stopped");
+
+				break;
+
+			}
+
+		}
+	};
+
+	private LocationListener locationListener = new LocationListener() {
+
+		@Override
+		public void onLocationChanged(Location location) {
+			// TODO Auto-generated method stub
+			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS, Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXED);
+			showError(errorMessages);
+			currentLat = (float) location.getLatitude();
+			currentLon = (float) location.getLongitude();
+			
+		}
+
+		@Override
+		public void onProviderDisabled(String provider) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onProviderEnabled(String provider) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+			// TODO Auto-generated method stub
+			Log.d(TAG, provider+" "+status);
+		}
+	};
+			
+
 }

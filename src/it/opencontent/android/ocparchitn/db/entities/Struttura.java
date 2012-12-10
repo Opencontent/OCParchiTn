@@ -1,6 +1,6 @@
 package it.opencontent.android.ocparchitn.db.entities;
 
-import it.opencontent.android.ocparchitn.Intents;
+import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.utils.FileNameCreator;
 
 import java.io.FileNotFoundException;
@@ -65,7 +65,7 @@ public class Struttura {
 	public Struttura(Set<Entry<String, Object>> set, int rfid, Context context) {
 		Bitmap bmp = null;
 		if (rfid > 0 && context != null) {
-			for (int i = 0; i < Intents.MAX_SNAPSHOTS_AMOUNT; i++) {
+			for (int i = 0; i < Constants.MAX_SNAPSHOTS_AMOUNT; i++) {
 				try {
 					String filename = FileNameCreator.getSnapshotFullPath(rfid,
 							i);

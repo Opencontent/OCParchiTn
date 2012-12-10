@@ -1,6 +1,9 @@
 package it.opencontent.android.ocparchitn.fragments;
 
 import it.opencontent.android.ocparchitn.R;
+
+import java.util.HashMap;
+
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.view.View;
@@ -25,5 +28,8 @@ public class SettingsFragment extends PreferenceFragment  implements ICustomFrag
 		// TODO Auto-generated method stub
 		
 	}
+	public void showError(HashMap<String,String> map){
+		
+	}	
 
 }
