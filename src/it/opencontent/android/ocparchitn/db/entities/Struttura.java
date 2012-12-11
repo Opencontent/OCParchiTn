@@ -225,7 +225,7 @@ public class Struttura {
 				res = Float.parseFloat((String) value);
 
 			} catch (Exception e) {
-				Log.e(TAG, "integer not parsed");
+				Log.e(TAG, "float not parsed");
 				if (value.getClass().equals(SoapObject.class)) {
 					Log.d(TAG, "Arrivato un valore non gestibile, " + key);
 				} else if (value.getClass().equals(SoapPrimitive.class)) {

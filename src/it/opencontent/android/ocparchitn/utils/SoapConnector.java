@@ -80,7 +80,7 @@ public class SoapConnector {
 			map.put("dump", httpTransport.responseDump);
 			
 		}
-		return map;
+ 		return map;
 	}
 
 }

@@ -346,8 +346,14 @@ public class MainActivity extends BaseActivity {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String value = input.getText().toString();
 				partitiDaID = true;
-				getStructureDataByID(Integer.parseInt(value));// Do something
-																// with value!
+				int idRequested = 0; 
+				try{
+					idRequested = Integer.parseInt(value);
+					getStructureDataByID(idRequested);// Do something
+					// with value!
+				} catch (NumberFormatException nfe){
+					Toast.makeText(getApplicationContext(), "Numero non riconosciuto", Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
 
