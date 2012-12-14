@@ -7,18 +7,18 @@ import android.content.Context;
 
 public class Gioco extends Struttura {
 
+	public final static String tipo = "gioco"; 
+	
 	public Gioco() {
-		this.tipo = "gioco";
 	}
 
 	public Gioco(Set<Entry<String, Object>> entrySet,int rfid,Context context) {
 		// TODO Auto-generated constructor stub
 		super(entrySet,rfid,context);
-		this.tipo = "gioco";
+		
 	}
 	public Gioco(Set<Entry<String, Object>> entrySet,Context context) {
 		// TODO Auto-generated constructor stub
 		super(entrySet,context);
-		this.tipo = "gioco";
 	}
 }

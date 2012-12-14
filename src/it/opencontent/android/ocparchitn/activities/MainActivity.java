@@ -46,7 +46,6 @@ public class MainActivity extends BaseActivity {
 
 	private static final String TAG = MainActivity.class.getSimpleName();
 
-
 	private static boolean serviceInfoTaken = false;
 
 	private Bitmap snapshot;
@@ -61,18 +60,15 @@ public class MainActivity extends BaseActivity {
 	private static boolean partitiDaRFID = false;
 	private static ActionBar actionBar;
 
-	
-
 	private static NfcAdapter nfca;
 	private static PendingIntent pi;
 	private static IntentFilter[] ifa;
-	private static String[][] techListsArray;	
-	
-	private static float currentLat =0;
-	private static float currentLon =0;
-	
-	private static HashMap<String,String> errorMessages = new HashMap<String, String>();
-	
+	private static String[][] techListsArray;
+
+	private static float currentLat = 0;
+	private static float currentLon = 0;
+
+	private static HashMap<String, String> errorMessages = new HashMap<String, String>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -81,11 +77,9 @@ public class MainActivity extends BaseActivity {
 
 		db = new OCParchiDB(getApplicationContext());
 
-		
 		actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayShowTitleEnabled(true);
-
 
 		Tab tab;
 		tab = actionBar
@@ -128,27 +122,29 @@ public class MainActivity extends BaseActivity {
 					"tab", 0));
 		}
 
-		
 		LocationManager locationManager = (LocationManager) getSystemService(BaseActivity.LOCATION_SERVICE);
-		
+
 		if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			
+
 			locationManager.addGpsStatusListener(gpsListener);
 			locationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, Constants.GPS_BEACON_INTERVAL, Constants.GPS_METER_THRESHOLD, locationListener);
-			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS, Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_OK);
-			
-			
+					LocationManager.GPS_PROVIDER,
+					Constants.GPS_BEACON_INTERVAL,
+					Constants.GPS_METER_THRESHOLD, locationListener);
+			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
+					Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_OK);
+
 		} else {
-			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS, Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_INACTIVE);
-			
+			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
+					Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_INACTIVE);
+
 		}
-		
+
 		nfca = NfcAdapter.getDefaultAdapter(this);
 		pi = PendingIntent.getActivity(this, 0, new Intent(this, getClass())
-		.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-		PendingIntent.FLAG_CANCEL_CURRENT);
-		
+				.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+				PendingIntent.FLAG_CANCEL_CURRENT);
+
 		IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 		try {
 			ndef.addDataScheme(getString(R.string.schema_struttura));
@@ -156,21 +152,18 @@ public class MainActivity extends BaseActivity {
 		} catch (Exception e) {
 			throw new RuntimeException("fail", e);
 		}
-		ifa = new IntentFilter[] { ndef, };		
-		
-		
+		ifa = new IntentFilter[] { ndef, };
+
 		// setContentView(R.layout.activity_main);
-		
+
 		Intent intent = getIntent();
 		parseIntent(intent);
-		
+
 		if (!serviceInfoTaken) {
 			getServiceInfo();
 			serviceInfoTaken = true;
 		}
-		
 
-		
 		updateCountDaSincronizzare();
 
 		// La techListArray per il momento la tengo vuota, così filtro per
@@ -179,6 +172,7 @@ public class MainActivity extends BaseActivity {
 		// progetto
 
 	}
+
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -192,20 +186,19 @@ public class MainActivity extends BaseActivity {
 		showError(errorMessages);
 		// nfca.enableForegroundDispatch(this, pi, null, null);
 	}
-	public void updateCountDaSincronizzare(){
-		
+
+	public void updateCountDaSincronizzare() {
+
 		int pending = db.getPendingSynchronizations();
 		actionBar.setTitle(getString(R.string.title_activity_main) + " ("
-				+ pending + ")");		
+				+ pending + ")");
 	}
-	
+
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putInt("tab", getActionBar().getSelectedNavigationIndex());
 	}
-
-
 
 	@Override
 	public void onStart() {
@@ -225,29 +218,28 @@ public class MainActivity extends BaseActivity {
 		alert.setTitle("Risultato");
 		alert.setMessage(message);
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-			
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 
 			}
 		});
-		
+
 		alert.show();
 	}
-	
-	public void sincronizzaModifiche(View v){
+
+	public void sincronizzaModifiche(View v) {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
-		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.EXTRAKEY_SYNC_ALL);
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME,
+				Constants.EXTRAKEY_SYNC_ALL);
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("all", true);
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
-		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE);		
-		
+		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE);
+
 	}
-	
-	
 
 	private void confirmLegaRFIDGioco(int rfid, Gioco gioco) {
 		final int mrfid = rfid;
@@ -255,22 +247,28 @@ public class MainActivity extends BaseActivity {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
 		alert.setTitle("Vuoi associare l'RFID " + rfid + " al Gioco "
-				+ gioco.id_gioco+" ?");
-		if(gioco.rfid> 0){
-			alert.setMessage("il Gioco "+ gioco.id_gioco+" attualmente ha l'RFID "+ gioco.rfid);
+				+ gioco.id_gioco + " ?");
+		if (gioco.rfid > 0) {
+			alert.setMessage("il Gioco " + gioco.id_gioco
+					+ " attualmente ha l'RFID " + gioco.rfid);
 		} else {
-			alert.setMessage("il Gioco "+ gioco.id_gioco+" attualmente non ha RFID associati");	
+			alert.setMessage("il Gioco " + gioco.id_gioco
+					+ " attualmente non ha RFID associati");
 		}
 
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
-				
-				if(legaRFIDGioco(mrfid, mgioco)){
-					feedback("Ok, ora il gioco "+mgioco.id_gioco+" è associato all'RFID "+mgioco.rfid);
-					MainFragment mf = (MainFragment) getFragmentManager()
-							.findFragmentByTag("rilevazione");
-					mf.showGiocoData(currentGioco);	
-					//TODO: triggerare il salvataggio dei dati locali che poi scatena a sua volta il salvataggio remoto
+
+				if (legaRFIDGioco(mrfid, mgioco)) {
+					feedback("Ok, ora il gioco " + mgioco.id_gioco
+							+ " è associato all'RFID " + mgioco.rfid);
+					String currentTag = (String) actionBar.getSelectedTab()
+							.getTag();
+					ICustomFragment mf = (ICustomFragment) getFragmentManager()
+							.findFragmentByTag(currentTag);
+					mf.showStrutturaData(currentGioco);
+					// TODO: triggerare il salvataggio dei dati locali che poi
+					// scatena a sua volta il salvataggio remoto
 				} else {
 					feedback("Qualcosa non ha funzionato, ritentare l'operazione");
 				}
@@ -315,15 +313,17 @@ public class MainActivity extends BaseActivity {
 					db.salvaGiocoLocally(currentGioco);
 				}
 
-//				String name = getString(R.string.display_gioco_id)
-//						+ currentRFID;
-//				String ser = getString(R.string.display_gioco_seriale) + out;
-//
-//				TextView giocoId = (TextView) findViewById(R.id.display_gioco_id);
-//				giocoId.setText(name);
-//				TextView giocoSeriale = (TextView) findViewById(R.id.display_gioco_seriale);
-//				giocoSeriale.setText(ser);
-//				Log.d(TAG, "Qualcosa è successo " + name + " " + res);
+				// String name = getString(R.string.display_gioco_id)
+				// + currentRFID;
+				// String ser = getString(R.string.display_gioco_seriale) + out;
+				//
+				// TextView giocoId = (TextView)
+				// findViewById(R.id.display_gioco_id);
+				// giocoId.setText(name);
+				// TextView giocoSeriale = (TextView)
+				// findViewById(R.id.display_gioco_seriale);
+				// giocoSeriale.setText(ser);
+				// Log.d(TAG, "Qualcosa è successo " + name + " " + res);
 			}
 		} catch (Exception e) {
 			// Non è un intent che ci interessa in questo caso
@@ -346,13 +346,15 @@ public class MainActivity extends BaseActivity {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String value = input.getText().toString();
 				partitiDaID = true;
-				int idRequested = 0; 
-				try{
+				int idRequested = 0;
+				try {
 					idRequested = Integer.parseInt(value);
 					getStructureDataByID(idRequested);// Do something
 					// with value!
-				} catch (NumberFormatException nfe){
-					Toast.makeText(getApplicationContext(), "Numero non riconosciuto", Toast.LENGTH_SHORT).show();
+				} catch (NumberFormatException nfe) {
+					Toast.makeText(getApplicationContext(),
+							"Numero non riconosciuto", Toast.LENGTH_SHORT)
+							.show();
 				}
 			}
 		});
@@ -415,27 +417,34 @@ public class MainActivity extends BaseActivity {
 
 	@Override
 	public void onActivityResult(int requestCode, int returnCode, Intent intent) {
-		HashMap<String, Object> res ;
+		HashMap<String, Object> res;
+		String currentTag = (String) actionBar.getSelectedTab().getTag();
+		ICustomFragment mf = (ICustomFragment) getFragmentManager()
+				.findFragmentByTag(currentTag);
+
 		switch (requestCode) {
 		case BaseActivity.SOAP_GET_GIOCO_REQUEST_CODE_BY_ID:
 			res = SynchroSoapActivity.getRes();
-			Gioco remoteGioco = new Gioco(res.entrySet(), getApplicationContext());		
+			Gioco remoteGioco = new Gioco(res.entrySet(),
+					getApplicationContext());
 			Gioco localGioco = db.readGiocoLocallyByID(remoteGioco.id_gioco);
-			
-			if(localGioco != null){
-				//if(!localGioco.sincronizzato || localGioco.hasDirtyData){
-					Toast.makeText(getApplicationContext(), "Gioco "+localGioco.id_gioco+" ha modifiche ancora non salvate", Toast.LENGTH_SHORT).show();
-				//}
+
+			if (localGioco != null) {
+				Toast.makeText(
+						getApplicationContext(),
+						"Gioco " + localGioco.id_gioco
+								+ " ha modifiche ancora non salvate",
+						Toast.LENGTH_SHORT).show();
+			} else {
+				currentGioco = remoteGioco;
+				mf.showStrutturaData(currentGioco);
 			}
-			
 			break;
 		case BaseActivity.SOAP_GET_GIOCO_REQUEST_CODE:
 
 			if (returnCode == RESULT_OK) {
 
 				res = SynchroSoapActivity.getRes();
-				MainFragment mf = (MainFragment) getFragmentManager()
-						.findFragmentByTag("rilevazione");// (R.id.activity_main);
 
 				if (res != null && res.size() > 0) {
 					currentGioco = new Gioco(res.entrySet(), currentRFID,
@@ -456,10 +465,10 @@ public class MainActivity extends BaseActivity {
 					 * currentGioco.foto4 = bmp; break; } }
 					 */
 
-					mf.showGiocoData(currentGioco);
+					mf.showStrutturaData(currentGioco);
 					getStructureFoto(currentRFID);
 				} else {
-					mf.showGiocoData(new Gioco());
+					mf.showStrutturaData(new Gioco());
 					Toast.makeText(
 							getApplicationContext(),
 							getString(R.string.errore_generico_soap) + " "
@@ -477,10 +486,8 @@ public class MainActivity extends BaseActivity {
 			if (returnCode == RESULT_OK) {
 				res = SynchroSoapActivity.getRes();
 				currentGioco.addImmagine(0, res.entrySet());
-				
-				MainFragment mf = (MainFragment) getFragmentManager()
-						.findFragmentByTag("rilevazione");// (R.id.activity_main);
-				mf.showGiocoData(currentGioco);
+
+				mf.showStrutturaData(currentGioco);
 			}
 			break;
 		case FOTO_REQUEST_CODE:
@@ -553,7 +560,8 @@ public class MainActivity extends BaseActivity {
 		case BaseActivity.SOAP_SERVICE_INFO_REQUEST_CODE:
 			serviceInfo = SynchroSoapActivity.getRes();
 			serviceInfoTaken = true;
-			errorMessages.put(Constants.STATUS_MESSAGE_SERVER_STATUS, "Connessione al server: OK");
+			errorMessages.put(Constants.STATUS_MESSAGE_SERVER_STATUS,
+					"Connessione al server: OK");
 			showError(errorMessages);
 			break;
 
@@ -563,24 +571,30 @@ public class MainActivity extends BaseActivity {
 
 	public static Gioco getCurrentGioco() {
 		return currentGioco;
-		
+
 	}
 
-	public void editMe(View v){
-		String currentTag =(String) actionBar.getSelectedTab().getTag();
-		ICustomFragment f = (ICustomFragment) getFragmentManager().findFragmentByTag(currentTag);
+	public void editMe(View v) {
+		String currentTag = (String) actionBar.getSelectedTab().getTag();
+		ICustomFragment f = (ICustomFragment) getFragmentManager()
+				.findFragmentByTag(currentTag);
 		f.editMe(v);
 	}
-	public void salvaModifiche(View v){
-		String currentTag =(String) actionBar.getSelectedTab().getTag();
-		ICustomFragment f = (ICustomFragment) getFragmentManager().findFragmentByTag(currentTag);
+
+	public void salvaModifiche(View v) {
+		String currentTag = (String) actionBar.getSelectedTab().getTag();
+		ICustomFragment f = (ICustomFragment) getFragmentManager()
+				.findFragmentByTag(currentTag);
 		f.salvaModifiche(v);
 	}
-	public void showError(HashMap<String,String> map){
-		String currentTag =(String) actionBar.getSelectedTab().getTag();
-		ICustomFragment f = (ICustomFragment) getFragmentManager().findFragmentByTag(currentTag);
-		f.showError(map);		
+
+	public void showError(HashMap<String, String> map) {
+		String currentTag = (String) actionBar.getSelectedTab().getTag();
+		ICustomFragment f = (ICustomFragment) getFragmentManager()
+				.findFragmentByTag(currentTag);
+		f.showError(map);
 	}
+
 	public void takeSnapshot(View button) {
 		Intent customCamera = new Intent(Constants.TAKE_SNAPSHOT);
 		int whichOne = Integer.parseInt((String) button.getTag());
@@ -593,6 +607,7 @@ public class MainActivity extends BaseActivity {
 	public static float getCurrentLon() {
 		return currentLon;
 	}
+
 	public static float getCurrentLat() {
 		return currentLat;
 	}
@@ -641,7 +656,7 @@ public class MainActivity extends BaseActivity {
 			// User selected the already selected tab. Usually do nothing.
 		}
 	}
-	
+
 	private Listener gpsListener = new Listener() {
 
 		@Override
@@ -651,7 +666,8 @@ public class MainActivity extends BaseActivity {
 			case GpsStatus.GPS_EVENT_FIRST_FIX:
 
 				Log.d(TAG, "onGpsStatusChanged First Fix");
-				errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS, Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXED);
+				errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
+						Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXED);
 				showError(errorMessages);
 				break;
 
@@ -663,7 +679,8 @@ public class MainActivity extends BaseActivity {
 			case GpsStatus.GPS_EVENT_STARTED:
 
 				Log.d(TAG, "onGpsStatusChanged Started");
-				errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS, Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXING);
+				errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
+						Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXING);
 				showError(errorMessages);
 				break;
 
@@ -683,11 +700,12 @@ public class MainActivity extends BaseActivity {
 		@Override
 		public void onLocationChanged(Location location) {
 			// TODO Auto-generated method stub
-			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS, Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXED);
+			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
+					Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXED);
 			showError(errorMessages);
 			currentLat = (float) location.getLatitude();
 			currentLon = (float) location.getLongitude();
-			
+
 		}
 
 		@Override
@@ -705,9 +723,8 @@ public class MainActivity extends BaseActivity {
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 			// TODO Auto-generated method stub
-			Log.d(TAG, provider+" "+status);
+			Log.d(TAG, provider + " " + status);
 		}
 	};
-			
 
 }

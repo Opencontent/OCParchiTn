@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="soap_endpoint">https://webapps.comune.trento.it/parcogiochiSrv/</string>
-	<!-- string name="soap_namespace">http://db.comune.trento.it</string -->
-	<string name="soap_namespace">http://gioco.parcogiochi</string>
-	<string name="soap_url">https://webapps.comune.trento.it/parcogiochiSrv/services/SrvGioco?wsdl</string>
+
 </resources>

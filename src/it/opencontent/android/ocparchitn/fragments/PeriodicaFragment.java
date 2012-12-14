@@ -1,6 +1,7 @@
 package it.opencontent.android.ocparchitn.fragments;
 
 import it.opencontent.android.ocparchitn.R;
+import it.opencontent.android.ocparchitn.db.entities.Struttura;
 
 import java.util.HashMap;
 
@@ -34,6 +35,12 @@ public class PeriodicaFragment extends Fragment implements ICustomFragment {
 	}
 	
 	public void showError(HashMap<String,String> map){
+		
+	}
+
+	@Override
+	public void showStrutturaData(Struttura struttura) {
+		// TODO Auto-generated method stub
 		
 	}	
 }

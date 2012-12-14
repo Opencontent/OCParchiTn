@@ -1,5 +1,7 @@
 package it.opencontent.android.ocparchitn.utils;
 
+import it.opencontent.android.ocparchitn.Constants;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +29,7 @@ public class SoapConnector {
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
 
+		
 		SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME); // set up
 																		// request
 		if (properties != null && properties.length > 0) {
@@ -39,6 +42,10 @@ public class SoapConnector {
 				SoapEnvelope.VER11); // put all required data into a soap
 										// envelope
 		envelope.setOutputSoapObject(request); // prepare request
+
+
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "Giocoupdate", GiocoUpdate.class);
+		
 		HttpTransportSE httpTransport = new HttpTransportSE(URL);
 
 		StringBuffer auth = new StringBuffer(USERNAME);
@@ -76,10 +83,10 @@ public class SoapConnector {
 		} catch (Exception e) {
 			Log.e(TAG, "SOAP ERROR:");
 			e.printStackTrace();
-
 			map.put("dump", httpTransport.responseDump);
 			
 		}
+		Log.d(TAG,httpTransport.requestDump);
  		return map;
 	}
 

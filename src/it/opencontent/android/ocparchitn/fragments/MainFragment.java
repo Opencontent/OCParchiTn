@@ -5,6 +5,7 @@ import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.activities.MainActivity;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
+import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.utils.DrawableOverlayWriter;
 
 import java.util.HashMap;
@@ -63,7 +64,7 @@ public class MainFragment extends Fragment implements ICustomFragment{
 	public void onResume() {
 		super.onResume();
 		if(MainActivity.getCurrentGioco() != null){
-			showGiocoData(MainActivity.getCurrentGioco());
+			showStrutturaData(MainActivity.getCurrentGioco());
 		}
 	}
 
@@ -118,12 +119,13 @@ public class MainFragment extends Fragment implements ICustomFragment{
 	}
 	
 
-	public void showGiocoData(Gioco gioco) {
+	public void showStrutturaData(Struttura gioco) {
 		TextView v;
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_id);
-		v.setText(gioco.id_gioco + "");	
+
+
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_marca);
-		v.setText(gioco.marca_1);
+		v.setText(gioco.descrizione_marca);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_nota);
 		v.setText(gioco.note);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_seriale);
@@ -140,7 +142,7 @@ public class MainFragment extends Fragment implements ICustomFragment{
 	}
 	
 
-	private void setupSnapshots(Gioco gioco) {
+	private void setupSnapshots(Struttura gioco) {
 		Bitmap bmp;
 		ImageView v;
 		String text;

@@ -107,17 +107,26 @@ public class OCParchiDB {
 		}
 		return cursor;
 	}
-	
-	private String[] getDefaultGiocoColumns(){
-		return new String[] { " id_gioco as id_gioco, rfid as rfid, marca_1 as marca_1, numeroserie as numeroserie, gpsx as gpsx, gpsy as gpsy, note as note" };
+
+	private String[] getDefaultColumns(Class<?> struttura) {
+		Field[] campi = struttura.getFields();
+		String res = "";
+		for (int i = 0; i < campi.length; i++) {
+			if (i > 0) {
+				res += "  , ";
+			}
+			String name = campi[i].getName();
+			res += name + " as " + name;
+		}
+		return new String[] { res };
 	}
 
 	public Gioco readGiocoLocallyByRFID(int rfid) {
 		String selection = " rfid  = ? ";
 		String[] selectionArgs = new String[] { rfid + "" };
 		Cursor c = mDatabaseOpenHelper.getReadableDatabase().query(
-				StruttureEnum.GIOCHI.tipo, getDefaultGiocoColumns(), selection, selectionArgs,
-				null, null, null);
+				StruttureEnum.GIOCHI.tipo, getDefaultColumns(Gioco.class), selection,
+				selectionArgs, null, null, null);
 		try {
 			return deserializeGiocoSingolo(c);
 		} catch (InvalidParameterException ipe) {
@@ -128,11 +137,11 @@ public class OCParchiDB {
 
 	public Gioco readGiocoLocallyByID(int id) {
 		String selection = " id_gioco  = ? ";
-		
+
 		String[] selectionArgs = new String[] { id + "" };
 		Cursor c = mDatabaseOpenHelper.getReadableDatabase().query(
-				StruttureEnum.GIOCHI.tipo, getDefaultGiocoColumns(), selection, selectionArgs,
-				null, null, null);
+				StruttureEnum.GIOCHI.tipo, getDefaultColumns(Gioco.class), selection,
+				selectionArgs, null, null, null);
 		try {
 			return deserializeGiocoSingolo(c);
 		} catch (InvalidParameterException ipe) {
@@ -201,7 +210,7 @@ public class OCParchiDB {
 
 		cv.put("sincronizzato", false);
 		cv.put("rfid", gioco.rfid);
-		cv.put("marca_1", gioco.marca_1);
+		cv.put("descrizione_marca", gioco.descrizione_marca);
 		cv.put("id_gioco", gioco.id_gioco);
 		cv.put("numeroserie", gioco.numeroserie);
 		cv.put("gpsx", gioco.gpsx);
@@ -265,7 +274,9 @@ public class OCParchiDB {
 		while (strutture.hasNext()) {
 
 			Entry<String, Struttura> entry = strutture.next();
-			String[] columns = new String[] { " id_gioco as id_gioco, rfid as rfid, marca_1 as marca_1, numeroserie as numeroserie, gpsx as gpsx, gpsy as gpsy, note as note" };
+
+			String[] columns = getDefaultColumns(entry.getValue().getClass());
+
 			String tableName = entry.getKey();
 			String selection = " sincronizzato = ? "; // TODO: trovare un modo
 														// per metterli in

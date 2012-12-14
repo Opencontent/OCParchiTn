@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:weightSum="4"
-    android:layout_height="fill_parent"
     android:layout_width="wrap_content"
-    > 
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:weightSum="7" >
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -25,208 +24,193 @@
             android:layout_height="wrap_content"
             android:onClick="startRilevazioneDaID"
             android:text="@string/pulsante_start_by_id_testo" />
-
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/wrapper_dati_e_istruzioni"
+    <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-    <LinearLayout
-        android:id="@+id/wrapper_dati_gioco"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:orientation="vertical" >
+        android:layout_height="0dp"
+        android:layout_weight="5" >
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:baselineAligned="false"
+            android:id="@+id/wrapper_dati_e_istruzioni"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/wrapper_dati_gioco"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/display_gioco_marca" 
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                />
+                android:layout_weight="2"
+                android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/display_gioco_marca"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" 
-                android:onClick="editMe" 
-                android:tag="gioco_marca"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                 />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/display_gioco_marca"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/display_gioco_marca"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="editMe"
+                        android:tag="gioco_marca"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/display_gioco_rfid"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/display_gioco_rfid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/display_gioco_id"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/display_gioco_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/display_area_rfid"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/display_area_rfid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/display_gioco_seriale"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/display_gioco_seriale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="editMe"
+                        android:tag="gioco_seriale"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/display_gioco_gpsx"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/display_gioco_gpsx"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/display_gioco_gpsy"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/display_gioco_gpsy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/display_gioco_nota"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/display_gioco_nota"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="editMe"
+                        android:tag="gioco_nota"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/display_gioco_istruzioni"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="pippo" />
+
+                <TextView
+                    android:id="@+id/display_gioco_warning"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="warning"
+                    android:textColor="@color/warning" />
+            </LinearLayout>
         </LinearLayout>
-
-        
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/display_gioco_rfid"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                 />
-
-            <TextView
-                android:id="@+id/display_gioco_rfid"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" 
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                />
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/display_gioco_id" 
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                />
-
-            <TextView
-                android:id="@+id/display_gioco_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" 
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/display_area_rfid" 
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                />
-
-            <TextView
-                android:id="@+id/display_area_rfid"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge" 
-                 />
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/display_gioco_seriale" 
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                />
-
-            <TextView
-                android:id="@+id/display_gioco_seriale"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" 
-                android:onClick="editMe" 
-                android:tag="gioco_seriale"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/display_gioco_gpsx" 
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                />
-
-            <TextView
-                android:id="@+id/display_gioco_gpsx"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/display_gioco_gpsy" 
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                />
-
-            <TextView
-                android:id="@+id/display_gioco_gpsy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/display_gioco_nota" 
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                />
-
-            <TextView
-                android:id="@+id/display_gioco_nota"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="editMe" 
-                android:tag="gioco_nota"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                />
-        </LinearLayout>
-    </LinearLayout>
-    
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="vertical" >
-
-		<TextView android:id="@+id/display_gioco_istruzioni"
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:text="pippo"
-		    />    
-		    
-		<TextView android:id="@+id/display_gioco_warning"
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:text="warning"
-		    android:textColor="@color/warning"
-		    />
-    
-    </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -240,12 +224,13 @@
             android:layout_height="wrap_content"
             android:onClick="salvaModifiche"
             android:text="@string/pulsante_salva_modifiche_gioco_testo" />
+
         <Button
             android:id="@+id/pulsante_sincronizza_modifiche_gioco"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="sincronizzaModifiche"
             android:text="@string/pulsante_sincronizza_modifiche_gioco_testo" />
-
     </LinearLayout>
+
 </LinearLayout>

@@ -26,4 +26,8 @@ public class Constants {
 	public final static String STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXING = STATUS_MESSAGE_GPS_STATUS_MESSAGE_OK+" cerco la posizione";
 	public final static String STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXED = STATUS_MESSAGE_GPS_STATUS_MESSAGE_OK+" posizione trovata";
 	
+	
+    public final static String SOAP_ENDPOINT ="https://webapps.comune.trento.it/parcogiochiSrv/";
+    public final static String SOAP_NAMESPACE = "http://gioco.parcogiochi";
+    public final static String SOAP_URL = "https://webapps.comune.trento.it/parcogiochiSrv/services/SrvGioco?wsdl";	
 }

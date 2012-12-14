@@ -4,14 +4,17 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="left"
+    android:weightSum="3"
     android:orientation="horizontal" >
 
-	<include layout="@layout/snapshot_holder" />
+	<include layout="@layout/snapshot_holder" 
+	    android:layout_weight="1"/>
 
     <include
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:layout_gravity="right"
+        android:layout_weight="2"
         layout="@layout/gioco_main_fragment" />
 
 </LinearLayout>

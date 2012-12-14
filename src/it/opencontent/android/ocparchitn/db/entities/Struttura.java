@@ -101,8 +101,8 @@ public class Struttura {
 		while (i.hasNext()) {
 			Entry<String, Object> e = i.next();
 			Log.d(TAG, e.getKey());
-			if (e.getKey().equals("marca_1")) {
-				marca_1 = bindStringToProperty(e.getValue(), e.getKey());
+			if (e.getKey().equals("descrizione_marca")) {
+				descrizione_marca = bindStringToProperty(e.getValue(), e.getKey());
 			}
 			if (e.getKey().equals("gpsx") && e.getValue() != null) {
 				gpsx = bindFloatToProperty(e.getValue(), e.getKey());
@@ -254,7 +254,7 @@ public class Struttura {
 	public float gpsy;
 
 	public String numeroserie;
-	public String marca_1;
+	public String descrizione_marca;
 
 	public String note;
 	public Bitmap foto0;
