@@ -10,7 +10,9 @@ import it.opencontent.android.ocparchitn.fragments.PeriodicaFragment;
 import it.opencontent.android.ocparchitn.fragments.RendicontazioneFragment;
 import it.opencontent.android.ocparchitn.fragments.SpostamentoFragment;
 import it.opencontent.android.ocparchitn.utils.FileNameCreator;
+import it.opencontent.android.ocparchitn.utils.PlatformChecks;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,17 +31,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.location.GpsStatus;
+import android.location.GpsStatus.Listener;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.GpsStatus.Listener;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends BaseActivity {
@@ -57,6 +61,7 @@ public class MainActivity extends BaseActivity {
 	private static Bitmap[] snapshots = new Bitmap[Constants.MAX_SNAPSHOTS_AMOUNT];
 
 	private static boolean partitiDaID = false;
+	private static int currentQueriedId =0;
 	private static boolean partitiDaRFID = false;
 	private static ActionBar actionBar;
 
@@ -139,7 +144,6 @@ public class MainActivity extends BaseActivity {
 					Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_INACTIVE);
 
 		}
-
 		nfca = NfcAdapter.getDefaultAdapter(this);
 		pi = PendingIntent.getActivity(this, 0, new Intent(this, getClass())
 				.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
@@ -228,18 +232,7 @@ public class MainActivity extends BaseActivity {
 		alert.show();
 	}
 
-	public void sincronizzaModifiche(View v) {
-		Intent serviceIntent = new Intent();
-		serviceIntent.setClass(getApplicationContext(),
-				SynchroSoapActivity.class);
-		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME,
-				Constants.EXTRAKEY_SYNC_ALL);
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("all", true);
-		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
-		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE);
 
-	}
 
 	private void confirmLegaRFIDGioco(int rfid, Gioco gioco) {
 		final int mrfid = rfid;
@@ -381,7 +374,18 @@ public class MainActivity extends BaseActivity {
 		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, "getInfo");
 		startActivityForResult(serviceIntent, SOAP_SERVICE_INFO_REQUEST_CODE);
 	}
+	public void sincronizzaModifiche(View v) {
+		Intent serviceIntent = new Intent();
+		serviceIntent.setClass(getApplicationContext(),
+				SynchroSoapActivity.class);
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME,
+				Constants.EXTRAKEY_SYNC_ALL);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("all", true);
+		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
+		startActivityForResult(serviceIntent, SOAP_SINCRONIZZA_TUTTO_REQUEST_CODE);
 
+	}
 	private void getStructureDataByID(int id) {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
@@ -389,8 +393,19 @@ public class MainActivity extends BaseActivity {
 		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, "getGioco_id");
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("idgioco", "" + id);
+		currentQueriedId = id;
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
 		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE_BY_ID);
+	}
+	private void getStructureFotoByID(int id) {
+		Intent serviceIntent = new Intent();
+		serviceIntent.setClass(getApplicationContext(),
+				SynchroSoapActivity.class);
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, "getFoto");
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("idGioco", "" + id);
+		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
+		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_FOTO_REQUEST_CODE);
 	}
 
 	private void getStructureDataByRFID(int id) {
@@ -410,7 +425,8 @@ public class MainActivity extends BaseActivity {
 				SynchroSoapActivity.class);
 		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, "getFoto");
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("rfid", "" + id);
+//		map.put("idGioco", "" + id);
+		map.put("args0", "" + id);
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
 		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_FOTO_REQUEST_CODE);
 	}
@@ -423,22 +439,40 @@ public class MainActivity extends BaseActivity {
 				.findFragmentByTag(currentTag);
 
 		switch (requestCode) {
+		case BaseActivity.SOAP_SINCRONIZZA_TUTTO_REQUEST_CODE:
+			updateCountDaSincronizzare();
+			break;
 		case BaseActivity.SOAP_GET_GIOCO_REQUEST_CODE_BY_ID:
 			res = SynchroSoapActivity.getRes();
 			Gioco remoteGioco = new Gioco(res.entrySet(),
 					getApplicationContext());
 			Gioco localGioco = db.readGiocoLocallyByID(remoteGioco.id_gioco);
-
+			
+			
+			
+			//C'è da sistemare come viene gestita la concorrenza fra locale e remoto
 			if (localGioco != null) {
 				Toast.makeText(
 						getApplicationContext(),
 						"Gioco " + localGioco.id_gioco
 								+ " ha modifiche ancora non salvate",
 						Toast.LENGTH_SHORT).show();
-			} else {
+				currentGioco = localGioco;
+				//Le foto le abbiamo già in locale
+			} else if(PlatformChecks.siamoOnline(getApplicationContext()) && remoteGioco !=null){
 				currentGioco = remoteGioco;
-				mf.showStrutturaData(currentGioco);
+				//Lo showStruttura viene chiamato dal loop delle foto
+				getStructureFoto(currentGioco.id_gioco);			
+			} else {
+				currentGioco = db.readGiocoLocallyByID(remoteGioco.id_gioco);
+				if(currentGioco == null){
+				currentGioco = new Gioco();
+				currentGioco.id_gioco = currentQueriedId;
+				} 
 			}
+			
+			mf.showStrutturaData(currentGioco);
+			
 			break;
 		case BaseActivity.SOAP_GET_GIOCO_REQUEST_CODE:
 
@@ -449,24 +483,8 @@ public class MainActivity extends BaseActivity {
 				if (res != null && res.size() > 0) {
 					currentGioco = new Gioco(res.entrySet(), currentRFID,
 							getApplicationContext());
-					Bitmap bmp = null;
-					/*
-					 * for(int i = 0;i< Constants.MAX_SNAPSHOTS_AMOUNT; i++){
-					 * String filename =
-					 * FileNameCreator.getSnapshotFullPath(currentRFID, i); try
-					 * { bmp =
-					 * BitmapFactory.decodeStream(openFileInput(filename)); }
-					 * catch (FileNotFoundException e) { // TODO Auto-generated
-					 * catch block bmp = null; e.printStackTrace(); } switch(i){
-					 * case 0: currentGioco.foto0 = bmp; break; case 1:
-					 * currentGioco.foto1 = bmp; break; case 2:
-					 * currentGioco.foto2 = bmp; break; case 3:
-					 * currentGioco.foto3 = bmp; break; case 4:
-					 * currentGioco.foto4 = bmp; break; } }
-					 */
-
 					mf.showStrutturaData(currentGioco);
-					getStructureFoto(currentRFID);
+					getStructureFoto(currentGioco.id_gioco);
 				} else {
 					mf.showStrutturaData(new Gioco());
 					Toast.makeText(
@@ -485,10 +503,9 @@ public class MainActivity extends BaseActivity {
 		case SOAP_GET_GIOCO_FOTO_REQUEST_CODE:
 			if (returnCode == RESULT_OK) {
 				res = SynchroSoapActivity.getRes();
-				currentGioco.addImmagine(0, res.entrySet());
-
-				mf.showStrutturaData(currentGioco);
+				currentGioco.addImmagine(res.entrySet());
 			}
+			mf.showStrutturaData(currentGioco);
 			break;
 		case FOTO_REQUEST_CODE:
 			try {
@@ -506,42 +523,37 @@ public class MainActivity extends BaseActivity {
 						currentRFID, whichOne);
 				FileOutputStream fos = openFileOutput(filename,
 						Context.MODE_PRIVATE);
-				snapshot.compress(Bitmap.CompressFormat.PNG, 80, fos);
-				fos.close();
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();  
+//				snapshot.compress(Bitmap.CompressFormat.PNG, 80, fos);
+//				fos.close();
+				snapshot.compress(Bitmap.CompressFormat.PNG, 80, stream);
+				byte[] image = stream.toByteArray();
 
 				ImageView mImageView = null;
 				switch (whichOne) {
 				case 0:
 					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_0);
-					currentGioco.foto0 = snapshot;
-					currentGioco.sincronizzato = false;
-					currentGioco.hasDirtyData = true;
+					currentGioco.foto0 = Base64.encodeToString(image, Base64.DEFAULT);
 					break;
 				case 1:
 					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_1);
-					currentGioco.foto1 = snapshot;
-					currentGioco.sincronizzato = false;
-					currentGioco.hasDirtyData = true;
+					currentGioco.foto1 = Base64.encodeToString(image, Base64.DEFAULT);
 					break;
 				case 2:
 					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_2);
-					currentGioco.foto2 = snapshot;
-					currentGioco.sincronizzato = false;
-					currentGioco.hasDirtyData = true;
+					currentGioco.foto2 = Base64.encodeToString(image, Base64.DEFAULT);
 					break;
 				case 3:
 					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_3);
-					currentGioco.foto3 = snapshot;
-					currentGioco.sincronizzato = false;
-					currentGioco.hasDirtyData = true;
+					currentGioco.foto3 = Base64.encodeToString(image, Base64.DEFAULT);
 					break;
 				case 4:
 					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_4);
-					currentGioco.foto4 = snapshot;
-					currentGioco.sincronizzato = false;
-					currentGioco.hasDirtyData = true;
+					currentGioco.foto4 = Base64.encodeToString(image, Base64.DEFAULT);
 					break;
 				}
+				currentGioco.sincronizzato = false;
+				currentGioco.hasDirtyData = true;
 
 				if (snapshot != null && mImageView != null) {
 					snapshots[whichOne] = snapshot;
@@ -673,7 +685,7 @@ public class MainActivity extends BaseActivity {
 
 			case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
 
-				Log.d(TAG, "onGpsStatusChanged Satellite");
+//				Log.d(TAG, "onGpsStatusChanged Satellite");
 				break;
 
 			case GpsStatus.GPS_EVENT_STARTED:
@@ -705,7 +717,23 @@ public class MainActivity extends BaseActivity {
 			showError(errorMessages);
 			currentLat = (float) location.getLatitude();
 			currentLon = (float) location.getLongitude();
+			if(currentGioco != null){
+				currentGioco.gpsx = currentLon;
+				currentGioco.gpsy = currentLat;
+			}
 
+			TextView tgpsx = (TextView) findViewById(R.id.display_gioco_gpsx);
+			TextView tgpsy = (TextView) findViewById(R.id.display_gioco_gpsy);
+			TextView tgpsc = (TextView) findViewById(R.id.display_gioco_gps_confidence);
+			if(tgpsc!=null){
+				tgpsc.setText("Confidence: "+location.getAccuracy()+"mt");
+			}
+			if(tgpsx!=null){
+			tgpsx.setText(""+currentLon);
+			}
+			if(tgpsy!=null){
+			tgpsy.setText(""+currentLat);
+			}
 		}
 
 		@Override

@@ -6,20 +6,24 @@ import it.opencontent.android.ocparchitn.activities.MainActivity;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
-import it.opencontent.android.ocparchitn.utils.DrawableOverlayWriter;
+import it.opencontent.android.ocparchitn.utils.Utils;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView.FindListener;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,8 +78,64 @@ public class MainFragment extends Fragment implements ICustomFragment{
 		saveLocal(MainActivity.getCurrentGioco());
 	}
 	
+	private void updateText(int viewId, String text){
+		TextView t = (TextView) getActivity().findViewById(viewId);
+		if(t != null){
+			t.setText(text);
+		}
+	}
+	
 	public void editMe(View v){
-		Log.d(TAG,"editme nel fragment");		
+		Log.d(TAG,"editme nel fragment");	
+		TextView t = (TextView) v;
+		
+		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+
+		alert.setTitle("Modifica il dato");
+		alert.setMessage("ID");
+
+		// Set an EditText view to get user input
+		final EditText input = new EditText(getActivity());
+		input.setText(t.getText());
+		input.setTag(R.integer.tag_view_id, v.getId());
+		
+		
+		alert.setView(input);
+
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				String value = input.getText().toString();
+				int viewId;
+				try {
+					viewId = Integer.parseInt(input.getTag(R.integer.tag_view_id).toString());
+					updateText(viewId,value);
+					Gioco g = MainActivity.getCurrentGioco();
+					switch(viewId){
+					case R.id.display_gioco_nota:
+						g.note = value;
+						break;
+					case R.id.display_gioco_gpsx:
+						g.gpsx = Float.parseFloat(value);
+						break;
+					case R.id.display_gioco_gpsy:
+						g.gpsy = Float.parseFloat(value);
+						break;
+					}
+					saveLocal(g);
+				} catch (NumberFormatException nfe) {
+
+				}
+			}
+		});
+
+		alert.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+
+					}
+				});
+
+		alert.show();		
 	}
 	public void placeMe(View v){
 		Gioco g = MainActivity.getCurrentGioco();
@@ -91,7 +151,7 @@ public class MainFragment extends Fragment implements ICustomFragment{
 		Iterator<Entry<String,String>> i = map.entrySet().iterator();
 		while(i.hasNext()){
 			Entry<String,String> n = (Entry<String, String>) i.next();
-			errorView.append(n.getValue());
+			errorView.append("\n"+n.getValue());
 		}
 	}
 
@@ -122,8 +182,7 @@ public class MainFragment extends Fragment implements ICustomFragment{
 	public void showStrutturaData(Struttura gioco) {
 		TextView v;
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_id);
-
-
+		v.setText(""+gioco.id_gioco);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_marca);
 		v.setText(gioco.descrizione_marca);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_nota);
@@ -143,85 +202,41 @@ public class MainFragment extends Fragment implements ICustomFragment{
 	
 
 	private void setupSnapshots(Struttura gioco) {
-		Bitmap bmp;
+		int width = 150;
+		int height= 150;
 		ImageView v;
-		String text;
 		for (int i = 0; i < Constants.MAX_SNAPSHOTS_AMOUNT; i++) {
-			text = "Foto "+(i+1);
 			switch(i){
 			case 0:
-				if(gioco == null || gioco.foto0==null){
-					bmp = new DrawableOverlayWriter().writeOnDrawable(
-							getResources(), R.drawable.snapshot_teaser, text)
-							.getBitmap();
-				} else {
-					bmp = new DrawableOverlayWriter().writeOnDrawable(
-							getResources(),
-							gioco.foto0.copy(Bitmap.Config.ARGB_8888, true), text,
-							70, 50).getBitmap();
-				}
 				v = (ImageView) getActivity().findViewById(R.id.snapshot_gioco_0);
-				v.setImageBitmap(bmp);
+				v.setImageBitmap(Utils.decodeSampledBitmapFromResource(Base64.decode(gioco.foto0, Base64.DEFAULT),getResources(),1,width,height));
 				break;
 			case 1:
-				if(gioco == null || gioco.foto1==null){
-					bmp = new DrawableOverlayWriter().writeOnDrawable(
-							getResources(), R.drawable.snapshot_teaser, text)
-							.getBitmap();
-				} else {
-					bmp = new DrawableOverlayWriter().writeOnDrawable(
-							getResources(),
-							gioco.foto1.copy(Bitmap.Config.ARGB_8888, true), text,
-							70, 50).getBitmap();
-				}
 				v = (ImageView) getActivity().findViewById(R.id.snapshot_gioco_1);
-				v.setImageBitmap(bmp);
-				break;
-			case 2:
-				if(gioco == null || gioco.foto2==null){
-					bmp = new DrawableOverlayWriter().writeOnDrawable(
-							getResources(), R.drawable.snapshot_teaser, text)
-							.getBitmap();
-				} else {
-					bmp = new DrawableOverlayWriter().writeOnDrawable(
-							getResources(),
-							gioco.foto2.copy(Bitmap.Config.ARGB_8888, true), text,
-							70, 50).getBitmap();
-				}
-				v = (ImageView) getActivity().findViewById(R.id.snapshot_gioco_2);
-				v.setImageBitmap(bmp);
-				break;
-			case 3:
-				if(gioco == null || gioco.foto3==null){
-					bmp = new DrawableOverlayWriter().writeOnDrawable(
-							getResources(), R.drawable.snapshot_teaser, text)
-							.getBitmap();
-				} else {
-					bmp = new DrawableOverlayWriter().writeOnDrawable(
-							getResources(),
-							gioco.foto3.copy(Bitmap.Config.ARGB_8888, true), text,
-							70, 50).getBitmap();
-				}
-				v = (ImageView) getActivity().findViewById(R.id.snapshot_gioco_3);
-				v.setImageBitmap(bmp);
-				break;
-			case 4:
-				if(gioco == null || gioco.foto4==null){
-					bmp = new DrawableOverlayWriter().writeOnDrawable(
-							getResources(), R.drawable.snapshot_teaser, text)
-							.getBitmap();
-				} else {
-					bmp = new DrawableOverlayWriter().writeOnDrawable(
-							getResources(),
-							gioco.foto4.copy(Bitmap.Config.ARGB_8888, true), text,
-							70, 50).getBitmap();
-				}
-				v = (ImageView) getActivity().findViewById(R.id.snapshot_gioco_4);
-				v.setImageBitmap(bmp);
+				v.setImageBitmap(Utils.decodeSampledBitmapFromResource(Base64.decode(gioco.foto1, Base64.DEFAULT),getResources(),2,width,height));
 				break;
 			
+			case 2:
+				v = (ImageView) getActivity().findViewById(R.id.snapshot_gioco_2);
+				v.setImageBitmap(Utils.decodeSampledBitmapFromResource(Base64.decode(gioco.foto2, Base64.DEFAULT),getResources(),3,width,height));
+				break;
+				
+			case 3:
+				v = (ImageView) getActivity().findViewById(R.id.snapshot_gioco_3);
+				v.setImageBitmap(Utils.decodeSampledBitmapFromResource(Base64.decode(gioco.foto3, Base64.DEFAULT),getResources(),4,width,height));
+				break;
+				
+			case 4:
+				v = (ImageView) getActivity().findViewById(R.id.snapshot_gioco_4);
+				v.setImageBitmap(Utils.decodeSampledBitmapFromResource(Base64.decode(gioco.foto4, Base64.DEFAULT),getResources(),5,width,height));
+				break;
+				
+			
 			}
+			
 		}
 	}
+	
+	
 
 }

@@ -20,11 +20,16 @@ public class Constants {
 	public final static int GPS_METER_THRESHOLD = 0;
 	
 	public final static String STATUS_MESSAGE_SERVER_STATUS = "server_status";
-	public final static String STATUS_MESSAGE_GPS_STATUS = "server_status";
+	public final static String STATUS_MESSAGE_REMOTE_UPDATE_STATUS = "remote_update_status";
+	public final static String STATUS_MESSAGE_GPS_STATUS = "gps_status";
 	public final static String STATUS_MESSAGE_GPS_STATUS_MESSAGE_OK = "GPS OK:";
 	public final static String STATUS_MESSAGE_GPS_STATUS_MESSAGE_INACTIVE = "GPS Spento: attivalo nelle opzioni dell'apparecchio";
 	public final static String STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXING = STATUS_MESSAGE_GPS_STATUS_MESSAGE_OK+" cerco la posizione";
 	public final static String STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXED = STATUS_MESSAGE_GPS_STATUS_MESSAGE_OK+" posizione trovata";
+	
+	public final static int TAG_ID_VIEW_ID = 0;
+	public final static int TAG_ID_NOME_CAMPO = 1;
+	
 	
 	
     public final static String SOAP_ENDPOINT ="https://webapps.comune.trento.it/parcogiochiSrv/";

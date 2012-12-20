@@ -6,6 +6,7 @@ import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.services.IRemoteConnection;
+import it.opencontent.android.ocparchitn.utils.FotoUpdate;
 import it.opencontent.android.ocparchitn.utils.GiocoUpdate;
 import it.opencontent.android.ocparchitn.utils.PlatformChecks;
 import it.opencontent.android.ocparchitn.utils.SoapConnector;
@@ -13,8 +14,6 @@ import it.opencontent.android.ocparchitn.utils.SoapConnector;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -26,14 +25,15 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.DropBoxManager;
+import android.os.Handler;
 import android.provider.Settings;
-import android.provider.Settings.Secure;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 
@@ -42,6 +42,8 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 	private static HashMap<String, Object> requestParameters;
 	private static HashMap<String, Object> res;
 	private static Thread remoteThread;
+
+	private static int queueLength = 0;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -53,6 +55,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		setContentView(R.layout.remote_loading_dialog);
 
 		Intent intent = getIntent();
+		queueLength = 0;
 
 		methodName = (String) intent.getExtras().get(
 				Constants.EXTRAKEY_METHOD_NAME);
@@ -62,74 +65,105 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 			OCParchiDB db = new OCParchiDB(getApplicationContext());
 			LinkedHashMap<String, Struttura> set = db
 					.getStruttureDaSincronizzare();
-			String a = "";
-			if (!set.isEmpty()) {
+			if (!set.isEmpty() && PlatformChecks.siamoOnline(getApplicationContext())) {
 				Iterator<String> keyIterator = set.keySet().iterator();
 				while (keyIterator.hasNext()) {
 					String k = keyIterator.next();
 					Struttura s = set.get(k);
 					if (s.getClass().equals(Gioco.class)) {
 						Gioco g = (Gioco) s;
-						// setGioco
-						// <xs:element minOccurs="0" name="gpsx" nillable="true"
-						// type="xs:string"/>
-						// <xs:element minOccurs="0" name="gpsy" nillable="true"
-						// type="xs:string"/>
-						// <xs:element minOccurs="0" name="id_gioco"
-						// nillable="true" type="xs:string"/>
-						// <xs:element minOccurs="0" name="note" nillable="true"
-						// type="xs:string"/>
-						// <xs:element minOccurs="0" name="rfid" nillable="true"
-						// type="xs:string"/>
-						// <xs:element minOccurs="0" name="tabletDataModifica"
-						// nillable="true" type="xs:date"/>
-						// <xs:element minOccurs="0"
-						// name="tabletDispositivoName" nillable="true"
-						// type="xs:string"/>
-						// <xs:element minOccurs="0" name="tabletTimeModifica"
-						// nillable="true" type="xs:string"/>
-						// <xs:element minOccurs="0" name="tabletUserName"
-						// nillable="true" type="xs:string"/>
 
-						
 						HashMap<String, Object> map = new HashMap<String, Object>();
-						GiocoUpdate  gu = new GiocoUpdate();
-						gu.id_gioco = "9";
+						GiocoUpdate gu = new GiocoUpdate();
+						gu.id_gioco = "" + g.id_gioco;
 						if (g.rfid > 0) {
-							gu.rfid = ""+g.rfid;
+							gu.rfid = "" + g.rfid;
 						}
-						gu.gpsx = "33.3";
-						gu.gpsy ="44.4";
-						gu.tabletUserName = "Qualcun altro";
-						 
+						gu.gpsx = "" + g.gpsx;
+						gu.gpsy = "" + g.gpsy;
+						gu.tabletUserName = "Utente Tablet";
+
 						// map.put("tabletDataModifica",);
-						String uuid = Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
-						Log.d(TAG,"Questo uuid: "+uuid);
-						String newuuid = "nomd5";
-						try {
-							gu.note	= URLEncoder.encode("Nota di test per verificare lunghezza del campo e encoding: èòàùùì ßðđŋħ üäëö ¹²³¼½ ¡⅜⅝⅞™ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mattis elit enim. Ut accumsan nulla nec dui vestibulum gravida. Integer quis libero elit, eu sagittis ante. Integer molestie blandit lacus quis consequat. Aliquam odio sem, ultricies ut iaculis eget, porttitor sed justo. Mauris cursus velit in dolor molestie sed semper odio faucibus. Pellentesque erat risus, ultricies at ullamcorper at, lobortis eu leo. Duis imperdiet pharetra turpis quis eleifend. Vivamus turpis ligula, posuere elementum bibendum quis, facilisis sed elit. Fusce a erat vitae turpis lobortis ullamcorper ac vitae ante. Nulla scelerisque, ipsum ut feugiat porttitor, risus sem convallis ligula, non cursus enim augue in nisi. In hac habitasse platea dictumst. Vestibulum sit amet nulla elit, ac tristique nunc. Fusce sem odio, pellentesque non interdum sit amet, molestie eget lectus. Nulla turpis arcu, volutpat non egestas non, vulputate quis eros. Fusce eget urna metus.","UTF-8");
-							gu.tabletDispositivoName = Base64.encodeToString(MessageDigest.getInstance("MD5").digest(uuid.getBytes()),Base64.NO_WRAP);
-						} catch (NoSuchAlgorithmException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}catch (UnsupportedEncodingException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-							gu.note = e1.getMessage();
-						}
-						//map.put("tabletDispositivoName",newuuid);
+						// String uuid =
+						// Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
+						String uuid = "Android tablet n° 1234567890";
+						gu.tabletDispositivoName = uuid;
+						gu.note = g.note;
+
+						// map.put("tabletDispositivoName",newuuid);
 						// map.put("tabletTimeModifica",);
-						//map.put("tabletUserName", "Utente Di Test");
+						// map.put("tabletUserName", "Utente Di Test");
 
-
-						map.put("Giocoupdate",gu);
+						map.put("Giocoupdate", gu);
 						returnResponse("setGioco", map, false);
 
+						// cicliamo le foto eventuali
+
+						if (g.foto0 != null && !g.foto0.equals("")) {
+							FotoUpdate fu = new FotoUpdate();
+							fu.idGioco = "" + g.id_gioco;
+							fu.sovrascrittura = true;
+							fu.estensioneImmagine = "jpg";
+							fu.immagine = g.foto0;
+							fu.nomeImmagine = "gioco_" + g.id_gioco + "_foto_0";
+							map = new HashMap<String, Object>();
+							map.put("Fotoupdate", fu);
+							returnResponse("setFoto", map, false);
+						}
+						if (g.foto1 != null && !g.foto1.equals("")) {
+							FotoUpdate fu = new FotoUpdate();
+							fu.idGioco = "" + g.id_gioco;
+							fu.sovrascrittura = true;
+							fu.estensioneImmagine = "jpg";
+							fu.immagine = g.foto1;
+							fu.nomeImmagine = "gioco_" + g.id_gioco + "_foto_1";
+							map = new HashMap<String, Object>();
+							map.put("Fotoupdate", fu);
+							returnResponse("setFoto", map, false);
+						}
+						if (g.foto2 != null && !g.foto2.equals("")) {
+							FotoUpdate fu = new FotoUpdate();
+							fu.idGioco = "" + g.id_gioco;
+							fu.sovrascrittura = true;
+							fu.estensioneImmagine = "jpg";
+							fu.immagine = g.foto2;
+							fu.nomeImmagine = "gioco_" + g.id_gioco + "_foto_2";
+							map = new HashMap<String, Object>();
+							map.put("Fotoupdate", fu);
+							returnResponse("setFoto", map, false);
+						}
+						if (g.foto3 != null && !g.foto3.equals("")) {
+							FotoUpdate fu = new FotoUpdate();
+							fu.idGioco = "" + g.id_gioco;
+							fu.sovrascrittura = true;
+							fu.estensioneImmagine = "jpg";
+							fu.immagine = g.foto3;
+							fu.nomeImmagine = "gioco_" + g.id_gioco + "_foto_3";
+							map = new HashMap<String, Object>();
+							map.put("Fotoupdate", fu);
+							returnResponse("setFoto", map, false);
+						}
+						if (g.foto4 != null && !g.foto4.equals("")) {
+							FotoUpdate fu = new FotoUpdate();
+							fu.idGioco = "" + g.id_gioco;
+							fu.sovrascrittura = true;
+							fu.estensioneImmagine = "jpg";
+							fu.immagine = g.foto4;
+							fu.nomeImmagine = "gioco_" + g.id_gioco + "_foto_4";
+							map = new HashMap<String, Object>();
+							map.put("Fotoupdate", fu);
+							returnResponse("setFoto", map, false);
+						}
+
+						db.marcaStrutturaSincronizzata(g);
 					}
 				}
+			} else {
+				setResult(RESULT_OK,getIntent());
+				finish();
 			}
-
-			finish();
+			// Messo nel thread e comandato dalla queuelength
+			// finish();
 		} else {
 			returnResponse(methodName, requestParameters, true);
 		}
@@ -154,14 +188,28 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		}
 	}
 
+	public final void updateCounter(int amount) {
+		TextView counterView = (TextView) findViewById(R.id.remote_loading_dialog_counter);
+		if (counterView != null) {
+			counterView.setText(" Elementi in coda : " + queueLength);
+		}
+	}
+
 	@Override
 	public void returnResponse(String method, HashMap<String, Object> data,
 			boolean f) {
 		methodName = method;
 		final boolean finish = f;
+		final Handler h = new Handler();
+
 		if (data == null) {
 			data = new HashMap<String, Object>();
 		}
+
+		if (!finish) {
+			queueLength++;
+		}
+		updateCounter(queueLength);
 
 		final PropertyInfo[] properties = new PropertyInfo[data.entrySet()
 				.size()];
@@ -183,22 +231,33 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				public void run() {
 					SoapConnector sc = new SoapConnector();
 					try {
-						res = sc.soap(methodName,
-								Constants.SOAP_ENDPOINT,
-								Constants.SOAP_NAMESPACE,
-								Constants.SOAP_URL, properties);
-						if (finish) {
+						res = sc.soap(methodName, Constants.SOAP_ENDPOINT,
+								Constants.SOAP_NAMESPACE, Constants.SOAP_URL,
+								properties);
+						if (!finish) {
+							queueLength--;
+						}
+						h.post(new Runnable() {
+							public void run() {
+								updateCounter(queueLength);
+							}
+						});
+						// updateCounter(queueLength);
+						if (finish || queueLength <= 0) {
 							setResult(RESULT_OK, getIntent());
 							finish();
 						}
 					} catch (IOException e) {
+						queueLength--;
 						e.printStackTrace();
 					} catch (XmlPullParserException e) {
+						queueLength--;
 						e.printStackTrace();
 					} catch (Exception e) {
+						queueLength--;
 						e.printStackTrace();
 					} finally {
-						if (finish) {
+						if (finish || queueLength <= 0) {
 							setResult(RESULT_CANCELED, getIntent());
 							finish();
 						}

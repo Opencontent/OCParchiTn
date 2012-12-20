@@ -32,10 +32,10 @@
         android:layout_weight="5" >
 
         <LinearLayout
-            android:baselineAligned="false"
             android:id="@+id/wrapper_dati_e_istruzioni"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:baselineAligned="false"
             android:orientation="horizontal" >
 
             <LinearLayout
@@ -129,7 +129,6 @@
                         android:id="@+id/display_gioco_seriale"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="editMe"
                         android:tag="gioco_seriale"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
                 </LinearLayout>
@@ -148,6 +147,8 @@
                         android:id="@+id/display_gioco_gpsx"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="editMe"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
                 </LinearLayout>
 
@@ -165,8 +166,18 @@
                         android:id="@+id/display_gioco_gpsy"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="editMe"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/display_gioco_gps_confidence"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:text="Cofidence: nd"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -182,8 +193,10 @@
                         android:id="@+id/display_gioco_nota"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:minHeight="150dp"
+                        android:minWidth="150dp"
                         android:onClick="editMe"
-                        android:tag="gioco_nota"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
                 </LinearLayout>
             </LinearLayout>
@@ -200,13 +213,13 @@
                     android:id="@+id/display_gioco_istruzioni"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="pippo" />
+                    android:text="@string/istruzioni_main_fragment" />
 
                 <TextView
                     android:id="@+id/display_gioco_warning"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="warning"
+                    android:text=""
                     android:textColor="@color/warning" />
             </LinearLayout>
         </LinearLayout>

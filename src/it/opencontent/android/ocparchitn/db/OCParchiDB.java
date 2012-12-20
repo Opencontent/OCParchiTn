@@ -1,5 +1,7 @@
 package it.opencontent.android.ocparchitn.db;
 
+import it.opencontent.android.ocparchitn.activities.MainActivity;
+import it.opencontent.android.ocparchitn.app.MainApp;
 import it.opencontent.android.ocparchitn.db.entities.Area;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
@@ -19,6 +21,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQuery;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
@@ -28,11 +31,13 @@ public class OCParchiDB {
 	private static final int DATABASE_VERSION = 1;
 	private static final String DATABASE_NAME = "parchitn";
 	private final OCParchiOpenHelper mDatabaseOpenHelper;
+	private Context context;
 
 	private static final HashMap<String, Struttura> mSchemaMap = buildSchemaMap();
 
 	public OCParchiDB(Context context) {
 		mDatabaseOpenHelper = new OCParchiOpenHelper(context);
+		this.context = context;
 		// mDatabaseOpenHelper.getWritableDatabase();
 		// context.deleteDatabase(DATABASE_NAME);
 	}
@@ -216,17 +221,35 @@ public class OCParchiDB {
 		cv.put("gpsx", gioco.gpsx);
 		cv.put("gpsy", gioco.gpsy);
 		cv.put("note", gioco.note);
+		cv.put("foto0",gioco.foto0);
+		cv.put("foto1",gioco.foto1);
+		cv.put("foto2",gioco.foto2);
+		cv.put("foto3",gioco.foto3);
+		cv.put("foto4",gioco.foto4);
 
 		long id = -1;
 		try {
-			id = mDatabaseOpenHelper.getWritableDatabase().insert(
-					StruttureEnum.GIOCHI.tipo, null, cv);
+			id = mDatabaseOpenHelper.getWritableDatabase().insertWithOnConflict(
+					StruttureEnum.GIOCHI.tipo, null, cv,SQLiteDatabase.CONFLICT_REPLACE);
 		} catch (SQLiteConstraintException e) {
 			Log.e(TAG, e.getMessage());
 			id = -2;
 		}
 		return id;
 	}
+	
+	public void marcaStrutturaSincronizzata(Gioco gioco){
+		ContentValues cv = new ContentValues();
+
+		cv.put(" sincronizzato ", true);
+				
+		try{
+			int res = mDatabaseOpenHelper.getWritableDatabase().update(StruttureEnum.GIOCHI.tipo, cv, "id_gioco = ?", new String[]{""+gioco.id_gioco});
+			Log.d(TAG,"Aggiornate "+res+" righe");
+		}catch(SQLiteConstraintException e){
+			Log.e(TAG, e.getMessage());
+		}
+	}	
 
 	/**
 	 * Returns a Cursor over all words that match the given query
@@ -262,8 +285,10 @@ public class OCParchiDB {
 		}
 		return result;
 	}
+	
 
-	public LinkedHashMap getStruttureDaSincronizzare() {
+
+	public LinkedHashMap<String,Struttura> getStruttureDaSincronizzare() {
 		LinkedHashMap<String, Struttura> res = new LinkedHashMap<String, Struttura>();
 
 		Iterator<Entry<String, Struttura>> strutture = mSchemaMap.entrySet()
@@ -293,13 +318,19 @@ public class OCParchiDB {
 					} else {
 						s = new Area();
 					}
+					
 					s.gpsx = Float.parseFloat(c.getString(c
 							.getColumnIndex("gpsx")));
 					s.gpsy = Float.parseFloat(c.getString(c
 							.getColumnIndex("gpsy")));
 					s.note = c.getString(c.getColumnIndex("note"));
 					s.id_gioco = c.getInt(c.getColumnIndex("id_gioco"));
-					s.rfid = c.getInt(c.getColumnIndex("id_gioco"));
+					s.rfid = c.getInt(c.getColumnIndex("rfid"));
+					s.foto0 = c.getString(c.getColumnIndex("foto0"));
+					s.foto1 = c.getString(c.getColumnIndex("foto1"));
+					s.foto2 = c.getString(c.getColumnIndex("foto2"));
+					s.foto3 = c.getString(c.getColumnIndex("foto3"));
+					s.foto4 = c.getString(c.getColumnIndex("foto4"));
 					res.put(tableName + "_" + s.id_gioco, s);
 
 				} while (c.moveToNext());

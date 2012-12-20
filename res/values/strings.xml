@@ -47,7 +47,7 @@
 	<string name="pulsante_salva_modifiche_gioco_testo">Salva le modifiche</string>
 	<string name="pulsante_sincronizza_modifiche_gioco_testo">Sincronizza le modifiche</string>
 	
-	
+	<string name="istruzioni_main_fragment">Per effettuare l\'abbinamento parti dal pulsante "Parti da un ID", inserisci l\'id del gioco cui vuoi associare un RFID e poi inserisci i dati che vuoi modificare e scansiona l\'RFID. Quando avrai scansionato l\'RFID ti sarà chiesto se vuoi associare quell\'RFID al gioco che stai visualizzando. Puoi accettare o rifiutare.\nSe il gioco ha già un RFID associato la cosa ti viene detta e puoi accettare o rifiutare la modifica\n Puoi cambiare l\'RFID quante volte vuoi finché non salvi e invii i dati sul server.\nUna volta inviati i dati sul server non potrai più modificare l\'RFID del gioco.</string>
 	
 	<!--  filtering dell'intent -->
 	<string name="schema_struttura">parchi</string>

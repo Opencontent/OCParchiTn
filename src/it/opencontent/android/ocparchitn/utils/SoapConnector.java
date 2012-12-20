@@ -1,7 +1,5 @@
 package it.opencontent.android.ocparchitn.utils;
 
-import it.opencontent.android.ocparchitn.Constants;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +7,7 @@ import java.util.List;
 
 import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.MarshalBase64;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
@@ -43,9 +42,23 @@ public class SoapConnector {
 										// envelope
 		envelope.setOutputSoapObject(request); // prepare request
 
+		
+		//new MarshalDouble().register(envelope);
+       	new MarshalBase64().register(envelope);   //serialization
+       	envelope.encodingStyle = SoapEnvelope.ENC;
+       	
+       envelope.bodyOut = request;
+       envelope.dotNet = true; 
+       envelope.setOutputSoapObject(request);
+       envelope.setAddAdornments(false);
+       envelope.implicitTypes= true;
+		
 
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Giocoupdate", GiocoUpdate.class);
-		
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotoupdate", FotoUpdate.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotografia", Fotografia.class);
+		//envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotoupdate", GiocoUpdate.class);
+
 		HttpTransportSE httpTransport = new HttpTransportSE(URL);
 
 		StringBuffer auth = new StringBuffer(USERNAME);
@@ -65,28 +78,37 @@ public class SoapConnector {
 		try {
 			httpTransport.call(SOAP_ACTION, envelope, headers); // send request
 			result = (SoapObject) envelope.getResponse(); // get response
-			if (result != null) {
-				int props = result.getPropertyCount();
-				Log.d(TAG, " risultano " + props + " proprietà");
+//			result = (SoapObject) envelope.bodyIn; // get response
 
-				for (int i = 0; i < props; i++) {
-
-					PropertyInfo pi = new PropertyInfo();
-					result.getPropertyInfo(i, pi);
-					map.put(pi.name, pi.getValue());
-
-				}
-			} else {
-				Log.d(TAG, envelope.bodyOut.toString());
-			}
 
 		} catch (Exception e) {
+			result=(SoapObject) envelope.bodyIn;
 			Log.e(TAG, "SOAP ERROR:");
 			e.printStackTrace();
 			map.put("dump", httpTransport.responseDump);
 			
 		}
+		if (result != null) {
+			int props = result.getPropertyCount();
+			Log.d(TAG, " risultano " + props + " proprietà");
+
+			for (int i = 0; i < props; i++) {
+
+				PropertyInfo pi = new PropertyInfo();
+				result.getPropertyInfo(i, pi);
+				String key =pi.name;
+				if(pi.name.equals("return")){
+					key = ""+i;
+				}
+				map.put(key, pi.getValue());
+
+			}
+		} else {
+			Log.d(TAG, envelope.bodyOut.toString());
+		}		
+		
 		Log.d(TAG,httpTransport.requestDump);
+		Log.d(TAG,httpTransport.responseDump);
  		return map;
 	}
 
