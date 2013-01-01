@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://gioco.parcogiochi" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax23="http://gioco.parcogiochi/xsd" xmlns:ax21="http://db.comune.trento.it/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://gioco.parcogiochi">
+    <wsdl:documentation>
+		Please Type your service description here
+	</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://db.comune.trento.it/xsd">
+            <xs:complexType name="DBException">
+                <xs:sequence/>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:ax24="http://gioco.parcogiochi/xsd" xmlns:ax22="http://db.comune.trento.it/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://gioco.parcogiochi">
+            <xs:import namespace="http://db.comune.trento.it/xsd"/>
+            <xs:import namespace="http://gioco.parcogiochi/xsd"/>
+            <xs:element name="SrvGiocoDBException">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="DBException" nillable="true" type="ax21:DBException"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="setGioco">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="args0" nillable="true" type="ax23:Giocoupdate"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="setGiocoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax23:EsitoSet"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="setFoto">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="args0" nillable="true" type="ax23:Fotoupdate"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="setFotoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax23:EsitoSet"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getInfo">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getInfoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax23:Info"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getGioco_id">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="args0" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getGioco_idResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Gioco"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getGioco">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="args0" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getGiocoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Gioco"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getFoto">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="args0" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getFotoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Fotografia"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getArea">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="args0" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAreaResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Area"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://gioco.parcogiochi/xsd">
+            <xs:complexType name="Giocoupdate">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="gpsx" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="gpsy" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="id_gioco" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="note" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="rfid" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="tabletDataModifica" nillable="true" type="xs:date"/>
+                    <xs:element minOccurs="0" name="tabletDispositivoName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="tabletTimeModifica" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="tabletUserName" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="EsitoSet">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="codice" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="messaggio" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="successo" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Fotoupdate">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="estensioneImmagine" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="idGioco" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="immagine" nillable="true" type="xs:base64Binary"/>
+                    <xs:element minOccurs="0" name="nomeImmagine" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="sovrascrittura" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Info">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="descrizione" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="note" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="sviluppatore" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="versione" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Gioco">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="descrizione_area" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="descrizione_gioco" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="descrizione_marca" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="dt_acquisto" nillable="true" type="xs:date"/>
+                    <xs:element minOccurs="0" name="dt_installazione" nillable="true" type="xs:date"/>
+                    <xs:element minOccurs="0" name="dt_posizionamento_al" nillable="true" type="xs:date"/>
+                    <xs:element minOccurs="0" name="dt_posizionamento_dal" nillable="true" type="xs:date"/>
+                    <xs:element minOccurs="0" name="dt_prossimointervento" nillable="true" type="xs:date"/>
+                    <xs:element minOccurs="0" name="gpsx" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="gpsy" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="id_gioco" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="id_modello" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="id_tipogioco" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="note" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="numero_fotografie" type="xs:int"/>
+                    <xs:element minOccurs="0" name="numeroserie" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="posizione_rfid" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="rfid" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="rfid_area" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Fotografia">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="descrizioneImmagine" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="estensioneImmagine" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="immagine" nillable="true" type="xs:base64Binary"/>
+                    <xs:element minOccurs="0" name="nomeImmagine" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Area">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="id_parco" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="note" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="rfid" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="spessore" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="superficie" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="tipo_pavimentazione" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="getAreaRequest">
+        <wsdl:part name="parameters" element="ns:getArea"/>
+    </wsdl:message>
+    <wsdl:message name="getAreaResponse">
+        <wsdl:part name="parameters" element="ns:getAreaResponse"/>
+    </wsdl:message>
+    <wsdl:message name="SrvGiocoDBException">
+        <wsdl:part name="parameters" element="ns:SrvGiocoDBException"/>
+    </wsdl:message>
+    <wsdl:message name="getGiocoRequest">
+        <wsdl:part name="parameters" element="ns:getGioco"/>
+    </wsdl:message>
+    <wsdl:message name="getGiocoResponse">
+        <wsdl:part name="parameters" element="ns:getGiocoResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getGioco_idRequest">
+        <wsdl:part name="parameters" element="ns:getGioco_id"/>
+    </wsdl:message>
+    <wsdl:message name="getGioco_idResponse">
+        <wsdl:part name="parameters" element="ns:getGioco_idResponse"/>
+    </wsdl:message>
+    <wsdl:message name="setGiocoRequest">
+        <wsdl:part name="parameters" element="ns:setGioco"/>
+    </wsdl:message>
+    <wsdl:message name="setGiocoResponse">
+        <wsdl:part name="parameters" element="ns:setGiocoResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getFotoRequest">
+        <wsdl:part name="parameters" element="ns:getFoto"/>
+    </wsdl:message>
+    <wsdl:message name="getFotoResponse">
+        <wsdl:part name="parameters" element="ns:getFotoResponse"/>
+    </wsdl:message>
+    <wsdl:message name="setFotoRequest">
+        <wsdl:part name="parameters" element="ns:setFoto"/>
+    </wsdl:message>
+    <wsdl:message name="setFotoResponse">
+        <wsdl:part name="parameters" element="ns:setFotoResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getInfoRequest">
+        <wsdl:part name="parameters" element="ns:getInfo"/>
+    </wsdl:message>
+    <wsdl:message name="getInfoResponse">
+        <wsdl:part name="parameters" element="ns:getInfoResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="SrvGiocoPortType">
+        <wsdl:operation name="getArea">
+            <wsdl:input message="ns:getAreaRequest" wsaw:Action="urn:getArea"/>
+            <wsdl:output message="ns:getAreaResponse" wsaw:Action="urn:getAreaResponse"/>
+            <wsdl:fault message="ns:SrvGiocoDBException" name="SrvGiocoDBException" wsaw:Action="urn:getAreaSrvGiocoDBException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getGioco">
+            <wsdl:input message="ns:getGiocoRequest" wsaw:Action="urn:getGioco"/>
+            <wsdl:output message="ns:getGiocoResponse" wsaw:Action="urn:getGiocoResponse"/>
+            <wsdl:fault message="ns:SrvGiocoDBException" name="SrvGiocoDBException" wsaw:Action="urn:getGiocoSrvGiocoDBException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getGioco_id">
+            <wsdl:input message="ns:getGioco_idRequest" wsaw:Action="urn:getGioco_id"/>
+            <wsdl:output message="ns:getGioco_idResponse" wsaw:Action="urn:getGioco_idResponse"/>
+            <wsdl:fault message="ns:SrvGiocoDBException" name="SrvGiocoDBException" wsaw:Action="urn:getGioco_idSrvGiocoDBException"/>
+        </wsdl:operation>
+        <wsdl:operation name="setGioco">
+            <wsdl:input message="ns:setGiocoRequest" wsaw:Action="urn:setGioco"/>
+            <wsdl:output message="ns:setGiocoResponse" wsaw:Action="urn:setGiocoResponse"/>
+            <wsdl:fault message="ns:SrvGiocoDBException" name="SrvGiocoDBException" wsaw:Action="urn:setGiocoSrvGiocoDBException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getFoto">
+            <wsdl:input message="ns:getFotoRequest" wsaw:Action="urn:getFoto"/>
+            <wsdl:output message="ns:getFotoResponse" wsaw:Action="urn:getFotoResponse"/>
+            <wsdl:fault message="ns:SrvGiocoDBException" name="SrvGiocoDBException" wsaw:Action="urn:getFotoSrvGiocoDBException"/>
+        </wsdl:operation>
+        <wsdl:operation name="setFoto">
+            <wsdl:input message="ns:setFotoRequest" wsaw:Action="urn:setFoto"/>
+            <wsdl:output message="ns:setFotoResponse" wsaw:Action="urn:setFotoResponse"/>
+            <wsdl:fault message="ns:SrvGiocoDBException" name="SrvGiocoDBException" wsaw:Action="urn:setFotoSrvGiocoDBException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getInfo">
+            <wsdl:input message="ns:getInfoRequest" wsaw:Action="urn:getInfo"/>
+            <wsdl:output message="ns:getInfoResponse" wsaw:Action="urn:getInfoResponse"/>
+            <wsdl:fault message="ns:SrvGiocoDBException" name="SrvGiocoDBException" wsaw:Action="urn:getInfoSrvGiocoDBException"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="SrvGiocoSoap11Binding" type="ns:SrvGiocoPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getArea">
+            <soap:operation soapAction="urn:getArea" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="SrvGiocoDBException">
+                <soap:fault use="literal" name="SrvGiocoDBException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getGioco">
+            <soap:operation soapAction="urn:getGioco" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="SrvGiocoDBException">
+                <soap:fault use="literal" name="SrvGiocoDBException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getGioco_id">
+            <soap:operation soapAction="urn:getGioco_id" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="SrvGiocoDBException">
+                <soap:fault use="literal" name="SrvGiocoDBException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="setGioco">
+            <soap:operation soapAction="urn:setGioco" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="SrvGiocoDBException">
+                <soap:fault use="literal" name="SrvGiocoDBException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getFoto">
+            <soap:operation soapAction="urn:getFoto" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="SrvGiocoDBException">
+                <soap:fault use="literal" name="SrvGiocoDBException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="setFoto">
+            <soap:operation soapAction="urn:setFoto" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="SrvGiocoDBException">
+                <soap:fault use="literal" name="SrvGiocoDBException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getInfo">
+            <soap:operation soapAction="urn:getInfo" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="SrvGiocoDBException">
+                <soap:fault use="literal" name="SrvGiocoDBException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="SrvGiocoSoap12Binding" type="ns:SrvGiocoPortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getArea">
+            <soap12:operation soapAction="urn:getArea" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="SrvGiocoDBException">
+                <soap12:fault use="literal" name="SrvGiocoDBException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getGioco">
+            <soap12:operation soapAction="urn:getGioco" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="SrvGiocoDBException">
+                <soap12:fault use="literal" name="SrvGiocoDBException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getGioco_id">
+            <soap12:operation soapAction="urn:getGioco_id" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="SrvGiocoDBException">
+                <soap12:fault use="literal" name="SrvGiocoDBException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="setGioco">
+            <soap12:operation soapAction="urn:setGioco" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="SrvGiocoDBException">
+                <soap12:fault use="literal" name="SrvGiocoDBException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getFoto">
+            <soap12:operation soapAction="urn:getFoto" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="SrvGiocoDBException">
+                <soap12:fault use="literal" name="SrvGiocoDBException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="setFoto">
+            <soap12:operation soapAction="urn:setFoto" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="SrvGiocoDBException">
+                <soap12:fault use="literal" name="SrvGiocoDBException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getInfo">
+            <soap12:operation soapAction="urn:getInfo" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="SrvGiocoDBException">
+                <soap12:fault use="literal" name="SrvGiocoDBException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="SrvGiocoHttpBinding" type="ns:SrvGiocoPortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="getArea">
+            <http:operation location="getArea"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getGioco">
+            <http:operation location="getGioco"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getGioco_id">
+            <http:operation location="getGioco_id"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="setGioco">
+            <http:operation location="setGioco"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getFoto">
+            <http:operation location="getFoto"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="setFoto">
+            <http:operation location="setFoto"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getInfo">
+            <http:operation location="getInfo"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="SrvGioco">
+        <wsdl:port name="SrvGiocoHttpsSoap11Endpoint" binding="ns:SrvGiocoSoap11Binding">
+            <soap:address location="https://webapps.comune.trento.it/parcogiochiSrv/services/SrvGioco.SrvGiocoHttpsSoap11Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="SrvGiocoHttpSoap11Endpoint" binding="ns:SrvGiocoSoap11Binding">
+            <soap:address location=""/>
+        </wsdl:port>
+        <wsdl:port name="SrvGiocoHttpSoap12Endpoint" binding="ns:SrvGiocoSoap12Binding">
+            <soap12:address location=""/>
+        </wsdl:port>
+        <wsdl:port name="SrvGiocoHttpsSoap12Endpoint" binding="ns:SrvGiocoSoap12Binding">
+            <soap12:address location="https://webapps.comune.trento.it/parcogiochiSrv/services/SrvGioco.SrvGiocoHttpsSoap12Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="SrvGiocoHttpsEndpoint" binding="ns:SrvGiocoHttpBinding">
+            <http:address location="https://webapps.comune.trento.it/parcogiochiSrv/services/SrvGioco.SrvGiocoHttpsEndpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="SrvGiocoHttpEndpoint" binding="ns:SrvGiocoHttpBinding">
+            <http:address location=""/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -1,5 +1,9 @@
 package it.opencontent.android.ocparchitn.utils;
 
+import it.opencontent.android.ocparchitn.SOAPMappings.FotoUpdate;
+import it.opencontent.android.ocparchitn.SOAPMappings.Fotografia;
+import it.opencontent.android.ocparchitn.SOAPMappings.GiocoUpdate;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,8 +61,7 @@ public class SoapConnector {
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Giocoupdate", GiocoUpdate.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotoupdate", FotoUpdate.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotografia", Fotografia.class);
-		//envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotoupdate", GiocoUpdate.class);
-
+		
 		HttpTransportSE httpTransport = new HttpTransportSE(URL);
 
 		StringBuffer auth = new StringBuffer(USERNAME);

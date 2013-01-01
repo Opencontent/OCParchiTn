@@ -1,4 +1,4 @@
-package it.opencontent.android.ocparchitn.utils;
+package it.opencontent.android.ocparchitn.SOAPMappings;
 
 import java.util.Hashtable;
 
@@ -47,7 +47,7 @@ public class FotoUpdate implements KvmSerializable {
 	}
 
 	@Override
-	public void getPropertyInfo(int arg0, Hashtable arg1, PropertyInfo info) {
+	public void getPropertyInfo(int arg0, @SuppressWarnings("rawtypes") Hashtable arg1, PropertyInfo info) {
 		info.type= PropertyInfo.STRING_CLASS;
         switch(arg0)
         {

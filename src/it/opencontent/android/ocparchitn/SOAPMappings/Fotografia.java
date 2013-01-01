@@ -1,4 +1,4 @@
-package it.opencontent.android.ocparchitn.utils;
+package it.opencontent.android.ocparchitn.SOAPMappings;
 
 import java.util.Hashtable;
 

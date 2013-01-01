@@ -1,6 +1,6 @@
 package it.opencontent.android.ocparchitn.db.entities;
 
-import it.opencontent.android.ocparchitn.utils.Fotografia;
+import it.opencontent.android.ocparchitn.SOAPMappings.Fotografia;
 
 import java.util.Iterator;
 import java.util.Map.Entry;

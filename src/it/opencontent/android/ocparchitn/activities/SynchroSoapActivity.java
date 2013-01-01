@@ -2,12 +2,12 @@ package it.opencontent.android.ocparchitn.activities;
 
 import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
+import it.opencontent.android.ocparchitn.SOAPMappings.FotoUpdate;
+import it.opencontent.android.ocparchitn.SOAPMappings.GiocoUpdate;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.services.IRemoteConnection;
-import it.opencontent.android.ocparchitn.utils.FotoUpdate;
-import it.opencontent.android.ocparchitn.utils.GiocoUpdate;
 import it.opencontent.android.ocparchitn.utils.PlatformChecks;
 import it.opencontent.android.ocparchitn.utils.SoapConnector;
 

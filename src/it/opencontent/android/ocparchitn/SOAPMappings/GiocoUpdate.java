@@ -1,4 +1,4 @@
-package it.opencontent.android.ocparchitn.utils;
+package it.opencontent.android.ocparchitn.SOAPMappings;
 
 import java.util.Hashtable;
 
@@ -25,18 +25,7 @@ public class GiocoUpdate implements KvmSerializable {
 		tabletUserName = "Qualcuno";
 		
 	}
-	/**
-	 * <xs:element minOccurs="0" name="gpsx" nillable="true" type="xs:string"/>
-<xs:element minOccurs="0" name="gpsy" nillable="true" type="xs:string"/>
-<xs:element minOccurs="0" name="id_gioco" nillable="true" type="xs:string"/>
-<xs:element minOccurs="0" name="note" nillable="true" type="xs:string"/>
-<xs:element minOccurs="0" name="rfid" nillable="true" type="xs:string"/>
-<xs:element minOccurs="0" name="tabletDataModifica" nillable="true" type="xs:date"/>
-<xs:element minOccurs="0" name="tabletDispositivoName" nillable="true" type="xs:string"/>
-<xs:element minOccurs="0" name="tabletTimeModifica" nillable="true" type="xs:string"/>
-<xs:element minOccurs="0" name="tabletUserName" nillable="true" type="xs:string"/>
 
-	 */
 	@Override
 	public Object getProperty(int arg0) {
 		// TODO Auto-generated method stub
@@ -70,7 +59,7 @@ public class GiocoUpdate implements KvmSerializable {
 	}
 
 	@Override
-	public void getPropertyInfo(int arg0, Hashtable arg1, PropertyInfo info) {
+	public void getPropertyInfo(int arg0, @SuppressWarnings("rawtypes") Hashtable arg1, PropertyInfo info) {
 		info.type= PropertyInfo.STRING_CLASS;
         switch(arg0)
         {
