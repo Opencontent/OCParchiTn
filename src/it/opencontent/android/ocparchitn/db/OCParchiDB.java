@@ -1,7 +1,5 @@
 package it.opencontent.android.ocparchitn.db;
 
-import it.opencontent.android.ocparchitn.activities.MainActivity;
-import it.opencontent.android.ocparchitn.app.MainApp;
 import it.opencontent.android.ocparchitn.db.entities.Area;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
@@ -21,7 +19,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQuery;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
@@ -31,6 +28,7 @@ public class OCParchiDB {
 	private static final int DATABASE_VERSION = 1;
 	private static final String DATABASE_NAME = "parchitn";
 	private final OCParchiOpenHelper mDatabaseOpenHelper;
+	@SuppressWarnings("unused")
 	private Context context;
 
 	private static final HashMap<String, Struttura> mSchemaMap = buildSchemaMap();
@@ -38,8 +36,8 @@ public class OCParchiDB {
 	public OCParchiDB(Context context) {
 		mDatabaseOpenHelper = new OCParchiOpenHelper(context);
 		this.context = context;
-		// mDatabaseOpenHelper.getWritableDatabase();
-		// context.deleteDatabase(DATABASE_NAME);
+//		 mDatabaseOpenHelper.getWritableDatabase();
+//		 context.deleteDatabase(DATABASE_NAME);
 	}
 
 	private static HashMap<String, Struttura> buildSchemaMap() {

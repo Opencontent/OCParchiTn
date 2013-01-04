@@ -1,16 +1,24 @@
 package it.opencontent.android.ocparchitn.utils;
 
-import it.opencontent.android.ocparchitn.SOAPMappings.FotoUpdate;
-import it.opencontent.android.ocparchitn.SOAPMappings.Fotografia;
-import it.opencontent.android.ocparchitn.SOAPMappings.GiocoUpdate;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotoUpdate;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotografia;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGioco;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGiocoUpdate;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPArea;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPEsitoSet;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPInfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
+import org.kobjects.base64.Base64;
 import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
+import org.ksoap2.SoapFault;
+import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.MarshalBase64;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
@@ -25,14 +33,19 @@ public class SoapConnector {
 	private static final String USERNAME = "PG_CED";
 	private static final String PASSWORD = "euforia";
 	private static final String TAG = SoapConnector.class.getSimpleName();
+	
+	private HashMap<String,Object> map =null; 
+	private Object result;
 
+	public HashMap<String, Object> getMap(){
+		return map;
+	}
 	public HashMap<String, Object> soap(String METHOD_NAME, String SOAP_ACTION,
 			String NAMESPACE, String URL, PropertyInfo[] properties)
 			throws IOException, XmlPullParserException {
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
-
-		
+		map = new HashMap<String, Object>();
+		result = null;
 		SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME); // set up
 																		// request
 		if (properties != null && properties.length > 0) {
@@ -58,9 +71,13 @@ public class SoapConnector {
        envelope.implicitTypes= true;
 		
 
-		envelope.addMapping("http://gioco.parcogiochi/xsd", "Giocoupdate", GiocoUpdate.class);
-		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotoupdate", FotoUpdate.class);
-		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotografia", Fotografia.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "Giocoupdate", SOAPGiocoUpdate.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotoupdate", SOAPFotoUpdate.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotografia", SOAPFotografia.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "Gioco", SOAPGioco.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "Info", SOAPInfo.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "Area", SOAPArea.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "EsitoSet", SOAPEsitoSet.class);
 		
 		HttpTransportSE httpTransport = new HttpTransportSE(URL);
 
@@ -69,7 +86,7 @@ public class SoapConnector {
 		byte[] raw = auth.toString().getBytes();
 		auth.setLength(0);
 		auth.append("Basic ");
-		org.kobjects.base64.Base64.encode(raw, 0, raw.length, auth);
+		Base64.encode(raw, 0, raw.length, auth);
 		List<HeaderProperty> headers = new ArrayList<HeaderProperty>();
 		headers.add(new HeaderProperty("Authorization", auth.toString())); // "Basic V1M6"));
 
@@ -77,34 +94,53 @@ public class SoapConnector {
 									// want to use a packet sniffer to check
 									// what the sent message was
 									// (httpTransport.requestDump)
-		SoapObject result = null;
+		
 		try {
 			httpTransport.call(SOAP_ACTION, envelope, headers); // send request
-			result = (SoapObject) envelope.getResponse(); // get response
-//			result = (SoapObject) envelope.bodyIn; // get response
-
-
-		} catch (Exception e) {
-			result=(SoapObject) envelope.bodyIn;
+			result = envelope.getResponse(); // get response
+		} catch(Exception e){
+			
+			 if(e.getClass().equals(SoapFault.class)){
+			  
+			  map.put("detail", ((SoapFault) e).detail);
+			  map.put("string", ((SoapFault) e).faultstring);
+			  map.put("success", false);
+			  map.put("faultcode", ((SoapFault) e).faultcode);
+			  Log.d(TAG,((SoapFault) e).getMessage());
+			} 
+			
+			//result=(SoapObject) envelope.bodyIn;
 			Log.e(TAG, "SOAP ERROR:");
 			e.printStackTrace();
 			map.put("dump", httpTransport.responseDump);
-			
+			map.put("success", false);
 		}
 		if (result != null) {
-			int props = result.getPropertyCount();
+			if(result instanceof KvmSerializable){
+			Log.d(TAG,"Mapped: "+result.getClass().getSimpleName());
+			map.put("mapped", result);	
+				
+			int props = ((KvmSerializable) result).getPropertyCount();
 			Log.d(TAG, " risultano " + props + " proprietà");
 
 			for (int i = 0; i < props; i++) {
 
 				PropertyInfo pi = new PropertyInfo();
-				result.getPropertyInfo(i, pi);
+				((KvmSerializable) result).getPropertyInfo(i, null, pi);
 				String key =pi.name;
-				if(pi.name.equals("return")){
-					key = ""+i;
-				}
+				
 				map.put(key, pi.getValue());
 
+			}
+			}else if (result instanceof Vector){
+				for( int i = 0; i < ((Vector) result).size(); i++){
+					String key =""+i;
+					map.put(key, ((Vector) result).get(i));
+				}				
+			}else{
+				
+				map.put("success",false);
+				map.put("message","Oggetto sconosciuto");
 			}
 		} else {
 			Log.d(TAG, envelope.bodyOut.toString());

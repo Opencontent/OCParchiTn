@@ -38,6 +38,7 @@ import android.location.LocationManager;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -209,6 +210,14 @@ public class MainActivity extends BaseActivity {
 		super.onStart();
 		// nfca.disableForegroundDispatch(this);
 	}
+	
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		//non vogliamo che la batteria si scarichi senza motivo
+		LocationManager locationManager = (LocationManager) getSystemService(BaseActivity.LOCATION_SERVICE);
+		locationManager.removeUpdates(locationListener);
+	}
 
 	private boolean legaRFIDGioco(int rfid, Gioco gioco) {
 		gioco.rfid = rfid;
@@ -333,6 +342,7 @@ public class MainActivity extends BaseActivity {
 
 		// Set an EditText view to get user input
 		final EditText input = new EditText(this);
+		input.setInputType(InputType.TYPE_CLASS_NUMBER);
 		alert.setView(input);
 
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -444,9 +454,31 @@ public class MainActivity extends BaseActivity {
 			break;
 		case BaseActivity.SOAP_GET_GIOCO_REQUEST_CODE_BY_ID:
 			res = SynchroSoapActivity.getRes();
-			Gioco remoteGioco = new Gioco(res.entrySet(),
-					getApplicationContext());
-			Gioco localGioco = db.readGiocoLocallyByID(remoteGioco.id_gioco);
+			Gioco remoteGioco = null;
+			Gioco localGioco = null;
+			if(res!=null && !res.containsKey("success")) {
+				if(res.containsKey("mapped")){
+					remoteGioco = new Gioco((it.opencontent.android.ocparchitn.SOAPMappings.SOAPGioco) res.get("mapped"),
+							getApplicationContext());
+				} else {
+					remoteGioco = new Gioco(res.entrySet(),
+							getApplicationContext());
+				}
+				localGioco = db.readGiocoLocallyByID(remoteGioco.id_gioco);
+			} else if(res.containsKey("success") && res.get("success").equals(false) ){
+				//TODO: comunicare l'errore all'untente
+				AlertDialog.Builder alert = new AlertDialog.Builder(this);
+				alert.setTitle("Errore remoto nel recupero della struttura "+currentQueriedId);
+				TextView content = new TextView(getApplicationContext());
+				content.setText(res.get("faultcode").toString()+"\n"+res.get("string").toString());
+				alert.setView(content);
+				alert.show();
+				remoteGioco = new Gioco();				
+				localGioco = db.readGiocoLocallyByID(currentQueriedId);
+			}else {
+			 remoteGioco = new Gioco();				
+			 localGioco = db.readGiocoLocallyByID(currentQueriedId);
+			}
 			
 			
 			

@@ -2,8 +2,8 @@ package it.opencontent.android.ocparchitn.activities;
 
 import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
-import it.opencontent.android.ocparchitn.SOAPMappings.FotoUpdate;
-import it.opencontent.android.ocparchitn.SOAPMappings.GiocoUpdate;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotoUpdate;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGiocoUpdate;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
@@ -74,7 +74,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 						Gioco g = (Gioco) s;
 
 						HashMap<String, Object> map = new HashMap<String, Object>();
-						GiocoUpdate gu = new GiocoUpdate();
+						SOAPGiocoUpdate gu = new SOAPGiocoUpdate();
 						gu.id_gioco = "" + g.id_gioco;
 						if (g.rfid > 0) {
 							gu.rfid = "" + g.rfid;
@@ -100,7 +100,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 						// cicliamo le foto eventuali
 
 						if (g.foto0 != null && !g.foto0.equals("")) {
-							FotoUpdate fu = new FotoUpdate();
+							SOAPFotoUpdate fu = new SOAPFotoUpdate();
 							fu.idGioco = "" + g.id_gioco;
 							fu.sovrascrittura = true;
 							fu.estensioneImmagine = "jpg";
@@ -111,7 +111,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 							returnResponse("setFoto", map, false);
 						}
 						if (g.foto1 != null && !g.foto1.equals("")) {
-							FotoUpdate fu = new FotoUpdate();
+							SOAPFotoUpdate fu = new SOAPFotoUpdate();
 							fu.idGioco = "" + g.id_gioco;
 							fu.sovrascrittura = true;
 							fu.estensioneImmagine = "jpg";
@@ -122,7 +122,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 							returnResponse("setFoto", map, false);
 						}
 						if (g.foto2 != null && !g.foto2.equals("")) {
-							FotoUpdate fu = new FotoUpdate();
+							SOAPFotoUpdate fu = new SOAPFotoUpdate();
 							fu.idGioco = "" + g.id_gioco;
 							fu.sovrascrittura = true;
 							fu.estensioneImmagine = "jpg";
@@ -133,7 +133,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 							returnResponse("setFoto", map, false);
 						}
 						if (g.foto3 != null && !g.foto3.equals("")) {
-							FotoUpdate fu = new FotoUpdate();
+							SOAPFotoUpdate fu = new SOAPFotoUpdate();
 							fu.idGioco = "" + g.id_gioco;
 							fu.sovrascrittura = true;
 							fu.estensioneImmagine = "jpg";
@@ -144,7 +144,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 							returnResponse("setFoto", map, false);
 						}
 						if (g.foto4 != null && !g.foto4.equals("")) {
-							FotoUpdate fu = new FotoUpdate();
+							SOAPFotoUpdate fu = new SOAPFotoUpdate();
 							fu.idGioco = "" + g.id_gioco;
 							fu.sovrascrittura = true;
 							fu.estensioneImmagine = "jpg";
@@ -176,7 +176,9 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 	}
 
 	public static HashMap<String, Object> getRes() {
-		return res;
+		HashMap<String,Object> ret = res;
+		res=null;
+		return ret;
 	}
 
 	@Override
@@ -257,6 +259,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 						queueLength--;
 						e.printStackTrace();
 					} finally {
+						res = sc.getMap();
 						if (finish || queueLength <= 0) {
 							setResult(RESULT_CANCELED, getIntent());
 							finish();

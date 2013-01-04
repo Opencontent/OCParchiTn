@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 
-public class GiocoUpdate implements KvmSerializable {
+public class SOAPGiocoUpdate implements KvmSerializable {
 
 	
 	public String gpsx; 
@@ -18,7 +18,7 @@ public class GiocoUpdate implements KvmSerializable {
 	public String tabletTimeModifica;
 	public String tabletUserName;
 	
-	public GiocoUpdate(){
+	public SOAPGiocoUpdate(){
 		tabletDataModifica = "";
 		tabletDispositivoName ="";
 		tabletTimeModifica = "";
@@ -99,22 +99,31 @@ public class GiocoUpdate implements KvmSerializable {
 		switch(arg0){
 		case 0:
 			gpsx = arg1.toString();
+			break;
 		case 1:
 			gpsy = arg1.toString();
+			break;
 		case 2:
 			id_gioco = arg1.toString();
+			break;
 		case 3:
 			note = arg1.toString();
+			break;
 		case 4:
 			rfid = arg1.toString();
+			break;
 		case 5:
 			tabletDataModifica = arg1.toString();
+			break;
 		case 6:
 			tabletDispositivoName = arg1.toString();
+			break;
 		case 7:
 			tabletTimeModifica = arg1.toString();
+			break;
 		case 8:
 			tabletUserName = arg1.toString();
+			break;
 		}		
 	}
 

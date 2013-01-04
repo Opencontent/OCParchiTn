@@ -1,6 +1,6 @@
 package it.opencontent.android.ocparchitn.db.entities;
 
-import it.opencontent.android.ocparchitn.SOAPMappings.Fotografia;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotografia;
 
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -28,17 +28,20 @@ public class Struttura {
 		int index = 0;
 		while (i.hasNext()) {
 			Entry<String, Object> e = i.next();
-			Log.d(TAG, e.getKey());
-			
-			if (e.getValue().getClass().equals(Fotografia.class)) {
-				Fotografia f = (Fotografia) e.getValue();
+			Log.d(TAG, "Chiave "+e.getKey());
+			String rawFotoName = "";
+			if (e.getValue().getClass().equals(SOAPFotografia.class)) {
+				SOAPFotografia f = (SOAPFotografia) e.getValue();
 				raw = f.immagine;
 				try{
+					rawFotoName = f.nomeImmagine;
 					String indexes = (String) f.nomeImmagine.subSequence(0, f.nomeImmagine.indexOf("."));
-					
 					String[] indexes2 = indexes.split("_");
-					
-					index = Integer.parseInt(indexes2[3]);
+					try{
+						index = Integer.parseInt(indexes2[3]);
+					}catch(IndexOutOfBoundsException iobe){
+						index =-1;
+					}
 				} catch (Exception ex){
 					ex.printStackTrace();
 				}
@@ -72,6 +75,9 @@ public class Struttura {
 				case 4:
 					foto4 = raw;
 					break;
+				default:
+					Log.d(TAG, "Foto con nome non valido "+rawFotoName);
+					break;
 				}
 
 			}
@@ -84,17 +90,6 @@ public class Struttura {
 		this(set, -1, context);
 	}
 
-	/*
-	 * public void recoverLocalImages(Context context){ Bitmap bmp = null; for
-	 * (int i = 0; i < Constants.MAX_SNAPSHOTS_AMOUNT; i++) { try { String
-	 * filename = FileNameCreator.getSnapshotFullPath(rfid, i); bmp =
-	 * BitmapFactory.decodeStream(context .openFileInput(filename));
-	 * Log.d(TAG,filename+" Aperto correttamente"); switch (i) { case 0: foto0 =
-	 * bmp; break; case 1: foto1 = bmp; break; case 2: foto2 = bmp; break; case
-	 * 3: foto3 = bmp; break; case 4: foto4 = bmp; break; } } catch
-	 * (FileNotFoundException e) { // TODO Auto-generated catch block bmp =
-	 * null; e.printStackTrace(); } } }
-	 */
 
 	public Struttura(Set<Entry<String, Object>> set, int rfid_argomento,
 			Context context) {
@@ -106,6 +101,14 @@ public class Struttura {
 			Log.d(TAG, e.getKey());
 			if (e.getKey().equals("descrizione_marca")) {
 				descrizione_marca = bindStringToProperty(e.getValue(),
+						e.getKey());
+			}
+			if (e.getKey().equals("descrizione_area")) {
+				descrizione_area = bindStringToProperty(e.getValue(),
+						e.getKey());
+			}
+			if (e.getKey().equals("descrizione_gioco")) {
+				descrizione_gioco = bindStringToProperty(e.getValue(),
 						e.getKey());
 			}
 			if (e.getKey().equals("gpsx") && e.getValue() != null) {
@@ -194,7 +197,7 @@ public class Struttura {
 				// return "INDEFINITO";
 			}
 		} else {
-			res = (String) value;
+			res = (String) value.toString();
 		}
 		return res;
 	}
@@ -232,12 +235,15 @@ public class Struttura {
 	public int rfid = 0;
 	public String rfid_area = "0";
 	public int id_gioco = 0;
+	public int numero_fotografie = 0;
 
 	public float gpsx = 0.0f;
 	public float gpsy = 0.0f;
 
 	public String numeroserie = "0";
 	public String descrizione_marca = "";
+	public String descrizione_area = "";
+	public String descrizione_gioco = "";
 
 	public String note = "";
 	public String foto0 = "";
@@ -246,14 +252,6 @@ public class Struttura {
 	public String foto3 = "";
 	public String foto4 = "";
 
-	// public String descrizione_gioco;
-	// public String descrizione_area;
-	// public String dt_acquisto;
-	// public String dt_installazione;
-	// public String dt_posizionamento;
-	// public String dt_prossimointervento;
-	// public int id_modello;
-	// public int id_tipogioco;
-	// public String posizione_rfid;
+
 
 }

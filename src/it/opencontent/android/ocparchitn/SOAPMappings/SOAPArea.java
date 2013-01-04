@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 
-public class Area implements KvmSerializable {
+public class SOAPArea implements KvmSerializable {
 	
 	public String id_parco;
 	public String note;
@@ -44,16 +44,22 @@ public class Area implements KvmSerializable {
 		switch(arg0){
 		case 0:
 			arg2.name = "id_parco";
+			break;
 		case 1:
 			arg2.name = "note";
+			break;
 		case 2:
 			arg2.name = "rfid";
+			break;
 		case 3:
 			arg2.name = "spessore";
+			break;
 		case 4:
 			arg2.name = "superficie";
+			break;
 		case 5:
 			arg2.name = "tipo_pavimentazione";
+			break;
 		}
 	}
 
@@ -62,16 +68,22 @@ public class Area implements KvmSerializable {
 		switch(arg0){
 		case 0:
 			id_parco= arg1.toString();
+			break;
 		case 1:
 			note= arg1.toString();
+			break;
 		case 2:
 			rfid= arg1.toString();
+			break;
 		case 3:
 			spessore= arg1.toString();
+			break;
 		case 4:
 			superficie= arg1.toString();
+			break;
 		case 5:
 			tipo_pavimentazione= arg1.toString();
+			break;
 		}
 	}
 

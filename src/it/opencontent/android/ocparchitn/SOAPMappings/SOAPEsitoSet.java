@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 
-public class EsitoSet implements KvmSerializable {
+public class SOAPEsitoSet implements KvmSerializable {
 
 	public String codice;
 	public String messaggio;
@@ -35,11 +35,14 @@ public class EsitoSet implements KvmSerializable {
 		switch(arg0){
 		case 0:
 			arg2.name = "codice";
+			break;
 		case 1:
 			arg2.name = "messaggio";
+			break;
 		case 2:
 			arg2.name = "successo";
 			arg2.type=PropertyInfo.BOOLEAN_CLASS;
+			break;
 		}
 	}
 
@@ -48,10 +51,13 @@ public class EsitoSet implements KvmSerializable {
 		switch(arg0){
 		case 0:
 			codice = arg1.toString();
+			break;
 		case 1:
 			messaggio = arg1.toString();
+			break;
 		case 2:
 			successo = Boolean.getBoolean(arg1.toString());
+			break;
 		}
 	}
 

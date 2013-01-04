@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 
-public class Fotografia implements KvmSerializable {
+public class SOAPFotografia implements KvmSerializable {
 
     
 	public String estensioneImmagine;
@@ -14,7 +14,7 @@ public class Fotografia implements KvmSerializable {
 	public String descrizioneImmagine;
 	
 	
-	public Fotografia(){
+	public SOAPFotografia(){
 		estensioneImmagine = "png";
 		immagine = "";
 		nomeImmagine = "foto_1";

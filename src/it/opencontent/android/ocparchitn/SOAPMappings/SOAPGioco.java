@@ -1,12 +1,11 @@
 package it.opencontent.android.ocparchitn.SOAPMappings;
 
-import java.util.Date;
 import java.util.Hashtable;
 
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 
-public class Gioco implements KvmSerializable {
+public class SOAPGioco implements KvmSerializable {
 	
 	public String descrizione_area;
 	public String descrizione_gioco;
@@ -85,43 +84,62 @@ public class Gioco implements KvmSerializable {
 		switch(arg0){
 		case 0:
 			arg2.name = "descrizione_area";
+			break;
 		case 1:
 			arg2.name = "descrizione_gioco";
+			break;
 		case 2:
 			arg2.name = "descrizione_marca";
+			break;
 		case 3:
 			arg2.name = "dt_acquisto";
+			break;
 		case 4:
 			arg2.name = "dt_installazione";
+			break;
 		case 5:
 			arg2.name = "dt_posizionamento_al";
+			break;
 		case 6:
 			arg2.name = "dt_posizionamento_dal";
+			break;
 		case 7:
 			arg2.name = "dt_prossimointervento";
+			break;
 		case 8:
 			arg2.name = "gpsx";
+			break;
 		case 9:
 			arg2.name = "gpsy";
+			break;
 		case 10:
 			arg2.name = "id_gioco";
+			break;
 		case 11:
 			arg2.name = "id_modello";
+			break;
 		case 12:
 			arg2.name = "id_tipogioco";
+			break;
 		case 13:
 			arg2.name = "note";
+			break;
 		case 14:
 			arg2.name = "numero_fotografie";
 			arg2.type = PropertyInfo.INTEGER_CLASS;
+			break;
 		case 15:
 			arg2.name = "posizione_rfid";
+			break;
 		case 16:
 			arg2.name = "numeroserie";
+			break;
 		case 17:
 			arg2.name = "rfid";
+			break;
 		case 18:
 			arg2.name = "rfid_area";
+			break;
 		}
 	}
 
@@ -130,42 +148,61 @@ public class Gioco implements KvmSerializable {
 		switch(arg0){
 		case 0:
 			descrizione_area = arg1.toString();
+			break;
 		case 1:
 			descrizione_gioco= arg1.toString();
+			break;
 		case 2:
 			descrizione_marca= arg1.toString();
+			break;
 		case 3:
 			dt_acquisto= arg1.toString();
+			break;
 		case 4:
 			dt_installazione= arg1.toString();
+			break;
 		case 5:
 			dt_posizionamento_al= arg1.toString();
+			break;
 		case 6:
 			dt_posizionamento_dal= arg1.toString();
+			break;
 		case 7:
 			dt_prossimointervento= arg1.toString();
+			break;
 		case 8:
 			gpsx= arg1.toString();
+			break;
 		case 9:
 			gpsy= arg1.toString();
+			break;
 		case 10:
 			id_gioco= arg1.toString();
+			break;
 		case 11:
 			id_modello= arg1.toString();
+			break;
 		case 12:
 			id_tipogioco= arg1.toString();
+			break;
 		case 13:
 			note= arg1.toString();
+			break;
 		case 14:
 			numero_fotografie= Integer.parseInt(arg1.toString());
+			break;
 		case 15:
 			numeroserie= arg1.toString();
+			break;
 		case 16:
 			posizione_rfid= arg1.toString();
+			break;
 		case 17:
 			rfid= arg1.toString();
+			break;
 		case 18:
 			rfid_area= arg1.toString();
+			break;
 		}		
 	}
 

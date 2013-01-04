@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 
-public class Info implements KvmSerializable {
+public class SOAPInfo implements KvmSerializable {
 	
 	public String descrizione;
 	public String note;
@@ -59,12 +59,16 @@ public class Info implements KvmSerializable {
 		switch(arg0){
 		case 0:
 			descrizione = arg1.toString();
+			break;
 		case 1:
 			note = arg1.toString();
+			break;
 		case 2:
 			sviluppatore = arg1.toString();
+			break;
 		case 3:
 			versione = arg1.toString();
+			break;
 		}
 		
 	}
