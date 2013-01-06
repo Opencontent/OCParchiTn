@@ -128,23 +128,7 @@ public class MainActivity extends BaseActivity {
 					"tab", 0));
 		}
 
-		LocationManager locationManager = (LocationManager) getSystemService(BaseActivity.LOCATION_SERVICE);
-
-		if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-
-			locationManager.addGpsStatusListener(gpsListener);
-			locationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER,
-					Constants.GPS_BEACON_INTERVAL,
-					Constants.GPS_METER_THRESHOLD, locationListener);
-			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
-					Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_OK);
-
-		} else {
-			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
-					Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_INACTIVE);
-
-		}
+		
 		nfca = NfcAdapter.getDefaultAdapter(this);
 		pi = PendingIntent.getActivity(this, 0, new Intent(this, getClass())
 				.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
@@ -209,11 +193,33 @@ public class MainActivity extends BaseActivity {
 	public void onStart() {
 		super.onStart();
 		// nfca.disableForegroundDispatch(this);
+		LocationManager locationManager = (LocationManager) getSystemService(BaseActivity.LOCATION_SERVICE);
+
+		if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+
+			locationManager.addGpsStatusListener(gpsListener);
+			locationManager.requestLocationUpdates(
+					LocationManager.GPS_PROVIDER,
+					Constants.GPS_BEACON_INTERVAL,
+					Constants.GPS_METER_THRESHOLD, locationListener);
+			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
+					Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_OK);
+
+		} else {
+			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
+					Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_INACTIVE);
+
+		}		
 	}
 	
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
+	}
+	
+	@Override
+	public void onStop(){
+		super.onStop();
 		//non vogliamo che la batteria si scarichi senza motivo
 		LocationManager locationManager = (LocationManager) getSystemService(BaseActivity.LOCATION_SERVICE);
 		locationManager.removeUpdates(locationListener);

@@ -30,7 +30,8 @@ public class Struttura {
 			Entry<String, Object> e = i.next();
 			Log.d(TAG, "Chiave "+e.getKey());
 			String rawFotoName = "";
-			if (e.getValue().getClass().equals(SOAPFotografia.class)) {
+			//if (e.getValue() != null && e.getValue().getClass().equals(SOAPFotografia.class)) {
+			if(e.getValue() instanceof SOAPFotografia){
 				SOAPFotografia f = (SOAPFotografia) e.getValue();
 				raw = f.immagine;
 				try{
@@ -55,7 +56,7 @@ public class Struttura {
 				Log.d(TAG,
 						e.getKey()
 								+ " "
-								+ bindStringToProperty(e.getValue(), e.getKey()));
+								+ bindStringToProperty(e.getValue() == null ? "Nullo" : e.getValue(), e.getKey()));
 			}
 
 			if (!raw.equals("")) {
