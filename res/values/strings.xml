@@ -8,6 +8,7 @@
  
     <string name="fragment_title_rendicontazione_manutenzione">Rendicontazione</string> 
     <string name="fragment_title_spostamento_gioco">Spostamento</string> 
+    <string name="fragment_title_debug">Debug</string> 
     
     
     
@@ -18,7 +19,9 @@
     <string name="snapshot_description">Snapshot dell\'attrezzatura</string>
     <string name="camera_unavailable">La fotocamera è occupata da un\'altra applicazione.\nChiudila o attendi che il sistema la liberi</string>
 	<string name="settings_field_username">Username</string>
+	<string name="settings_key_username">username</string>
 	<string name="settings_field_password">Password</string>
+	<string name="settings_key_password">password</string>
 	<string name="settings_field_password2">(ripeti)</string>
 	
 	<!--  schermata main della struttura -->
@@ -41,6 +44,11 @@
 	<string name="display_gioco_gpsx">GPSX:</string>
 	<string name="display_gioco_gpsy">GPSY:</string>
 	<string name="display_gioco_posizione_rfid">Posizione RFID</string>
+	
+	<string name="pulsante_invalidate_token_testo">Invalida il token</string>
+	<string name="pulsante_status_token_testo">Status del token</string>
+	<string name="pulsante_refresh_token_testo">Refresh del token</string>
+	
 	
 	<string name="pulsante_start_by_rfid_testo">Parti da un RFID</string>
 	<string name="pulsante_start_by_id_testo">Parti da un ID</string>

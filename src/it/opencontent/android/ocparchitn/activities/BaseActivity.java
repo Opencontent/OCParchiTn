@@ -20,6 +20,9 @@ import android.view.MenuItem;
 public class BaseActivity extends Activity {
 
 	public static final int FOTO_REQUEST_CODE = 1;
+	public static final int SOAP_GET_TOKEN_REQUEST_CODE = 200;
+	public static final int SOAP_GET_TOKEN_STATUS_REQUEST_CODE = 201;
+	public static final int SOAP_GET_INVALIDATE_TOKEN_REQUEST_CODE = 202;
 	public static final int SOAP_GET_GIOCO_REQUEST_CODE = 2;
 	public static final int SOAP_GET_GIOCO_REQUEST_CODE_BY_ID = 101;
 	public static final int SOAP_GET_GIOCO_REQUEST_CODE_BY_RFID = 102;

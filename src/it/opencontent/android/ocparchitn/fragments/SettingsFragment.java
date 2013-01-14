@@ -38,5 +38,10 @@ public class SettingsFragment extends PreferenceFragment  implements ICustomFrag
 		// TODO Auto-generated method stub
 		
 	}	
+	@Override
+	public void clickedMe(View v) {
+		// TODO Auto-generated method stub
+		
+	}	
 
 }

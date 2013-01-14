@@ -236,6 +236,12 @@ public class MainFragment extends Fragment implements ICustomFragment{
 			
 		}
 	}
+
+	@Override
+	public void clickedMe(View v) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 

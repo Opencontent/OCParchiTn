@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/debug_main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/status_token_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="clickedMe"
+        android:text="@string/pulsante_status_token_testo" />
+
+    <Button
+        android:id="@+id/invalidate_token_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="clickedMe"
+        android:text="@string/pulsante_invalidate_token_testo" />
+    <Button
+        android:id="@+id/refresh_token_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="clickedMe"
+        android:text="@string/pulsante_refresh_token_testo" />
+
+</LinearLayout>

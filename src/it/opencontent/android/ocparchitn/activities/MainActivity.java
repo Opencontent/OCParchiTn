@@ -2,8 +2,10 @@ package it.opencontent.android.ocparchitn.activities;
 
 import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAutGiochi;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
+import it.opencontent.android.ocparchitn.fragments.DebugFragment;
 import it.opencontent.android.ocparchitn.fragments.ICustomFragment;
 import it.opencontent.android.ocparchitn.fragments.MainFragment;
 import it.opencontent.android.ocparchitn.fragments.PeriodicaFragment;
@@ -18,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.kxml2.kdom.Element;
+
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
@@ -29,6 +33,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.location.GpsStatus;
 import android.location.GpsStatus.Listener;
@@ -38,6 +43,7 @@ import android.location.LocationManager;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
@@ -52,6 +58,9 @@ public class MainActivity extends BaseActivity {
 	private static final String TAG = MainActivity.class.getSimpleName();
 
 	private static boolean serviceInfoTaken = false;
+	
+	public static Element[] headerOut = null;
+	public static boolean tokenIsValid = false;
 
 	private Bitmap snapshot;
 	private OCParchiDB db;
@@ -122,6 +131,14 @@ public class MainActivity extends BaseActivity {
 						new CustomTabListener<SpostamentoFragment>(this,
 								"spostamento", SpostamentoFragment.class));
 		actionBar.addTab(tab);
+		tab = actionBar
+				.newTab()
+				.setTag("debug")
+				.setText(getString(R.string.fragment_title_debug))
+				.setTabListener(
+						new CustomTabListener<DebugFragment>(this,
+								"debug", DebugFragment.class));
+		actionBar.addTab(tab);
 
 		if (savedInstanceState != null) {
 			actionBar.setSelectedNavigationItem(savedInstanceState.getInt(
@@ -154,6 +171,10 @@ public class MainActivity extends BaseActivity {
 		}
 
 		updateCountDaSincronizzare();
+		
+		if(!tokenIsValid){
+			renewToken();
+		}
 
 		// La techListArray per il momento la tengo vuota, così filtro per
 		// qualsiasi
@@ -387,7 +408,7 @@ public class MainActivity extends BaseActivity {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
-		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, "getInfo");
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_INFO_METHOD_NAME);
 		startActivityForResult(serviceIntent, SOAP_SERVICE_INFO_REQUEST_CODE);
 	}
 	public void sincronizzaModifiche(View v) {
@@ -406,7 +427,7 @@ public class MainActivity extends BaseActivity {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
-		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, "getGioco_id");
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_GIOCO_ID_METHOD_NAME);
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("idgioco", "" + id);
 		currentQueriedId = id;
@@ -417,7 +438,7 @@ public class MainActivity extends BaseActivity {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
-		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, "getFoto");
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_FOTO_METHOD_NAME);
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("idGioco", "" + id);
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
@@ -428,7 +449,7 @@ public class MainActivity extends BaseActivity {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
-		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, "getGioco");
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_GIOCO_METHOD_NAME);
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("rfid", "" + id);
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
@@ -439,12 +460,30 @@ public class MainActivity extends BaseActivity {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
-		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, "getFoto");
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_FOTO_METHOD_NAME);
 		HashMap<String, Object> map = new HashMap<String, Object>();
 //		map.put("idGioco", "" + id);
 		map.put("args0", "" + id);
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
 		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_FOTO_REQUEST_CODE);
+	}
+	
+	private void renewToken(){
+		Intent serviceIntent = new Intent();
+		serviceIntent.setClass(getApplicationContext(),
+				SynchroSoapActivity.class);
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_LOGINUSER_METHOD_NAME);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		//SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		String username = prefs.getString(getString(R.string.settings_key_username), "UNSET");
+		String password = prefs.getString(getString(R.string.settings_key_password), "UNSET");
+		
+		map.put("args0", username);
+		map.put("args1", password);
+		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
+		startActivityForResult(serviceIntent, SOAP_GET_TOKEN_REQUEST_CODE);		
 	}
 
 	@Override
@@ -455,11 +494,42 @@ public class MainActivity extends BaseActivity {
 				.findFragmentByTag(currentTag);
 
 		switch (requestCode) {
+		case BaseActivity.SOAP_GET_TOKEN_REQUEST_CODE:
+			res = SynchroSoapActivity.getRes(Constants.GET_LOGINUSER_METHOD_NAME);
+			if(res != null && res.containsKey("success") ){
+				String faultString = res.get("string").toString();
+				Toast.makeText(getApplicationContext(), faultString, Toast.LENGTH_SHORT).show();
+				AlertDialog.Builder changeCredentials = new AlertDialog.Builder(this);
+				changeCredentials.setTitle("Credenziali errate");
+				changeCredentials.setMessage(faultString+"\nClicca su OK per modificare le credenziali");
+				changeCredentials.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent();
+						intent.setClass(getApplicationContext(), SettingsActivity.class);
+						startActivity(intent);
+						return;
+					}
+					
+				});
+				changeCredentials.show();
+				
+			} else if(res != null && res.containsKey("mapped")){
+				SOAPAutGiochi auth = (SOAPAutGiochi) res.get("mapped");
+				int a = auth.autComune;
+			}
+			
+			if(res!=null && res.containsKey("headerIn")){
+				headerOut = (Element[]) res.get("headerIn");
+			}
+			
+			break;
 		case BaseActivity.SOAP_SINCRONIZZA_TUTTO_REQUEST_CODE:
 			updateCountDaSincronizzare();
 			break;
 		case BaseActivity.SOAP_GET_GIOCO_REQUEST_CODE_BY_ID:
-			res = SynchroSoapActivity.getRes();
+			res = SynchroSoapActivity.getRes(Constants.GET_GIOCO_ID_METHOD_NAME);
 			Gioco remoteGioco = null;
 			Gioco localGioco = null;
 			if(res!=null && !res.containsKey("success")) {
@@ -516,7 +586,7 @@ public class MainActivity extends BaseActivity {
 
 			if (returnCode == RESULT_OK) {
 
-				res = SynchroSoapActivity.getRes();
+				res = SynchroSoapActivity.getRes(Constants.GET_GIOCO_METHOD_NAME);
 
 				if (res != null && res.size() > 0) {
 					currentGioco = new Gioco(res.entrySet(), currentRFID,
@@ -540,7 +610,7 @@ public class MainActivity extends BaseActivity {
 			break;
 		case SOAP_GET_GIOCO_FOTO_REQUEST_CODE:
 			if (returnCode == RESULT_OK) {
-				res = SynchroSoapActivity.getRes();
+				res = SynchroSoapActivity.getRes(Constants.GET_FOTO_METHOD_NAME);
 				currentGioco.addImmagine(res.entrySet());
 			}
 			mf.showStrutturaData(currentGioco);
@@ -608,12 +678,16 @@ public class MainActivity extends BaseActivity {
 			}
 			break;
 		case BaseActivity.SOAP_SERVICE_INFO_REQUEST_CODE:
-			serviceInfo = SynchroSoapActivity.getRes();
+			//TODO: rimappare l'oggetto info
+			serviceInfo = SynchroSoapActivity.getRes(Constants.GET_INFO_METHOD_NAME);
 			serviceInfoTaken = true;
 			errorMessages.put(Constants.STATUS_MESSAGE_SERVER_STATUS,
 					"Connessione al server: OK");
 			showError(errorMessages);
 			break;
+			default:
+				super.onActivityResult(requestCode, returnCode, intent);
+				break;
 
 		}
 
@@ -629,6 +703,12 @@ public class MainActivity extends BaseActivity {
 		ICustomFragment f = (ICustomFragment) getFragmentManager()
 				.findFragmentByTag(currentTag);
 		f.editMe(v);
+	}
+	public void clickedMe(View v) {
+		String currentTag = (String) actionBar.getSelectedTab().getTag();
+		ICustomFragment f = (ICustomFragment) getFragmentManager()
+				.findFragmentByTag(currentTag);
+		f.clickedMe(v);
 	}
 
 	public void salvaModifiche(View v) {

@@ -11,4 +11,5 @@ public interface ICustomFragment {
 	public void editMe(View v);
 	public void showError(HashMap<String,String> map);
 	public void showStrutturaData(Struttura struttura);
+	public void clickedMe(View v);
 }

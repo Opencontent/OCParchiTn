@@ -12,20 +12,18 @@ import it.opencontent.android.ocparchitn.utils.PlatformChecks;
 import it.opencontent.android.ocparchitn.utils.SoapConnector;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import org.ksoap2.serialization.PropertyInfo;
+import org.kxml2.kdom.Element;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.DropBoxManager;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
@@ -38,10 +36,11 @@ import android.widget.TextView;
 public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 
 	private static final String TAG = SynchroSoapActivity.class.getSimpleName();
-	private static String methodName;
-	private static HashMap<String, Object> requestParameters;
-	private static HashMap<String, Object> res;
-	private static Thread remoteThread;
+	private String methodName;
+	private HashMap<String, Object> requestParameters;
+	private HashMap<String, Object> res;
+	private Thread remoteThread;
+	private static HashMap<String,HashMap<String,Object>> allmaps = new HashMap<String, HashMap<String,Object>>();
 
 	private static int queueLength = 0;
 
@@ -61,6 +60,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				Constants.EXTRAKEY_METHOD_NAME);
 		requestParameters = (HashMap<String, Object>) intent.getExtras().get(
 				Constants.EXTRAKEY_DATAMAP);
+		
 		if (methodName.equals(Constants.EXTRAKEY_SYNC_ALL)) {
 			OCParchiDB db = new OCParchiDB(getApplicationContext());
 			LinkedHashMap<String, Struttura> set = db
@@ -175,9 +175,14 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 
 	}
 
-	public static HashMap<String, Object> getRes() {
-		HashMap<String,Object> ret = res;
-		res=null;
+	public static HashMap<String, Object> getRes(String key) {
+		HashMap<String,Object> ret; 
+		if(allmaps.containsKey(key)){
+			ret = allmaps.get(key);
+		allmaps.remove(key);
+		} else {
+			ret = null;
+		}
 		return ret;
 	}
 
@@ -236,6 +241,9 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 						res = sc.soap(methodName, Constants.SOAP_ENDPOINT,
 								Constants.SOAP_NAMESPACE, Constants.SOAP_URL,
 								properties);
+						
+						allmaps.put(methodName, res);
+						
 						if (!finish) {
 							queueLength--;
 						}
@@ -261,6 +269,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 					} finally {
 						res = sc.getMap();
 						if (finish || queueLength <= 0) {
+							allmaps.put(methodName, res);
 							setResult(RESULT_CANCELED, getIntent());
 							finish();
 						}
@@ -289,7 +298,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 			});
 
 			res.put("Azioni possibili:", wirelessConfig);
-
+			allmaps.put(methodName, res);
 			Log.d(TAG, "Network non connesso");
 			if (finish) {
 				setResult(RESULT_CANCELED, getIntent());

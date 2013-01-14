@@ -29,4 +29,9 @@ public class SpostamentoFragment extends Fragment  implements ICustomFragment{
 		// TODO Auto-generated method stub
 		
 	}	
+	@Override
+	public void clickedMe(View v) {
+		// TODO Auto-generated method stub
+		
+	}	
 }

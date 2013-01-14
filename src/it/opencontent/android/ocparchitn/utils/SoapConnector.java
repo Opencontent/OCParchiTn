@@ -1,45 +1,47 @@
 package it.opencontent.android.ocparchitn.utils;
 
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPArea;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAutGiochi;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPEsitoSet;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotoUpdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotografia;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGioco;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGiocoUpdate;
-import it.opencontent.android.ocparchitn.SOAPMappings.SOAPArea;
-import it.opencontent.android.ocparchitn.SOAPMappings.SOAPEsitoSet;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPInfo;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkAutException;
+import it.opencontent.android.ocparchitn.activities.MainActivity;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Vector;
 
-import org.kobjects.base64.Base64;
-import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.MarshalBase64;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+import org.kxml2.kdom.Element;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.util.Log;
 
 public class SoapConnector {
 
-	private static final String USERNAME = "PG_CED";
-	private static final String PASSWORD = "euforia";
+//	private static final String USERNAME = "PG_CED";
+//	private static final String PASSWORD = "euforia";
 	private static final String TAG = SoapConnector.class.getSimpleName();
 	
 	private HashMap<String,Object> map =null; 
 	private Object result;
-
+	
 	public HashMap<String, Object> getMap(){
 		return map;
 	}
+	@SuppressWarnings("rawtypes")
 	public HashMap<String, Object> soap(String METHOD_NAME, String SOAP_ACTION,
 			String NAMESPACE, String URL, PropertyInfo[] properties)
 			throws IOException, XmlPullParserException {
@@ -64,11 +66,11 @@ public class SoapConnector {
        	new MarshalBase64().register(envelope);   //serialization
        	envelope.encodingStyle = SoapEnvelope.ENC;
        	
-       envelope.bodyOut = request;
-       envelope.dotNet = true; 
-       envelope.setOutputSoapObject(request);
-       envelope.setAddAdornments(false);
-       envelope.implicitTypes= true;
+        envelope.bodyOut = request;
+        envelope.dotNet = true; 
+        envelope.setOutputSoapObject(request);
+        envelope.setAddAdornments(false);
+        envelope.implicitTypes= true;
 		
 
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Giocoupdate", SOAPGiocoUpdate.class);
@@ -78,17 +80,24 @@ public class SoapConnector {
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Info", SOAPInfo.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Area", SOAPArea.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "EsitoSet", SOAPEsitoSet.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "AutGiochi", SOAPAutGiochi.class);
+		//Eccezioni
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "SrvGiocoArkAutException", SOAPSrvGiocoArkAutException.class);
+		
+		if(MainActivity.headerOut != null){
+			envelope.headerOut = MainActivity.headerOut;
+		}
 		
 		HttpTransportSE httpTransport = new HttpTransportSE(URL);
 
-		StringBuffer auth = new StringBuffer(USERNAME);
-		auth.append(':').append(PASSWORD);
-		byte[] raw = auth.toString().getBytes();
-		auth.setLength(0);
-		auth.append("Basic ");
-		Base64.encode(raw, 0, raw.length, auth);
-		List<HeaderProperty> headers = new ArrayList<HeaderProperty>();
-		headers.add(new HeaderProperty("Authorization", auth.toString())); // "Basic V1M6"));
+//		StringBuffer auth = new StringBuffer(USERNAME);
+//		auth.append(':').append(PASSWORD);
+//		byte[] raw = auth.toString().getBytes();
+//		auth.setLength(0);
+//		auth.append("Basic ");
+//		Base64.encode(raw, 0, raw.length, auth);
+//		List<HeaderProperty> headers = new ArrayList<HeaderProperty>();
+//		headers.add(new HeaderProperty("Authorization", auth.toString())); 
 
 		httpTransport.debug = true; // this is optional, use it if you don't
 									// want to use a packet sniffer to check
@@ -96,8 +105,11 @@ public class SoapConnector {
 									// (httpTransport.requestDump)
 		
 		try {
-			httpTransport.call(SOAP_ACTION, envelope, headers); // send request
+//			httpTransport.call(SOAP_ACTION, envelope, headers); // send request
+			httpTransport.call(SOAP_ACTION, envelope, null); // send request
 			result = envelope.getResponse(); // get response
+			map.put("headerIn", envelope.headerIn);
+			
 		} catch(Exception e){
 			
 			 if(e.getClass().equals(SoapFault.class)){
@@ -116,22 +128,25 @@ public class SoapConnector {
 			map.put("success", false);
 		}
 		if (result != null) {
-			if(result instanceof KvmSerializable){
+			if(result instanceof SoapPrimitive){
+				Log.d(TAG,"Mapped: "+result.getClass().getSimpleName());
+				map.put("primitive", result.toString());				
+			}else if(result instanceof KvmSerializable){
 			Log.d(TAG,"Mapped: "+result.getClass().getSimpleName());
 			map.put("mapped", result);	
 				
 			int props = ((KvmSerializable) result).getPropertyCount();
 			Log.d(TAG, " risultano " + props + " proprietà");
 
-			for (int i = 0; i < props; i++) {
-
-				PropertyInfo pi = new PropertyInfo();
-				((KvmSerializable) result).getPropertyInfo(i, null, pi);
-				String key =pi.name;
-				
-				map.put(key, pi.getValue());
-
-			}
+				for (int i = 0; i < props; i++) {
+	
+					PropertyInfo pi = new PropertyInfo();
+					((KvmSerializable) result).getPropertyInfo(i, null, pi);
+					String key =pi.name;
+					
+					map.put(key, pi.getValue());
+	
+				}
 			}else if (result instanceof Vector){
 				for( int i = 0; i < ((Vector) result).size(); i++){
 					String key =""+i;
