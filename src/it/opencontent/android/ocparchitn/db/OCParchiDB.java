@@ -139,7 +139,7 @@ public class OCParchiDB {
 	}
 
 	public Gioco readGiocoLocallyByID(int id) {
-		String selection = " id_gioco  = ? ";
+		String selection = " idGioco  = ? ";
 
 		String[] selectionArgs = new String[] { id + "" };
 		Cursor c = mDatabaseOpenHelper.getReadableDatabase().query(
@@ -213,9 +213,9 @@ public class OCParchiDB {
 
 		cv.put("sincronizzato", false);
 		cv.put("rfid", gioco.rfid);
-		cv.put("descrizione_marca", gioco.descrizione_marca);
-		cv.put("id_gioco", gioco.id_gioco);
-		cv.put("numeroserie", gioco.numeroserie);
+		cv.put("descrizioneMarca", gioco.descrizioneMarca);
+		cv.put("idGioco", gioco.idGioco);
+		cv.put("numeroserie", gioco.numeroSerie);
 		cv.put("gpsx", gioco.gpsx);
 		cv.put("gpsy", gioco.gpsy);
 		cv.put("note", gioco.note);
@@ -242,7 +242,7 @@ public class OCParchiDB {
 		cv.put(" sincronizzato ", true);
 				
 		try{
-			int res = mDatabaseOpenHelper.getWritableDatabase().update(StruttureEnum.GIOCHI.tipo, cv, "id_gioco = ?", new String[]{""+gioco.id_gioco});
+			int res = mDatabaseOpenHelper.getWritableDatabase().update(StruttureEnum.GIOCHI.tipo, cv, "idGioco = ?", new String[]{""+gioco.idGioco});
 			Log.d(TAG,"Aggiornate "+res+" righe");
 		}catch(SQLiteConstraintException e){
 			Log.e(TAG, e.getMessage());
@@ -322,14 +322,14 @@ public class OCParchiDB {
 					s.gpsy = Float.parseFloat(c.getString(c
 							.getColumnIndex("gpsy")));
 					s.note = c.getString(c.getColumnIndex("note"));
-					s.id_gioco = c.getInt(c.getColumnIndex("id_gioco"));
+					s.idGioco = c.getInt(c.getColumnIndex("idGioco"));
 					s.rfid = c.getInt(c.getColumnIndex("rfid"));
 					s.foto0 = c.getString(c.getColumnIndex("foto0"));
 					s.foto1 = c.getString(c.getColumnIndex("foto1"));
 					s.foto2 = c.getString(c.getColumnIndex("foto2"));
 					s.foto3 = c.getString(c.getColumnIndex("foto3"));
 					s.foto4 = c.getString(c.getColumnIndex("foto4"));
-					res.put(tableName + "_" + s.id_gioco, s);
+					res.put(tableName + "_" + s.idGioco, s);
 
 				} while (c.moveToNext());
 			}
@@ -381,7 +381,7 @@ public class OCParchiDB {
 						}
 					}
 				}
-				sqlCreateCode += ",UNIQUE (id_gioco,rfid) "; // TODO fare
+				sqlCreateCode += ",UNIQUE (idGioco,rfid) "; // TODO fare
 																// qualcosa per
 																// non
 																// hardcodarli

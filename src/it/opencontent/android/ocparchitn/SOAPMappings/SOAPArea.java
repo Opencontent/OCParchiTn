@@ -7,18 +7,19 @@ import org.ksoap2.serialization.PropertyInfo;
 
 public class SOAPArea implements KvmSerializable {
 	
-	public String id_parco;
+	public String idParco;
 	public String note;
 	public String rfid;
 	public String spessore;
 	public String superficie;
-	public String tipo_pavimentazione;
+	public String tipoPavimentazione;
+	public String idArea;
 
 	@Override
 	public Object getProperty(int arg0) {
 		switch(arg0){
 		case 0:
-			return id_parco;
+			return idParco;
 		case 1:
 			return note;
 		case 2:
@@ -28,14 +29,16 @@ public class SOAPArea implements KvmSerializable {
 		case 4:
 			return superficie;
 		case 5:
-			return tipo_pavimentazione;
+			return tipoPavimentazione;
+		case 6:
+			return idArea;
 		}
 		return null;
 	}
 
 	@Override
 	public int getPropertyCount() {
-		return 6;
+		return 7;
 	}
 
 	@Override
@@ -60,14 +63,20 @@ public class SOAPArea implements KvmSerializable {
 		case 5:
 			arg2.name = "tipo_pavimentazione";
 			break;
+		case 6:
+			arg2.name = "idArea";
+			break;
 		}
 	}
 
 	@Override
 	public void setProperty(int arg0, Object arg1) {
+		if(arg1 == null){
+			arg1 = "";
+		}
 		switch(arg0){
 		case 0:
-			id_parco= arg1.toString();
+			idParco= arg1.toString();
 			break;
 		case 1:
 			note= arg1.toString();
@@ -82,7 +91,10 @@ public class SOAPArea implements KvmSerializable {
 			superficie= arg1.toString();
 			break;
 		case 5:
-			tipo_pavimentazione= arg1.toString();
+			tipoPavimentazione= arg1.toString();
+			break;
+		case 6:
+			idArea=arg1.toString();
 			break;
 		}
 	}

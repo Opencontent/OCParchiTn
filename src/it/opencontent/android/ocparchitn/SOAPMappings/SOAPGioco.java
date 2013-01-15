@@ -7,68 +7,68 @@ import org.ksoap2.serialization.PropertyInfo;
 
 public class SOAPGioco implements KvmSerializable {
 	
-	public String descrizione_area;
-	public String descrizione_gioco;
-	public String descrizione_marca;
-	public String dt_acquisto;
-	public String dt_installazione;
-	public String dt_posizionamento_al;
-	public String dt_posizionamento_dal;
-	public String dt_prossimointervento;
+	public String descrizioneArea;
+	public String descrizioneGioco;
+	public String descrizioneMarca;
+	public String dtAcquisto;
+	public String dtInstallazione;
+	public String dtPosizionamentoAl;
+	public String dtPosizionamentoDal;
+	public String dtProssimoIntervento;
 	public String gpsx;
 	public String gpsy;
-	public String id_gioco;
-	public String id_modello;
-	public String id_tipogioco;
+	public String idGioco;
+	public String idModello;
+	public String idTipoGioco;
 	public String note;
-	public int    numero_fotografie;
-	public String numeroserie;
-	public String posizione_rfid;
+	public int    numeroFotografie;
+	public String numeroSerie;
+	public String posizioneRfid;
 	public String rfid;
-	public String rfid_area;
+	public String rfidArea;
 	
 
 	@Override
 	public Object getProperty(int arg0) {
 		switch(arg0){
 		case 0:
-			return descrizione_area;
+			return descrizioneArea;
 		case 1:
-			return descrizione_gioco;
+			return descrizioneGioco;
 		case 2:
-			return descrizione_marca;
+			return descrizioneMarca;
 		case 3:
-			return dt_acquisto;
+			return dtAcquisto;
 		case 4:
-			return dt_installazione;
+			return dtInstallazione;
 		case 5:
-			return dt_posizionamento_al;
+			return dtPosizionamentoAl;
 		case 6:
-			return dt_posizionamento_dal;
+			return dtPosizionamentoDal;
 		case 7:
-			return dt_prossimointervento;
+			return dtProssimoIntervento;
 		case 8:
 			return gpsx;
 		case 9:
 			return gpsy;
 		case 10:
-			return id_gioco;
+			return idGioco;
 		case 11:
-			return id_modello;
+			return idModello;
 		case 12:
-			return id_tipogioco;
+			return idTipoGioco;
 		case 13:
 			return note;
 		case 14:
-			return numero_fotografie;
+			return numeroFotografie;
 		case 15:
-			return numeroserie;
+			return numeroSerie;
 		case 16:
-			return posizione_rfid;
+			return posizioneRfid;
 		case 17:
 			return rfid;
 		case 18:
-			return rfid_area;
+			return rfidArea;
 		}
 		return null;
 	}
@@ -83,28 +83,28 @@ public class SOAPGioco implements KvmSerializable {
 		arg2.type = PropertyInfo.STRING_CLASS;
 		switch(arg0){
 		case 0:
-			arg2.name = "descrizione_area";
+			arg2.name = "descrizioneArea";
 			break;
 		case 1:
-			arg2.name = "descrizione_gioco";
+			arg2.name = "descrizioneGioco";
 			break;
 		case 2:
-			arg2.name = "descrizione_marca";
+			arg2.name = "descrizioneMarca";
 			break;
 		case 3:
-			arg2.name = "dt_acquisto";
+			arg2.name = "dtAcquisto";
 			break;
 		case 4:
-			arg2.name = "dt_installazione";
+			arg2.name = "dtInstallazione";
 			break;
 		case 5:
-			arg2.name = "dt_posizionamento_al";
+			arg2.name = "dtPosizionamentoAl";
 			break;
 		case 6:
-			arg2.name = "dt_posizionamento_dal";
+			arg2.name = "dtPosizionamentoDal";
 			break;
 		case 7:
-			arg2.name = "dt_prossimointervento";
+			arg2.name = "dtProssimoIntervento";
 			break;
 		case 8:
 			arg2.name = "gpsx";
@@ -113,62 +113,65 @@ public class SOAPGioco implements KvmSerializable {
 			arg2.name = "gpsy";
 			break;
 		case 10:
-			arg2.name = "id_gioco";
+			arg2.name = "idGioco";
 			break;
 		case 11:
-			arg2.name = "id_modello";
+			arg2.name = "idModello";
 			break;
 		case 12:
-			arg2.name = "id_tipogioco";
+			arg2.name = "idTipoGioco";
 			break;
 		case 13:
 			arg2.name = "note";
 			break;
 		case 14:
-			arg2.name = "numero_fotografie";
+			arg2.name = "numeroFotografie";
 			arg2.type = PropertyInfo.INTEGER_CLASS;
 			break;
 		case 15:
-			arg2.name = "posizione_rfid";
+			arg2.name = "posizioneRfid";
 			break;
 		case 16:
-			arg2.name = "numeroserie";
+			arg2.name = "numeroSerie";
 			break;
 		case 17:
 			arg2.name = "rfid";
 			break;
 		case 18:
-			arg2.name = "rfid_area";
+			arg2.name = "rfidArea";
 			break;
 		}
 	}
 
 	@Override
 	public void setProperty(int arg0, Object arg1) {
+		if(arg1 == null){
+			arg1 = "";
+		}
 		switch(arg0){
 		case 0:
-			descrizione_area = arg1.toString();
+			descrizioneArea = arg1.toString();
 			break;
 		case 1:
-			descrizione_gioco= arg1.toString();
+			descrizioneGioco= arg1.toString();
 			break;
 		case 2:
-			descrizione_marca= arg1.toString();
+			descrizioneMarca= arg1.toString();
 			break;
 		case 3:
-			dt_acquisto= arg1.toString();
+			dtAcquisto= arg1.toString();
 			break;
 		case 4:
-			dt_installazione= arg1.toString();
+			dtInstallazione= arg1.toString();
 			break;
 		case 5:
-			dt_posizionamento_al= arg1.toString();
+			dtPosizionamentoAl= arg1.toString();
 			break;
 		case 6:
-			dt_posizionamento_dal= arg1.toString();
+			dtPosizionamentoDal= arg1.toString();
 			break;
 		case 7:
-			dt_prossimointervento= arg1.toString();
+			dtProssimoIntervento= arg1.toString();
 			break;
 		case 8:
 			gpsx= arg1.toString();
@@ -177,31 +180,31 @@ public class SOAPGioco implements KvmSerializable {
 			gpsy= arg1.toString();
 			break;
 		case 10:
-			id_gioco= arg1.toString();
+			idGioco= arg1.toString();
 			break;
 		case 11:
-			id_modello= arg1.toString();
+			idModello= arg1.toString();
 			break;
 		case 12:
-			id_tipogioco= arg1.toString();
+			idTipoGioco= arg1.toString();
 			break;
 		case 13:
 			note= arg1.toString();
 			break;
 		case 14:
-			numero_fotografie= Integer.parseInt(arg1.toString());
+			numeroFotografie= Integer.parseInt(arg1.toString());
 			break;
 		case 15:
-			numeroserie= arg1.toString();
+			numeroSerie= arg1.toString();
 			break;
 		case 16:
-			posizione_rfid= arg1.toString();
+			posizioneRfid= arg1.toString();
 			break;
 		case 17:
 			rfid= arg1.toString();
 			break;
 		case 18:
-			rfid_area= arg1.toString();
+			rfidArea= arg1.toString();
 			break;
 		}		
 	}

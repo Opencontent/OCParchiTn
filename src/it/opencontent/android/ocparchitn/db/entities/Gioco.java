@@ -18,15 +18,15 @@ public class Gioco extends Struttura {
 		tipo="gioco";
 		gpsx = Float.parseFloat(remote.gpsx);
 		gpsy = Float.parseFloat(remote.gpsy);
-		descrizione_marca = remote.descrizione_marca;
-		descrizione_area = remote.descrizione_area;
-		descrizione_gioco = remote.descrizione_gioco;
+		descrizioneMarca = remote.descrizioneMarca;
+		descrizioneArea = remote.descrizioneArea;
+		descrizione_gioco = remote.descrizioneGioco;
 		rfid = Integer.parseInt(remote.rfid);
-		rfid_area = remote.rfid_area;
-		id_gioco = Integer.parseInt(remote.id_gioco);
+		rfidArea = remote.rfidArea;
+		idGioco = Integer.parseInt(remote.idGioco);
 		note = remote.note;
-		numero_fotografie = remote.numero_fotografie;
-		numeroserie = remote.numeroserie;
+		numeroFotografie = remote.numeroFotografie;
+		numeroSerie = remote.numeroSerie;
 	}
 	
 	public Gioco(Set<Entry<String, Object>> entrySet,int rfid,Context context) {

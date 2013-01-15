@@ -9,7 +9,7 @@ public class Constants {
 	public final static String EXTRAKEY_DATAMAP_RESULT = "dataMapResult";
 	public final static String EXTRAKEY_METHOD_NAME = "methodName";
 	public final static String GET_GIOCO_METHOD_NAME = "getGioco";
-	public final static String GET_GIOCO_ID_METHOD_NAME = "getGioco_id";
+	public final static String GET_GIOCO_ID_METHOD_NAME = "getGiocoId";
 	public final static String GET_FOTO_METHOD_NAME = "getFoto";
 	public final static String GET_INFO_METHOD_NAME = "getInfo";
 	public final static String GET_LOGINUSER_METHOD_NAME = "loginUser";

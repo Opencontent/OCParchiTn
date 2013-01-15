@@ -2,7 +2,7 @@ package it.opencontent.android.ocparchitn.activities;
 
 import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
-import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotoUpdate;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotoupdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGiocoUpdate;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
@@ -75,7 +75,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 
 						HashMap<String, Object> map = new HashMap<String, Object>();
 						SOAPGiocoUpdate gu = new SOAPGiocoUpdate();
-						gu.id_gioco = "" + g.id_gioco;
+						gu.id_gioco = "" + g.idGioco;
 						if (g.rfid > 0) {
 							gu.rfid = "" + g.rfid;
 						}
@@ -100,56 +100,56 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 						// cicliamo le foto eventuali
 
 						if (g.foto0 != null && !g.foto0.equals("")) {
-							SOAPFotoUpdate fu = new SOAPFotoUpdate();
-							fu.idGioco = "" + g.id_gioco;
+							SOAPFotoupdate fu = new SOAPFotoupdate();
+							fu.idGioco = "" + g.idGioco;
 							fu.sovrascrittura = true;
 							fu.estensioneImmagine = "jpg";
 							fu.immagine = g.foto0;
-							fu.nomeImmagine = "gioco_" + g.id_gioco + "_foto_0";
+							fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_0";
 							map = new HashMap<String, Object>();
 							map.put("Fotoupdate", fu);
 							returnResponse("setFoto", map, false);
 						}
 						if (g.foto1 != null && !g.foto1.equals("")) {
-							SOAPFotoUpdate fu = new SOAPFotoUpdate();
-							fu.idGioco = "" + g.id_gioco;
+							SOAPFotoupdate fu = new SOAPFotoupdate();
+							fu.idGioco = "" + g.idGioco;
 							fu.sovrascrittura = true;
 							fu.estensioneImmagine = "jpg";
 							fu.immagine = g.foto1;
-							fu.nomeImmagine = "gioco_" + g.id_gioco + "_foto_1";
+							fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_1";
 							map = new HashMap<String, Object>();
 							map.put("Fotoupdate", fu);
 							returnResponse("setFoto", map, false);
 						}
 						if (g.foto2 != null && !g.foto2.equals("")) {
-							SOAPFotoUpdate fu = new SOAPFotoUpdate();
-							fu.idGioco = "" + g.id_gioco;
+							SOAPFotoupdate fu = new SOAPFotoupdate();
+							fu.idGioco = "" + g.idGioco;
 							fu.sovrascrittura = true;
 							fu.estensioneImmagine = "jpg";
 							fu.immagine = g.foto2;
-							fu.nomeImmagine = "gioco_" + g.id_gioco + "_foto_2";
+							fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_2";
 							map = new HashMap<String, Object>();
 							map.put("Fotoupdate", fu);
 							returnResponse("setFoto", map, false);
 						}
 						if (g.foto3 != null && !g.foto3.equals("")) {
-							SOAPFotoUpdate fu = new SOAPFotoUpdate();
-							fu.idGioco = "" + g.id_gioco;
+							SOAPFotoupdate fu = new SOAPFotoupdate();
+							fu.idGioco = "" + g.idGioco;
 							fu.sovrascrittura = true;
 							fu.estensioneImmagine = "jpg";
 							fu.immagine = g.foto3;
-							fu.nomeImmagine = "gioco_" + g.id_gioco + "_foto_3";
+							fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_3";
 							map = new HashMap<String, Object>();
 							map.put("Fotoupdate", fu);
 							returnResponse("setFoto", map, false);
 						}
 						if (g.foto4 != null && !g.foto4.equals("")) {
-							SOAPFotoUpdate fu = new SOAPFotoUpdate();
-							fu.idGioco = "" + g.id_gioco;
+							SOAPFotoupdate fu = new SOAPFotoupdate();
+							fu.idGioco = "" + g.idGioco;
 							fu.sovrascrittura = true;
 							fu.estensioneImmagine = "jpg";
 							fu.immagine = g.foto4;
-							fu.nomeImmagine = "gioco_" + g.id_gioco + "_foto_4";
+							fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_4";
 							map = new HashMap<String, Object>();
 							map.put("Fotoupdate", fu);
 							returnResponse("setFoto", map, false);

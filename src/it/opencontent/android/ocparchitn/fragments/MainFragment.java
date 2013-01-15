@@ -182,17 +182,17 @@ public class MainFragment extends Fragment implements ICustomFragment{
 	public void showStrutturaData(Struttura gioco) {
 		TextView v;
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_id);
-		v.setText(""+gioco.id_gioco);
+		v.setText(""+gioco.idGioco);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_marca);
-		v.setText(gioco.descrizione_marca);
+		v.setText(gioco.descrizioneMarca);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_nota);
 		v.setText(gioco.note);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_seriale);
-		v.setText(gioco.numeroserie);
+		v.setText(gioco.numeroSerie);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_rfid);
 		v.setText(gioco.rfid+"");
 		v = (TextView) getActivity().findViewById(R.id.display_area_rfid);
-		v.setText(gioco.rfid_area);
+		v.setText(gioco.rfidArea);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsx);
 		v.setText(gioco.gpsx + "");
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsy);

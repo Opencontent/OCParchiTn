@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 
-public class SOAPFotoUpdate implements KvmSerializable {
+public class SOAPFotoupdate implements KvmSerializable {
 
 	
 	public String estensioneImmagine;
@@ -14,7 +14,7 @@ public class SOAPFotoUpdate implements KvmSerializable {
 	public String idGioco;
 	public boolean sovrascrittura;
 	
-	public SOAPFotoUpdate(){
+	public SOAPFotoupdate(){
 		estensioneImmagine = "png";
 		nomeImmagine = "foto_1";
 		idGioco = "0";
@@ -71,7 +71,9 @@ public class SOAPFotoUpdate implements KvmSerializable {
 
 	@Override
 	public void setProperty(int arg0, Object arg1) {
-		
+		if(arg1 == null){
+			arg1 = "";
+		}
 		switch(arg0){
 		case 0:
 			estensioneImmagine = arg1.toString();

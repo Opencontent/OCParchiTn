@@ -2,9 +2,8 @@ package it.opencontent.android.ocparchitn.utils;
 
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPArea;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAutGiochi;
-import it.opencontent.android.ocparchitn.SOAPMappings.SOAPEsitoSet;
-import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotoUpdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotografia;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotoupdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGioco;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGiocoUpdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPInfo;
@@ -25,6 +24,7 @@ import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 import org.kxml2.kdom.Element;
+import org.kxml2.kdom.Node;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.util.Log;
@@ -74,15 +74,16 @@ public class SoapConnector {
 		
 
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Giocoupdate", SOAPGiocoUpdate.class);
-		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotoupdate", SOAPFotoUpdate.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotoupdate", SOAPFotoupdate.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotografia", SOAPFotografia.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Gioco", SOAPGioco.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Info", SOAPInfo.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Area", SOAPArea.class);
-		envelope.addMapping("http://gioco.parcogiochi/xsd", "EsitoSet", SOAPEsitoSet.class);
+//		envelope.addMapping("http://gioco.parcogiochi/xsd", "EsitoSet", SOAPEsitoSet.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "AutGiochi", SOAPAutGiochi.class);
 		//Eccezioni
-		envelope.addMapping("http://gioco.parcogiochi/xsd", "SrvGiocoArkAutException", SOAPSrvGiocoArkAutException.class);
+//		envelope.addMapping("http://gioco.parcogiochi/xsd", "SrvGiocoArkAutException", SOAPSrvGiocoArkAutException.class);
+		envelope.addMapping("http://gioco.parcogiochi", "SrvGiocoArkAutException", SOAPSrvGiocoArkAutException.class);
 		
 		if(MainActivity.headerOut != null){
 			envelope.headerOut = MainActivity.headerOut;
@@ -113,8 +114,10 @@ public class SoapConnector {
 		} catch(Exception e){
 			
 			 if(e.getClass().equals(SoapFault.class)){
-			  
-			  map.put("detail", ((SoapFault) e).detail);
+			  Node detail = (Node) ((SoapFault) e).detail;
+			  KvmSerializable exception = Utils.parseExceptionNode(detail);
+			  map.put("exception", exception);
+			  //map.put("detail", ((SoapFault) e).detail);
 			  map.put("string", ((SoapFault) e).faultstring);
 			  map.put("success", false);
 			  map.put("faultcode", ((SoapFault) e).faultcode);

@@ -100,15 +100,15 @@ public class Struttura {
 		while (iterator.hasNext()) {
 			Entry<String, Object> e = iterator.next();
 			Log.d(TAG, e.getKey());
-			if (e.getKey().equals("descrizione_marca")) {
-				descrizione_marca = bindStringToProperty(e.getValue(),
+			if (e.getKey().equals("descrizioneMarca")) {
+				descrizioneMarca = bindStringToProperty(e.getValue(),
 						e.getKey());
 			}
-			if (e.getKey().equals("descrizione_area")) {
-				descrizione_area = bindStringToProperty(e.getValue(),
+			if (e.getKey().equals("descrizioneArea")) {
+				descrizioneArea = bindStringToProperty(e.getValue(),
 						e.getKey());
 			}
-			if (e.getKey().equals("descrizione_gioco")) {
+			if (e.getKey().equals("descrizioneGioco")) {
 				descrizione_gioco = bindStringToProperty(e.getValue(),
 						e.getKey());
 			}
@@ -122,17 +122,17 @@ public class Struttura {
 			if (e.getKey().equals("note")) {
 				note = bindStringToProperty(e.getValue(), e.getKey());
 			}
-			if (e.getKey().equals("numeroserie")) {
-				numeroserie = bindStringToProperty(e.getValue(), e.getKey());
+			if (e.getKey().equals("numeroSerie")) {
+				numeroSerie = bindStringToProperty(e.getValue(), e.getKey());
 			}
 			if (e.getKey().equals("rfid")) {
 				rfid = bindIntToProperty(e.getValue(), e.getKey());
 			}
-			if (e.getKey().equals("rfid_area")) {
-				rfid_area = bindStringToProperty(e.getValue(), e.getKey());
+			if (e.getKey().equals("rfidArea")) {
+				rfidArea = bindStringToProperty(e.getValue(), e.getKey());
 			}
-			if (e.getKey().equals("id_gioco") && e.getValue() != null) {
-				id_gioco = bindIntToProperty(e.getValue(), e.getKey());
+			if (e.getKey().equals("idGioco") && e.getValue() != null) {
+				idGioco = bindIntToProperty(e.getValue(), e.getKey());
 			}
 			if (e.getKey().equals("foto0") && e.getValue() != null) {
 				foto0 = bindStringToProperty(e.getValue(), e.getKey());
@@ -234,16 +234,16 @@ public class Struttura {
 
 	public String dirtyElements = "0";
 	public int rfid = 0;
-	public String rfid_area = "0";
-	public int id_gioco = 0;
-	public int numero_fotografie = 0;
+	public String rfidArea = "0";
+	public int idGioco = 0;
+	public int numeroFotografie = 0;
 
 	public float gpsx = 0.0f;
 	public float gpsy = 0.0f;
 
-	public String numeroserie = "0";
-	public String descrizione_marca = "";
-	public String descrizione_area = "";
+	public String numeroSerie = "0";
+	public String descrizioneMarca = "";
+	public String descrizioneArea = "";
 	public String descrizione_gioco = "";
 
 	public String note = "";

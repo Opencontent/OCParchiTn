@@ -3,6 +3,9 @@ package it.opencontent.android.ocparchitn.activities;
 import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAutGiochi;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkAutException;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkGiochiException;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkSrvException;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.fragments.DebugFragment;
@@ -20,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.ksoap2.serialization.KvmSerializable;
 import org.kxml2.kdom.Element;
 
 import android.app.ActionBar;
@@ -276,12 +280,12 @@ public class MainActivity extends BaseActivity {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
 		alert.setTitle("Vuoi associare l'RFID " + rfid + " al Gioco "
-				+ gioco.id_gioco + " ?");
+				+ gioco.idGioco + " ?");
 		if (gioco.rfid > 0) {
-			alert.setMessage("il Gioco " + gioco.id_gioco
+			alert.setMessage("il Gioco " + gioco.idGioco
 					+ " attualmente ha l'RFID " + gioco.rfid);
 		} else {
-			alert.setMessage("il Gioco " + gioco.id_gioco
+			alert.setMessage("il Gioco " + gioco.idGioco
 					+ " attualmente non ha RFID associati");
 		}
 
@@ -289,7 +293,7 @@ public class MainActivity extends BaseActivity {
 			public void onClick(DialogInterface dialog, int whichButton) {
 
 				if (legaRFIDGioco(mrfid, mgioco)) {
-					feedback("Ok, ora il gioco " + mgioco.id_gioco
+					feedback("Ok, ora il gioco " + mgioco.idGioco
 							+ " è associato all'RFID " + mgioco.rfid);
 					String currentTag = (String) actionBar.getSelectedTab()
 							.getTag();
@@ -540,15 +544,45 @@ public class MainActivity extends BaseActivity {
 					remoteGioco = new Gioco(res.entrySet(),
 							getApplicationContext());
 				}
-				localGioco = db.readGiocoLocallyByID(remoteGioco.id_gioco);
+				localGioco = db.readGiocoLocallyByID(remoteGioco.idGioco);
 			} else if(res.containsKey("success") && res.get("success").equals(false) ){
-				//TODO: comunicare l'errore all'untente
+				/********************************************************
+				 * TODO:                                                *
+				 * raggruppare la gestione dell'errore in un punto solo *
+				 ********************************************************/
+
 				AlertDialog.Builder alert = new AlertDialog.Builder(this);
 				alert.setTitle("Errore remoto nel recupero della struttura "+currentQueriedId);
 				TextView content = new TextView(getApplicationContext());
-				content.setText(res.get("faultcode").toString()+"\n"+res.get("string").toString());
+				String outText = "";
+				if(res.get("faultcode") != null ){
+					outText += res.get("faultcode"); 
+				}
+				if(res.get("string") != null ){
+					outText += "\n"+res.get("string"); 
+				}
+				if(res.get("exception") != null){
+					KvmSerializable exception = (KvmSerializable) res.get("exception");
+					if(exception.getClass().equals(SOAPSrvGiocoArkAutException.class)){
+						outText += "\nCodice: "+((SOAPSrvGiocoArkAutException) exception).codice;
+						outText += "\nMessaggio: "+((SOAPSrvGiocoArkAutException) exception).message;
+					}else if(exception.getClass().equals(SOAPSrvGiocoArkGiochiException.class)){
+						outText += "\nCodice: "+((SOAPSrvGiocoArkGiochiException) exception).codice;
+						outText += "\nMessaggio: "+((SOAPSrvGiocoArkGiochiException) exception).message;
+					} else {
+						outText += "\nMessaggio: "+((SOAPSrvGiocoArkSrvException) exception).message;
+					}
+					
+				}
+				content.setText(outText);
 				alert.setView(content);
+				alert.setPositiveButton("OK", null);
 				alert.show();
+				/********************************
+				 * Fine abbozzo gestione errori *
+				 ********************************/
+				
+				
 				remoteGioco = new Gioco();				
 				localGioco = db.readGiocoLocallyByID(currentQueriedId);
 			}else {
@@ -562,7 +596,7 @@ public class MainActivity extends BaseActivity {
 			if (localGioco != null) {
 				Toast.makeText(
 						getApplicationContext(),
-						"Gioco " + localGioco.id_gioco
+						"Gioco " + localGioco.idGioco
 								+ " ha modifiche ancora non salvate",
 						Toast.LENGTH_SHORT).show();
 				currentGioco = localGioco;
@@ -570,12 +604,12 @@ public class MainActivity extends BaseActivity {
 			} else if(PlatformChecks.siamoOnline(getApplicationContext()) && remoteGioco !=null){
 				currentGioco = remoteGioco;
 				//Lo showStruttura viene chiamato dal loop delle foto
-				getStructureFoto(currentGioco.id_gioco);			
+				getStructureFoto(currentGioco.idGioco);			
 			} else {
-				currentGioco = db.readGiocoLocallyByID(remoteGioco.id_gioco);
+				currentGioco = db.readGiocoLocallyByID(remoteGioco.idGioco);
 				if(currentGioco == null){
 				currentGioco = new Gioco();
-				currentGioco.id_gioco = currentQueriedId;
+				currentGioco.idGioco = currentQueriedId;
 				} 
 			}
 			
@@ -592,7 +626,7 @@ public class MainActivity extends BaseActivity {
 					currentGioco = new Gioco(res.entrySet(), currentRFID,
 							getApplicationContext());
 					mf.showStrutturaData(currentGioco);
-					getStructureFoto(currentGioco.id_gioco);
+					getStructureFoto(currentGioco.idGioco);
 				} else {
 					mf.showStrutturaData(new Gioco());
 					Toast.makeText(

@@ -67,7 +67,9 @@ public class SOAPFotografia implements KvmSerializable {
 
 	@Override
 	public void setProperty(int arg0, Object arg1) {
-		
+		if(arg1 == null){
+			arg1 = "";
+		}		
 		switch(arg0){
 		case 0:
 			estensioneImmagine = arg1.toString();
