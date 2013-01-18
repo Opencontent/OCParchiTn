@@ -452,7 +452,8 @@ public class OCParchiDB {
 					}
 				}
 			}
-			sqlCreateCode += " ) ";
+			
+			sqlCreateCode += ",UNIQUE (numeroTabella,Codice) ) ";
 			Log.d(TAG, sqlCreateCode);
 			mDatabase.execSQL(sqlCreateCode);
 

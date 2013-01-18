@@ -1,14 +1,21 @@
 package it.opencontent.android.ocparchitn.SOAPMappings;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Hashtable;
+import java.util.Locale;
 
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
+
+import android.util.Log;
 
 public class SOAPCodTabella implements KvmSerializable {
 
 	public int codice;
 	public String descrizione;
+	public Date dtValidita;
 	
 	
 	@Override
@@ -18,13 +25,15 @@ public class SOAPCodTabella implements KvmSerializable {
 			return codice;
 		case 1:
 			return descrizione;
+		case 2:
+			return dtValidita;
 		}
 		return null;
 	}
 
 	@Override
 	public int getPropertyCount() {
-		return 2;
+		return 3;
 	}
 
 	@Override
@@ -38,6 +47,10 @@ public class SOAPCodTabella implements KvmSerializable {
 			arg2.name = "descrizione";
 			arg2.type = PropertyInfo.STRING_CLASS;
 			break;
+		case 2:
+			arg2.name = "dtValidita";
+			arg2.type = PropertyInfo.OBJECT_CLASS;
+			break;
 		}
 	}
 
@@ -49,6 +62,18 @@ public class SOAPCodTabella implements KvmSerializable {
 			break;
 		case 1:
 			descrizione = arg1.toString();
+			break;
+		case 2:
+			//2050-12-31
+			
+			try {
+				String pattern = "yyyy-MM-dd";
+				SimpleDateFormat sdf = new SimpleDateFormat(pattern,Locale.US);
+				dtValidita = sdf.parse(arg1+"");
+				Log.d("LEVAMI",arg1+" mappato a "+dtValidita);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			} 
 			break;
 		}
 

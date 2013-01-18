@@ -13,7 +13,7 @@ public class RecordTabellaSupporto {
 	
 	public RecordTabellaSupporto(int nt, SOAPCodTabella soap){
 		tipo = "";
-		validita = new Date().getTime() + 600000;
+		validita = soap.dtValidita.getTime();
 		codice = soap.codice;
 		numeroTabella = nt;
 		descrizione = soap.descrizione;
