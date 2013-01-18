@@ -99,7 +99,7 @@ public class Struttura {
 
 		while (iterator.hasNext()) {
 			Entry<String, Object> e = iterator.next();
-			Log.d(TAG, e.getKey());
+//			Log.d(TAG, e.getKey());
 			if (e.getKey().equals("descrizioneMarca")) {
 				descrizioneMarca = bindStringToProperty(e.getValue(),
 						e.getKey());
@@ -198,7 +198,9 @@ public class Struttura {
 				// return "INDEFINITO";
 			}
 		} else {
+			if(value!=null){
 			res = (String) value.toString();
+			} 
 		}
 		return res;
 	}

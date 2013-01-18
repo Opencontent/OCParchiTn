@@ -2,13 +2,12 @@ package it.opencontent.android.ocparchitn.utils;
 
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPArea;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAutGiochi;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPCodTabella;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotografia;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotoupdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGioco;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGiocoUpdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPInfo;
-import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkAutException;
-import it.opencontent.android.ocparchitn.activities.MainActivity;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,7 +22,6 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
-import org.kxml2.kdom.Element;
 import org.kxml2.kdom.Node;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -71,7 +69,6 @@ public class SoapConnector {
         envelope.setOutputSoapObject(request);
         envelope.setAddAdornments(false);
         envelope.implicitTypes= true;
-		
 
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Giocoupdate", SOAPGiocoUpdate.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotoupdate", SOAPFotoupdate.class);
@@ -79,14 +76,15 @@ public class SoapConnector {
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Gioco", SOAPGioco.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Info", SOAPInfo.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Area", SOAPArea.class);
-//		envelope.addMapping("http://gioco.parcogiochi/xsd", "EsitoSet", SOAPEsitoSet.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "AutGiochi", SOAPAutGiochi.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "CodTabella", SOAPCodTabella.class);
+
 		//Eccezioni
 //		envelope.addMapping("http://gioco.parcogiochi/xsd", "SrvGiocoArkAutException", SOAPSrvGiocoArkAutException.class);
-		envelope.addMapping("http://gioco.parcogiochi", "SrvGiocoArkAutException", SOAPSrvGiocoArkAutException.class);
+//		envelope.addMapping("http://gioco.parcogiochi", "SrvGiocoArkAutException", SOAPSrvGiocoArkAutException.class);
 		
-		if(MainActivity.headerOut != null){
-			envelope.headerOut = MainActivity.headerOut;
+		if(AuthCheck.getHeaderOut() != null){
+			envelope.headerOut = AuthCheck.getHeaderOut();
 		}
 		
 		HttpTransportSE httpTransport = new HttpTransportSE(URL);
@@ -129,6 +127,10 @@ public class SoapConnector {
 			e.printStackTrace();
 			map.put("dump", httpTransport.responseDump);
 			map.put("success", false);
+		} finally {
+			Log.d(TAG,httpTransport.requestDump);
+			Log.d(TAG,httpTransport.responseDump);			
+			
 		}
 		if (result != null) {
 			if(result instanceof SoapPrimitive){
@@ -152,7 +154,7 @@ public class SoapConnector {
 				}
 			}else if (result instanceof Vector){
 				for( int i = 0; i < ((Vector) result).size(); i++){
-					String key =""+i;
+					String key = ""+i;
 					map.put(key, ((Vector) result).get(i));
 				}				
 			}else{
@@ -164,8 +166,7 @@ public class SoapConnector {
 			Log.d(TAG, envelope.bodyOut.toString());
 		}		
 		
-		Log.d(TAG,httpTransport.requestDump);
-		Log.d(TAG,httpTransport.responseDump);
+
  		return map;
 	}
 

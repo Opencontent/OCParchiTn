@@ -131,8 +131,10 @@ public class Utils {
 				setExc(exceptionClass);
 			}
 			
-		} else {
+		} else if(element.getChildCount()>0) {
 			digIntoNode(element.getElement(0));
+		} else{
+			
 		}
 	}
 	

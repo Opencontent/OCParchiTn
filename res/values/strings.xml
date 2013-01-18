@@ -2,13 +2,7 @@
 
     <string name="app_name">OCParchiTN</string>
     
-    <string name="fragment_title_rilevazione">Rilevazione</string> 
- 
-    <string name="fragment_title_attivita_periodica">Verifica Periodica</string> 
- 
-    <string name="fragment_title_rendicontazione_manutenzione">Rendicontazione</string> 
-    <string name="fragment_title_spostamento_gioco">Spostamento</string> 
-    <string name="fragment_title_debug">Debug</string> 
+
     
     
     

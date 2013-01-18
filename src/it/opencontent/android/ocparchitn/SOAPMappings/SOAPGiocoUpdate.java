@@ -10,7 +10,7 @@ public class SOAPGiocoUpdate implements KvmSerializable {
 	
 	public String gpsx; 
 	public String gpsy;
-	public String id_gioco;
+	public String idGioco;
 	public String note;
 	public String rfid;
 	public String tabletDataModifica;
@@ -35,7 +35,7 @@ public class SOAPGiocoUpdate implements KvmSerializable {
 		case 1:
 			return gpsy;
 		case 2:
-			return id_gioco;
+			return idGioco;
 		case 3:
 			return note;
 		case 4:
@@ -70,7 +70,7 @@ public class SOAPGiocoUpdate implements KvmSerializable {
 			info.name ="gpsy";
 			break;
 		case 2:
-			info.name ="id_gioco";
+			info.name ="idGioco";
 			break;
 		case 3:
 			info.name ="note";
@@ -106,7 +106,7 @@ public class SOAPGiocoUpdate implements KvmSerializable {
 			gpsy = arg1.toString();
 			break;
 		case 2:
-			id_gioco = arg1.toString();
+			idGioco = arg1.toString();
 			break;
 		case 3:
 			note = arg1.toString();

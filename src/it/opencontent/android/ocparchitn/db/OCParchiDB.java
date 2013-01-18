@@ -2,12 +2,15 @@ package it.opencontent.android.ocparchitn.db;
 
 import it.opencontent.android.ocparchitn.db.entities.Area;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
+import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.db.entities.StruttureEnum;
 import it.opencontent.android.ocparchitn.utils.FileNameCreator;
 
 import java.lang.reflect.Field;
 import java.security.InvalidParameterException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -111,8 +114,8 @@ public class OCParchiDB {
 		return cursor;
 	}
 
-	private String[] getDefaultColumns(Class<?> struttura) {
-		Field[] campi = struttura.getFields();
+	private String[] getDefaultColumns(Class<?> classe) {
+		Field[] campi = classe.getFields();
 		String res = "";
 		for (int i = 0; i < campi.length; i++) {
 			if (i > 0) {
@@ -151,6 +154,43 @@ public class OCParchiDB {
 			ipe.printStackTrace();
 			return null;
 		}
+	}
+	
+	public void TabelleSupportoUpdate(RecordTabellaSupporto[] records){
+		mDatabaseOpenHelper.getWritableDatabase().beginTransaction();
+		for(RecordTabellaSupporto r : records){
+			ContentValues cv  = new ContentValues();
+			cv.put("numeroTabella", r.numeroTabella);
+			cv.put("codice", r.codice);
+			cv.put("descrizione", r.descrizione);
+			cv.put("validita", r.validita);
+			cv.put("tipo", r.tipo);
+			mDatabaseOpenHelper.getWritableDatabase().insertWithOnConflict(
+					RecordTabellaSupporto.class.getSimpleName(), null, cv,SQLiteDatabase.CONFLICT_REPLACE);
+		}
+		mDatabaseOpenHelper.getWritableDatabase().setTransactionSuccessful();
+		mDatabaseOpenHelper.getWritableDatabase().endTransaction();
+	}
+	
+	
+	public boolean tabelleSupportoScadute(){
+		String timestamp = new Date().getTime() + "";
+		String selection = " validita  < ? ";
+		String[] selectionArgs = new String[] {  timestamp };
+		Cursor c = mDatabaseOpenHelper.getReadableDatabase().query(
+				RecordTabellaSupporto.class.getSimpleName(), getDefaultColumns(RecordTabellaSupporto.class), selection,
+				selectionArgs, null, null, null);
+		boolean result = c.getCount() > 0;
+		c.close();
+		return result;
+	}
+	public boolean tabelleSupportoPopolate(){
+		Cursor c = mDatabaseOpenHelper.getReadableDatabase().query (
+				RecordTabellaSupporto.class.getSimpleName(), getDefaultColumns(RecordTabellaSupporto.class), null,
+				null, null, null, null);
+		boolean result = c.getCount() >0;
+		c.close();
+		return result;
 	}
 
 	private Gioco deserializeGiocoSingolo(Cursor c)
@@ -374,7 +414,7 @@ public class OCParchiDB {
 
 						sqlCreateCode += fields[i].getName();
 
-						if (c.equals(int.class)) {
+						if (c.equals(int.class) || c.equals(long.class)) {
 							sqlCreateCode += " INT ";
 						} else {
 							sqlCreateCode += " TEXT ";
@@ -389,6 +429,32 @@ public class OCParchiDB {
 				Log.d(TAG, sqlCreateCode);
 				mDatabase.execSQL(sqlCreateCode);
 			}
+			
+			//Creazione tabella dei recordTabellaSupporto
+			String sqlCreateCode = "CREATE TABLE "+RecordTabellaSupporto.class.getSimpleName()+ " ( ";
+			Field[] fields = RecordTabellaSupporto.class.getFields();
+			for (int i = 0; i < fields.length; i++) {
+				@SuppressWarnings("rawtypes")
+				Class c = fields[i].getType();
+
+				if (!c.equals(Enum.class)) {
+
+					if (i > 0) {
+						sqlCreateCode += ",";
+					}
+
+					sqlCreateCode += fields[i].getName();
+
+					if (c.equals(int.class) || c.equals(long.class)) {
+						sqlCreateCode += " INT ";
+					} else {
+						sqlCreateCode += " TEXT ";
+					}
+				}
+			}
+			sqlCreateCode += " ) ";
+			Log.d(TAG, sqlCreateCode);
+			mDatabase.execSQL(sqlCreateCode);
 
 		}
 

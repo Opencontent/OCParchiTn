@@ -3,11 +3,11 @@ package it.opencontent.android.ocparchitn.fragments;
 import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAutGiochi;
-import it.opencontent.android.ocparchitn.activities.BaseActivity;
 import it.opencontent.android.ocparchitn.activities.MainActivity;
 import it.opencontent.android.ocparchitn.activities.SettingsActivity;
 import it.opencontent.android.ocparchitn.activities.SynchroSoapActivity;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
+import it.opencontent.android.ocparchitn.utils.AuthCheck;
 
 import java.util.HashMap;
 
@@ -71,11 +71,11 @@ public class DebugFragment extends Fragment  implements ICustomFragment{
 		switch(v.getId()){
 		case R.id.status_token_button:
 			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_TOKEN_STATUS_METHOD_NAME);
-			startActivityForResult(serviceIntent, BaseActivity.SOAP_GET_TOKEN_STATUS_REQUEST_CODE);			
+			startActivityForResult(serviceIntent, Constants.SOAP_GET_TOKEN_STATUS_REQUEST_CODE);			
 			break;
 		case R.id.invalidate_token_button:
 			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_INVALIDATE_TOKEN_METHOD_NAME);
-			startActivityForResult(serviceIntent, BaseActivity.SOAP_GET_INVALIDATE_TOKEN_REQUEST_CODE);			
+			startActivityForResult(serviceIntent, Constants.SOAP_GET_INVALIDATE_TOKEN_REQUEST_CODE);			
 			break;
 		case R.id.refresh_token_button:
 			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_LOGINUSER_METHOD_NAME);
@@ -86,7 +86,7 @@ public class DebugFragment extends Fragment  implements ICustomFragment{
 			map.put("args0", username);
 			map.put("args1", password);
 			serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
-			startActivityForResult(serviceIntent, BaseActivity.SOAP_GET_TOKEN_REQUEST_CODE);							
+			startActivityForResult(serviceIntent, Constants.SOAP_GET_TOKEN_REQUEST_CODE);							
 			break;
 		}
 		
@@ -96,7 +96,7 @@ public class DebugFragment extends Fragment  implements ICustomFragment{
 	public void onActivityResult(int requestCode, int resultCode, Intent intent){
 		HashMap<String, Object> res;
 		switch(requestCode){
-		case BaseActivity.SOAP_GET_TOKEN_STATUS_REQUEST_CODE:
+		case Constants.SOAP_GET_TOKEN_STATUS_REQUEST_CODE:
 			res = SynchroSoapActivity.getRes(Constants.GET_TOKEN_STATUS_METHOD_NAME);
 			if(res != null){
 				if(res.containsKey("primitive")){
@@ -109,7 +109,7 @@ public class DebugFragment extends Fragment  implements ICustomFragment{
 			}
 			Log.d(TAG,"Status request response");
 			break;
-		case BaseActivity.SOAP_GET_INVALIDATE_TOKEN_REQUEST_CODE:
+		case Constants.SOAP_GET_INVALIDATE_TOKEN_REQUEST_CODE:
 			res = SynchroSoapActivity.getRes(Constants.GET_INVALIDATE_TOKEN_METHOD_NAME);
 			if(res != null && res.containsKey("primitive")){
 				boolean status = Boolean.parseBoolean((String) res.get("primitive"));
@@ -117,7 +117,7 @@ public class DebugFragment extends Fragment  implements ICustomFragment{
 			}
 			Log.d(TAG,"invalidate request response");
 			break;
-		case BaseActivity.SOAP_GET_TOKEN_REQUEST_CODE:
+		case Constants.SOAP_GET_TOKEN_REQUEST_CODE:
 			res = SynchroSoapActivity.getRes(Constants.GET_LOGINUSER_METHOD_NAME);
 			if(res != null && res.containsKey("success") ){
 				String faultString = res.get("string").toString();
@@ -144,7 +144,7 @@ public class DebugFragment extends Fragment  implements ICustomFragment{
 			}
 			
 			if(res!=null && res.containsKey("headerIn")){
-				MainActivity.headerOut = (Element[]) res.get("headerIn");
+				AuthCheck.setHeaderOut((Element[]) res.get("headerIn"));
 			}
 			
 			break;			

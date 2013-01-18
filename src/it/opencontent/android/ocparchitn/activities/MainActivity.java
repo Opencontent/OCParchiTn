@@ -3,25 +3,24 @@ package it.opencontent.android.ocparchitn.activities;
 import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAutGiochi;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPCodTabella;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkAutException;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkGiochiException;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkSrvException;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
-import it.opencontent.android.ocparchitn.fragments.DebugFragment;
+import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
+import it.opencontent.android.ocparchitn.fragments.AvailableFragment;
 import it.opencontent.android.ocparchitn.fragments.ICustomFragment;
-import it.opencontent.android.ocparchitn.fragments.MainFragment;
-import it.opencontent.android.ocparchitn.fragments.PeriodicaFragment;
-import it.opencontent.android.ocparchitn.fragments.RendicontazioneFragment;
-import it.opencontent.android.ocparchitn.fragments.SpostamentoFragment;
-import it.opencontent.android.ocparchitn.utils.FileNameCreator;
+import it.opencontent.android.ocparchitn.utils.AuthCheck;
 import it.opencontent.android.ocparchitn.utils.PlatformChecks;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.ksoap2.serialization.KvmSerializable;
 import org.kxml2.kdom.Element;
@@ -33,7 +32,6 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -63,7 +61,7 @@ public class MainActivity extends BaseActivity {
 
 	private static boolean serviceInfoTaken = false;
 	
-	public static Element[] headerOut = null;
+	
 	public static boolean tokenIsValid = false;
 
 	private Bitmap snapshot;
@@ -93,62 +91,26 @@ public class MainActivity extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// setContentView(R.layout.activity_main_fragments);
+		
+		//Prima cosa controlliamo che il token sia attivo
+		
 
 		db = new OCParchiDB(getApplicationContext());
-
-		actionBar = getActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		actionBar.setDisplayShowTitleEnabled(true);
-
-		Tab tab;
-		tab = actionBar
-				.newTab()
-				.setText(getString(R.string.fragment_title_rilevazione))
-				.setTag("rilevazione")
-				.setTabListener(
-						new CustomTabListener<MainFragment>(this,
-								"rilevazione", MainFragment.class));
-		actionBar.addTab(tab);
-		tab = actionBar
-				.newTab()
-				.setTag("periodica")
-				.setText(getString(R.string.fragment_title_attivita_periodica))
-				.setTabListener(
-						new CustomTabListener<PeriodicaFragment>(this,
-								"periodica", PeriodicaFragment.class));
-		actionBar.addTab(tab);
-		tab = actionBar
-				.newTab()
-				.setTag("rendicontazione")
-				.setText(
-						getString(R.string.fragment_title_rendicontazione_manutenzione))
-				.setTabListener(
-						new CustomTabListener<RendicontazioneFragment>(this,
-								"rendicontazione",
-								RendicontazioneFragment.class));
-		actionBar.addTab(tab);
-		tab = actionBar
-				.newTab()
-				.setTag("spostamento")
-				.setText(getString(R.string.fragment_title_spostamento_gioco))
-				.setTabListener(
-						new CustomTabListener<SpostamentoFragment>(this,
-								"spostamento", SpostamentoFragment.class));
-		actionBar.addTab(tab);
-		tab = actionBar
-				.newTab()
-				.setTag("debug")
-				.setText(getString(R.string.fragment_title_debug))
-				.setTabListener(
-						new CustomTabListener<DebugFragment>(this,
-								"debug", DebugFragment.class));
-		actionBar.addTab(tab);
-
+		if (!serviceInfoTaken) {
+			getServiceInfo();
+			serviceInfoTaken = true;
+		}
+		if(!AuthCheck.getTokenValid()){
+			renewToken();
+		} else {
+			setupActionBar();
+			setupTabelleAppoggio();
+		}
+		
 		if (savedInstanceState != null) {
 			actionBar.setSelectedNavigationItem(savedInstanceState.getInt(
 					"tab", 0));
 		}
-
 		
 		nfca = NfcAdapter.getDefaultAdapter(this);
 		pi = PendingIntent.getActivity(this, 0, new Intent(this, getClass())
@@ -169,17 +131,6 @@ public class MainActivity extends BaseActivity {
 		Intent intent = getIntent();
 		parseIntent(intent);
 
-		if (!serviceInfoTaken) {
-			getServiceInfo();
-			serviceInfoTaken = true;
-		}
-
-		updateCountDaSincronizzare();
-		
-		if(!tokenIsValid){
-			renewToken();
-		}
-
 		// La techListArray per il momento la tengo vuota, così filtro per
 		// qualsiasi
 		// TODO: definire un set di techList specifiche e corrette per il
@@ -187,17 +138,72 @@ public class MainActivity extends BaseActivity {
 
 	}
 
+	private void setupTabelleAppoggio(){
+		
+		//setup della tabella recordTabellaSupporto importandoli da remoto se vuota
+		//vogliamo le tabelle con id remoto 5 e 3
+		if(!db.tabelleSupportoPopolate() || db.tabelleSupportoScadute()){
+			getTabellaSupporto();
+		} else {
+			Log.d(TAG,"Tabelle di supporto già popolate e aggiornate");
+		}
+	}
+	
+	private void setupActionBar(){
+		actionBar = getActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		actionBar.setDisplayShowTitleEnabled(true);
+		
+
+
+		for(AvailableFragment f : AvailableFragment.values()){
+			boolean displayMe = false;
+			if(AuthCheck.siamoComune()){
+				if( AuthCheck.getAutComune() >= f.minimumComuneAutLevel){
+				displayMe = true;
+				}
+			} else if(AuthCheck.siamoCooperativa()){
+				if( AuthCheck.getAutCooperativa() >= f.minimumCooperativaAutLevel){
+					displayMe = true;
+				}
+			}
+			if(displayMe){
+			Class<ICustomFragment> specific = f.specificClass;
+			
+			
+			
+			Tab tab = actionBar
+					.newTab()
+					.setText(f.title)
+					.setTag(f.label)
+					.setTabListener(
+							new CustomTabListener<ICustomFragment>(this,
+									f.label, specific));
+			actionBar.addTab(tab);
+			} else {
+				Log.d(TAG,"Tab non mostrato causa permessi: "+f.label);
+			}
+		}
+		updateCountDaSincronizzare();
+
+		
+	}
+
 	@Override
 	public void onPause() {
 		super.onPause();
+		if(nfca != null){
 		nfca.disableForegroundDispatch(this);
+		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+		if(nfca != null){
 		nfca.enableForegroundDispatch(this, pi, ifa, techListsArray);
-		showError(errorMessages);
+		}
+//		showError(errorMessages);
 		// nfca.enableForegroundDispatch(this, pi, null, null);
 	}
 
@@ -413,7 +419,7 @@ public class MainActivity extends BaseActivity {
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
 		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_INFO_METHOD_NAME);
-		startActivityForResult(serviceIntent, SOAP_SERVICE_INFO_REQUEST_CODE);
+		startActivityForResult(serviceIntent, Constants.SOAP_SERVICE_INFO_REQUEST_CODE);
 	}
 	public void sincronizzaModifiche(View v) {
 		Intent serviceIntent = new Intent();
@@ -424,7 +430,7 @@ public class MainActivity extends BaseActivity {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("all", true);
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
-		startActivityForResult(serviceIntent, SOAP_SINCRONIZZA_TUTTO_REQUEST_CODE);
+		startActivityForResult(serviceIntent, Constants.SOAP_SINCRONIZZA_TUTTO_REQUEST_CODE);
 
 	}
 	private void getStructureDataByID(int id) {
@@ -436,7 +442,7 @@ public class MainActivity extends BaseActivity {
 		map.put("idgioco", "" + id);
 		currentQueriedId = id;
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
-		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE_BY_ID);
+		startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_ID);
 	}
 	private void getStructureFotoByID(int id) {
 		Intent serviceIntent = new Intent();
@@ -446,7 +452,14 @@ public class MainActivity extends BaseActivity {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("idGioco", "" + id);
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
-		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_FOTO_REQUEST_CODE);
+		startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_FOTO_REQUEST_CODE);
+	}
+	private void getTabellaSupporto() {
+		Intent serviceIntent = new Intent();
+		serviceIntent.setClass(getApplicationContext(),
+				SynchroSoapActivity.class);
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_TABELLA_METHOD_NAME);
+		startActivityForResult(serviceIntent, Constants.SOAP_GET_TABELLA_REQUEST_CODE);
 	}
 
 	private void getStructureDataByRFID(int id) {
@@ -457,7 +470,7 @@ public class MainActivity extends BaseActivity {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("rfid", "" + id);
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
-		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_REQUEST_CODE);
+		startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_REQUEST_CODE);
 	}
 
 	private void getStructureFoto(int id) {
@@ -469,7 +482,7 @@ public class MainActivity extends BaseActivity {
 //		map.put("idGioco", "" + id);
 		map.put("args0", "" + id);
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
-		startActivityForResult(serviceIntent, SOAP_GET_GIOCO_FOTO_REQUEST_CODE);
+		startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_FOTO_REQUEST_CODE);
 	}
 	
 	private void renewToken(){
@@ -487,18 +500,24 @@ public class MainActivity extends BaseActivity {
 		map.put("args0", username);
 		map.put("args1", password);
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
-		startActivityForResult(serviceIntent, SOAP_GET_TOKEN_REQUEST_CODE);		
+		startActivityForResult(serviceIntent, Constants.SOAP_GET_TOKEN_REQUEST_CODE);		
 	}
 
 	@Override
 	public void onActivityResult(int requestCode, int returnCode, Intent intent) {
 		HashMap<String, Object> res;
-		String currentTag = (String) actionBar.getSelectedTab().getTag();
+		String currentTag = "";
+		if(actionBar != null && actionBar.getSelectedTab() != null){
+			currentTag = (String) actionBar.getSelectedTab().getTag();
+		}
 		ICustomFragment mf = (ICustomFragment) getFragmentManager()
 				.findFragmentByTag(currentTag);
 
 		switch (requestCode) {
-		case BaseActivity.SOAP_GET_TOKEN_REQUEST_CODE:
+		case Constants.CREDENTIALS_UPDATED_REQUEST_CODE:
+			renewToken();
+			break;
+		case Constants.SOAP_GET_TOKEN_REQUEST_CODE:
 			res = SynchroSoapActivity.getRes(Constants.GET_LOGINUSER_METHOD_NAME);
 			if(res != null && res.containsKey("success") ){
 				String faultString = res.get("string").toString();
@@ -512,7 +531,7 @@ public class MainActivity extends BaseActivity {
 					public void onClick(DialogInterface dialog, int which) {
 						Intent intent = new Intent();
 						intent.setClass(getApplicationContext(), SettingsActivity.class);
-						startActivity(intent);
+						startActivityForResult(intent,Constants.CREDENTIALS_UPDATED_REQUEST_CODE);
 						return;
 					}
 					
@@ -521,18 +540,20 @@ public class MainActivity extends BaseActivity {
 				
 			} else if(res != null && res.containsKey("mapped")){
 				SOAPAutGiochi auth = (SOAPAutGiochi) res.get("mapped");
-				int a = auth.autComune;
+				AuthCheck.setAutGiochi(auth);
+				setupActionBar();
+				setupTabelleAppoggio();
 			}
 			
 			if(res!=null && res.containsKey("headerIn")){
-				headerOut = (Element[]) res.get("headerIn");
+				AuthCheck.setHeaderOut((Element[]) res.get("headerIn"));
 			}
 			
 			break;
-		case BaseActivity.SOAP_SINCRONIZZA_TUTTO_REQUEST_CODE:
+		case Constants.SOAP_SINCRONIZZA_TUTTO_REQUEST_CODE:
 			updateCountDaSincronizzare();
 			break;
-		case BaseActivity.SOAP_GET_GIOCO_REQUEST_CODE_BY_ID:
+		case Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_ID:
 			res = SynchroSoapActivity.getRes(Constants.GET_GIOCO_ID_METHOD_NAME);
 			Gioco remoteGioco = null;
 			Gioco localGioco = null;
@@ -616,7 +637,7 @@ public class MainActivity extends BaseActivity {
 			mf.showStrutturaData(currentGioco);
 			
 			break;
-		case BaseActivity.SOAP_GET_GIOCO_REQUEST_CODE:
+		case Constants.SOAP_GET_GIOCO_REQUEST_CODE:
 
 			if (returnCode == RESULT_OK) {
 
@@ -642,14 +663,34 @@ public class MainActivity extends BaseActivity {
 						Toast.LENGTH_SHORT).show();
 			}
 			break;
-		case SOAP_GET_GIOCO_FOTO_REQUEST_CODE:
+		case Constants.SOAP_GET_TABELLA_REQUEST_CODE:
+			if (returnCode == RESULT_OK) {
+				//TODO: attaccare la gestione dell'errore
+				for(int id : Constants.ID_TABELLE_SUPPORTO){
+					res = SynchroSoapActivity.getRes(Constants.GET_TABELLA_METHOD_NAME+"_"+id);
+					if(res!=null && !res.containsKey("success")){
+						ArrayList<RecordTabellaSupporto> records = new ArrayList<RecordTabellaSupporto>();
+						Set<Entry<String,Object>> s = res.entrySet();
+						Iterator<Entry<String,Object>> iterator = s.iterator();
+						while(iterator.hasNext()){
+							Entry<String,Object> e = iterator.next();
+							if(e.getValue() instanceof SOAPCodTabella){
+								records.add(new RecordTabellaSupporto(id,(SOAPCodTabella) e.getValue()) );						
+							}
+						}
+						db.TabelleSupportoUpdate(records.toArray(new RecordTabellaSupporto[records.size()]));
+					}
+				}
+			}
+			break;
+		case Constants.SOAP_GET_GIOCO_FOTO_REQUEST_CODE:
 			if (returnCode == RESULT_OK) {
 				res = SynchroSoapActivity.getRes(Constants.GET_FOTO_METHOD_NAME);
 				currentGioco.addImmagine(res.entrySet());
 			}
 			mf.showStrutturaData(currentGioco);
 			break;
-		case FOTO_REQUEST_CODE:
+		case Constants.FOTO_REQUEST_CODE:
 			try {
 				snapshot = CameraActivity.getImage();
 				if (currentGioco == null) {
@@ -661,10 +702,10 @@ public class MainActivity extends BaseActivity {
 
 				int whichOne = intent.getExtras().getInt(
 						Constants.EXTRAKEY_FOTO_NUMBER);
-				String filename = FileNameCreator.getSnapshotFullPath(
-						currentRFID, whichOne);
-				FileOutputStream fos = openFileOutput(filename,
-						Context.MODE_PRIVATE);
+//				String filename = FileNameCreator.getSnapshotFullPath(
+//						currentRFID, whichOne);
+//				FileOutputStream fos = openFileOutput(filename,
+//						Context.MODE_PRIVATE);
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();  
 //				snapshot.compress(Bitmap.CompressFormat.PNG, 80, fos);
 //				fos.close();
@@ -703,21 +744,21 @@ public class MainActivity extends BaseActivity {
 				}
 			} catch (NullPointerException e) {
 				Log.d(TAG, "Immagine nulla");
-			} catch (FileNotFoundException e) {
+			}/* catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 			break;
-		case BaseActivity.SOAP_SERVICE_INFO_REQUEST_CODE:
+		case Constants.SOAP_SERVICE_INFO_REQUEST_CODE:
 			//TODO: rimappare l'oggetto info
 			serviceInfo = SynchroSoapActivity.getRes(Constants.GET_INFO_METHOD_NAME);
 			serviceInfoTaken = true;
 			errorMessages.put(Constants.STATUS_MESSAGE_SERVER_STATUS,
 					"Connessione al server: OK");
-			showError(errorMessages);
+//			showError(errorMessages);
 			break;
 			default:
 				super.onActivityResult(requestCode, returnCode, intent);
@@ -753,19 +794,37 @@ public class MainActivity extends BaseActivity {
 	}
 
 	public void showError(HashMap<String, String> map) {
+		if(actionBar != null && actionBar.getSelectedTab() != null){
 		String currentTag = (String) actionBar.getSelectedTab().getTag();
 		ICustomFragment f = (ICustomFragment) getFragmentManager()
 				.findFragmentByTag(currentTag);
 		f.showError(map);
+		} else {
+			showError(map, true);
+		}
 	}
 
+	private void showError(HashMap<String,String> map, boolean here){
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Errore");
+		String out = "";
+		Iterator<Entry<String,String>> i = map.entrySet().iterator();
+		while(i.hasNext()){
+			Entry<String,String> n = (Entry<String, String>) i.next();
+			out +="\n"+n.getValue();
+		}
+		alert.setMessage(out);
+		alert.setPositiveButton("OK", null);
+		alert.show();
+	}
+	
 	public void takeSnapshot(View button) {
 		Intent customCamera = new Intent(Constants.TAKE_SNAPSHOT);
 		int whichOne = Integer.parseInt((String) button.getTag());
 		customCamera.putExtra(Constants.EXTRAKEY_FOTO_NUMBER, whichOne);
 		customCamera.setClass(getApplicationContext(), CameraActivity.class);
 		Log.d(TAG, customCamera.getAction());
-		startActivityForResult(customCamera, BaseActivity.FOTO_REQUEST_CODE);
+		startActivityForResult(customCamera, Constants.FOTO_REQUEST_CODE);
 	}
 
 	public static float getCurrentLon() {
@@ -776,7 +835,8 @@ public class MainActivity extends BaseActivity {
 		return currentLat;
 	}
 
-	public static class CustomTabListener<T extends Fragment> implements
+//	public static class CustomTabListener<T extends Fragment> implements
+	public static class CustomTabListener<T> implements
 			ActionBar.TabListener {
 		private Fragment mFragment;
 		private final Activity mActivity;
@@ -832,7 +892,7 @@ public class MainActivity extends BaseActivity {
 				Log.d(TAG, "onGpsStatusChanged First Fix");
 				errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
 						Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXED);
-				showError(errorMessages);
+//				showError(errorMessages);
 				break;
 
 			case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
@@ -845,7 +905,7 @@ public class MainActivity extends BaseActivity {
 				Log.d(TAG, "onGpsStatusChanged Started");
 				errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
 						Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXING);
-				showError(errorMessages);
+//				showError(errorMessages);
 				break;
 
 			case GpsStatus.GPS_EVENT_STOPPED:
@@ -866,7 +926,7 @@ public class MainActivity extends BaseActivity {
 			// TODO Auto-generated method stub
 			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
 					Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXED);
-			showError(errorMessages);
+//			showError(errorMessages);
 			currentLat = (float) location.getLatitude();
 			currentLon = (float) location.getLongitude();
 			if(currentGioco != null){
@@ -881,10 +941,10 @@ public class MainActivity extends BaseActivity {
 				tgpsc.setText("Confidence: "+location.getAccuracy()+"mt");
 			}
 			if(tgpsx!=null){
-			tgpsx.setText(""+currentLon);
+				tgpsx.setText(""+currentLon);
 			}
 			if(tgpsy!=null){
-			tgpsy.setText(""+currentLat);
+				tgpsy.setText(""+currentLat);
 			}
 		}
 

@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -61,6 +62,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		requestParameters = (HashMap<String, Object>) intent.getExtras().get(
 				Constants.EXTRAKEY_DATAMAP);
 		
+		
 		if (methodName.equals(Constants.EXTRAKEY_SYNC_ALL)) {
 			OCParchiDB db = new OCParchiDB(getApplicationContext());
 			LinkedHashMap<String, Struttura> set = db
@@ -75,13 +77,13 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 
 						HashMap<String, Object> map = new HashMap<String, Object>();
 						SOAPGiocoUpdate gu = new SOAPGiocoUpdate();
-						gu.id_gioco = "" + g.idGioco;
+						gu.idGioco = "" + g.idGioco;
 						if (g.rfid > 0) {
 							gu.rfid = "" + g.rfid;
-						}
+						
 						gu.gpsx = "" + g.gpsx;
 						gu.gpsy = "" + g.gpsy;
-						gu.tabletUserName = "Utente Tablet";
+						gu.tabletUserName = PreferenceManager.getDefaultSharedPreferences(this).getString("username", "unset");
 
 						// map.put("tabletDataModifica",);
 						// String uuid =
@@ -95,7 +97,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 						// map.put("tabletUserName", "Utente Di Test");
 
 						map.put("Giocoupdate", gu);
-						returnResponse("setGioco", map, false);
+						returnResponse("setGioco", map, false,"setGioco");
 
 						// cicliamo le foto eventuali
 
@@ -108,7 +110,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 							fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_0";
 							map = new HashMap<String, Object>();
 							map.put("Fotoupdate", fu);
-							returnResponse("setFoto", map, false);
+							returnResponse("setFoto", map, false,"setFoto");
 						}
 						if (g.foto1 != null && !g.foto1.equals("")) {
 							SOAPFotoupdate fu = new SOAPFotoupdate();
@@ -119,7 +121,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 							fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_1";
 							map = new HashMap<String, Object>();
 							map.put("Fotoupdate", fu);
-							returnResponse("setFoto", map, false);
+							returnResponse("setFoto", map, false,"setFoto");
 						}
 						if (g.foto2 != null && !g.foto2.equals("")) {
 							SOAPFotoupdate fu = new SOAPFotoupdate();
@@ -130,7 +132,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 							fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_2";
 							map = new HashMap<String, Object>();
 							map.put("Fotoupdate", fu);
-							returnResponse("setFoto", map, false);
+							returnResponse("setFoto", map, false,"setFoto");
 						}
 						if (g.foto3 != null && !g.foto3.equals("")) {
 							SOAPFotoupdate fu = new SOAPFotoupdate();
@@ -141,7 +143,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 							fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_3";
 							map = new HashMap<String, Object>();
 							map.put("Fotoupdate", fu);
-							returnResponse("setFoto", map, false);
+							returnResponse("setFoto", map, false,"setFoto");
 						}
 						if (g.foto4 != null && !g.foto4.equals("")) {
 							SOAPFotoupdate fu = new SOAPFotoupdate();
@@ -152,10 +154,13 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 							fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_4";
 							map = new HashMap<String, Object>();
 							map.put("Fotoupdate", fu);
-							returnResponse("setFoto", map, false);
+							returnResponse("setFoto", map, false,"setFoto");
 						}
 
 						db.marcaStrutturaSincronizzata(g);
+						}else {
+							Log.d(TAG,"Gioco senza rfid, non sincronizzato "+g.idGioco);
+						}
 					}
 				}
 			} else {
@@ -164,9 +169,25 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 			}
 			// Messo nel thread e comandato dalla queuelength
 			// finish();
-		} else {
-			returnResponse(methodName, requestParameters, true);
+		} else if(methodName.equals(Constants.GET_TABELLA_METHOD_NAME)){
+			//facciamo un loop delle tabelle e le facciamo accumulare
+			for(int tid : Constants.ID_TABELLE_SUPPORTO){
+				HashMap<String, Object> thismap = new HashMap<String, Object>();
+				thismap.put("args0", "" + tid);
+				/**
+				 * Il @methodName in questo ciclo deve essere allineato con il methodname 
+				 * nella main activity che va a sbobinare i risultati di questo stesso ciclo
+				 * L'idea è che qui facciamo partire N chiamate asincrone
+				 * L'ultima lancia il finish() di questa activity
+				 * L'onResult della main si va a prendere i risultati con un ciclo identico
+				 */
+				returnResponse(methodName, thismap, false,methodName+"_"+tid);	
+			}
+			
+		}else {
+			returnResponse(methodName, requestParameters, true,methodName);
 		}
+		
 	}
 
 	@Override
@@ -198,16 +219,18 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 	public final void updateCounter(int amount) {
 		TextView counterView = (TextView) findViewById(R.id.remote_loading_dialog_counter);
 		if (counterView != null) {
-			counterView.setText(" Elementi in coda : " + queueLength);
+			counterView.setText(" Elementi in coda : " + (queueLength+1));
 		}
 	}
 
 	@Override
-	public void returnResponse(String method, HashMap<String, Object> data,
-			boolean f) {
-		methodName = method;
+	public void returnResponse(String m, HashMap<String, Object> data,
+			boolean f,String md) {
+		//methodName = method;
+		final String method = m;
 		final boolean finish = f;
 		final Handler h = new Handler();
+		final String mapid = md; 
 
 		if (data == null) {
 			data = new HashMap<String, Object>();
@@ -238,11 +261,13 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				public void run() {
 					SoapConnector sc = new SoapConnector();
 					try {
-						res = sc.soap(methodName, Constants.SOAP_ENDPOINT,
+						res = sc.soap(method, Constants.SOAP_ENDPOINT,
 								Constants.SOAP_NAMESPACE, Constants.SOAP_URL,
 								properties);
+
+//							allmaps.put(method, res);
+							allmaps.put(mapid, res);
 						
-						allmaps.put(methodName, res);
 						
 						if (!finish) {
 							queueLength--;
@@ -269,7 +294,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 					} finally {
 						res = sc.getMap();
 						if (finish || queueLength <= 0) {
-							allmaps.put(methodName, res);
+							allmaps.put(method, res);
 							setResult(RESULT_CANCELED, getIntent());
 							finish();
 						}
@@ -298,7 +323,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 			});
 
 			res.put("Azioni possibili:", wirelessConfig);
-			allmaps.put(methodName, res);
+			allmaps.put(method, res);
 			Log.d(TAG, "Network non connesso");
 			if (finish) {
 				setResult(RESULT_CANCELED, getIntent());
