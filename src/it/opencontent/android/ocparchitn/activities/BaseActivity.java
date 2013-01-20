@@ -2,18 +2,9 @@ package it.opencontent.android.ocparchitn.activities;
 
 import it.opencontent.android.ocparchitn.R;
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.location.GpsStatus;
-import android.location.GpsStatus.Listener;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
-import android.nfc.NfcAdapter;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -22,11 +13,10 @@ public class BaseActivity extends Activity {
 	public static final int SETUP_NETWORK = 100;
 
 	public static boolean networkIsAvailable = false;
+	protected final static int MEDIA_TYPE_IMAGE = 1;
+	protected final static int MEDIA_TYPE_VIDEO = 2;
 
 	protected static int currentRFID = 0;
-
-	private final static String TAG = BaseActivity.class.getSimpleName();
-
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -54,8 +44,7 @@ public class BaseActivity extends Activity {
 		
 
 	}
-
-
+	
 
 	public boolean getNetworkIsAvailable() {
 		ConnectivityManager cm = (ConnectivityManager) getApplicationContext()

@@ -37,15 +37,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.GpsStatus;
 import android.location.GpsStatus.Listener;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
@@ -70,6 +73,7 @@ public class MainActivity extends BaseActivity {
 	private static HashMap<String, Object> serviceInfo;
 
 	private static Gioco currentGioco;
+	private static int currentSnapshotID;
 	private static Bitmap[] snapshots = new Bitmap[Constants.MAX_SNAPSHOTS_AMOUNT];
 
 	private static boolean partitiDaID = false;
@@ -692,16 +696,26 @@ public class MainActivity extends BaseActivity {
 			break;
 		case Constants.FOTO_REQUEST_CODE:
 			try {
-				snapshot = CameraActivity.getImage();
+				//Codice per l'activity custom
+				//snapshot = CameraActivity.getImage();
+				
+				//codice per l'activity rgistrata a sistema
+				snapshot = (Bitmap) intent.getExtras().get("data");
+				
 				if (currentGioco == null) {
 					currentGioco = new Gioco();
 					currentGioco.sincronizzato = false;
 					currentGioco.hasDirtyData = true;
 					currentRFID = 0;
 				}
-
-				int whichOne = intent.getExtras().getInt(
+				int whichOne;
+				if(intent.getExtras().containsKey(Constants.EXTRAKEY_FOTO_NUMBER)){
+				 whichOne = intent.getExtras().getInt(
 						Constants.EXTRAKEY_FOTO_NUMBER);
+				} else {
+					whichOne = currentSnapshotID;
+					currentSnapshotID = -1;
+				}
 //				String filename = FileNameCreator.getSnapshotFullPath(
 //						currentRFID, whichOne);
 //				FileOutputStream fos = openFileOutput(filename,
@@ -819,11 +833,19 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	public void takeSnapshot(View button) {
-		Intent customCamera = new Intent(Constants.TAKE_SNAPSHOT);
+		//codice per l'activity custom
+//		Intent customCamera = new Intent(Constants.TAKE_SNAPSHOT);
+//		int whichOne = Integer.parseInt((String) button.getTag());
+//		customCamera.putExtra(Constants.EXTRAKEY_FOTO_NUMBER, whichOne);
+//		customCamera.setClass(getApplicationContext(), CameraActivity.class);
+//		Log.d(TAG, customCamera.getAction());
+//		startActivityForResult(customCamera, Constants.FOTO_REQUEST_CODE);
+
+		//codice per l'activity registrata a sistema
+		Intent customCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		int whichOne = Integer.parseInt((String) button.getTag());
 		customCamera.putExtra(Constants.EXTRAKEY_FOTO_NUMBER, whichOne);
-		customCamera.setClass(getApplicationContext(), CameraActivity.class);
-		Log.d(TAG, customCamera.getAction());
+		currentSnapshotID = whichOne;
 		startActivityForResult(customCamera, Constants.FOTO_REQUEST_CODE);
 	}
 

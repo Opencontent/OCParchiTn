@@ -46,7 +46,10 @@ public class CameraSurfaceView extends SurfaceView implements
 		if (camera != null) {
 
 			CameraInfo cameraInfo = new CameraInfo();
-			Camera.getCameraInfo(numberOfCameras - 1, cameraInfo);
+			//la camera dorsale pare essere sempre la 0
+			//quindi prendo direttamente quella
+//			Camera.getCameraInfo(numberOfCameras - 1, cameraInfo);
+			Camera.getCameraInfo(0, cameraInfo);
 			degrees = 0;
 			orientation = ((WindowManager) this.getContext().getSystemService(
 					Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
@@ -107,7 +110,10 @@ public class CameraSurfaceView extends SurfaceView implements
 
 	private void enablePreview() {
 		try {
-			this.camera = Camera.open(numberOfCameras - 1);
+			//la camera dorsale pare essere sempre la 0
+			//quindi prendo direttamente quella
+//			this.camera = Camera.open(numberOfCameras - 1);
+			this.camera = Camera.open(0);
 			this.camera.setPreviewDisplay(this.holder);
 		} catch (IOException ioe) {
 			ioe.printStackTrace(System.out);
