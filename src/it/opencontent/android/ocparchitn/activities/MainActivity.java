@@ -8,8 +8,11 @@ import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkAutExceptio
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkGiochiException;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkSrvException;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
+import it.opencontent.android.ocparchitn.db.entities.Area;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
+import it.opencontent.android.ocparchitn.db.entities.Struttura;
+import it.opencontent.android.ocparchitn.db.entities.StruttureEnum;
 import it.opencontent.android.ocparchitn.fragments.AvailableFragment;
 import it.opencontent.android.ocparchitn.fragments.ICustomFragment;
 import it.opencontent.android.ocparchitn.utils.AuthCheck;
@@ -33,17 +36,16 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.GpsStatus;
 import android.location.GpsStatus.Listener;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
@@ -72,7 +74,7 @@ public class MainActivity extends BaseActivity {
 
 	private static HashMap<String, Object> serviceInfo;
 
-	private static Gioco currentGioco;
+	private static Struttura currentStruttura;
 	private static int currentSnapshotID;
 	private static Bitmap[] snapshots = new Bitmap[Constants.MAX_SNAPSHOTS_AMOUNT];
 
@@ -260,10 +262,10 @@ public class MainActivity extends BaseActivity {
 		locationManager.removeUpdates(locationListener);
 	}
 
-	private boolean legaRFIDGioco(int rfid, Gioco gioco) {
-		gioco.rfid = rfid;
-		gioco.hasDirtyData = true;
-		currentGioco = gioco;
+	private boolean legaRFIDGioco(int rfid, Struttura struttura) {
+		struttura.rfid = rfid;
+		struttura.hasDirtyData = true;
+		currentStruttura = struttura;
 		return true;
 	}
 
@@ -284,32 +286,32 @@ public class MainActivity extends BaseActivity {
 
 
 
-	private void confirmLegaRFIDGioco(int rfid, Gioco gioco) {
+	private void confirmLegaRFIDGioco(int rfid, Struttura struttura) {
 		final int mrfid = rfid;
-		final Gioco mgioco = gioco;
+		final Struttura mStruttura = struttura;
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
 		alert.setTitle("Vuoi associare l'RFID " + rfid + " al Gioco "
-				+ gioco.idGioco + " ?");
-		if (gioco.rfid > 0) {
-			alert.setMessage("il Gioco " + gioco.idGioco
-					+ " attualmente ha l'RFID " + gioco.rfid);
+				+ struttura.idGioco + " ?");
+		if (struttura.rfid > 0) {
+			alert.setMessage("il Gioco " + struttura.idGioco
+					+ " attualmente ha l'RFID " + struttura.rfid);
 		} else {
-			alert.setMessage("il Gioco " + gioco.idGioco
+			alert.setMessage("il Gioco " + struttura.idGioco
 					+ " attualmente non ha RFID associati");
 		}
 
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 
-				if (legaRFIDGioco(mrfid, mgioco)) {
-					feedback("Ok, ora il gioco " + mgioco.idGioco
-							+ " è associato all'RFID " + mgioco.rfid);
+				if (legaRFIDGioco(mrfid, mStruttura)) {
+					feedback("Ok, ora il gioco " + mStruttura.idGioco
+							+ " è associato all'RFID " + mStruttura.rfid);
 					String currentTag = (String) actionBar.getSelectedTab()
 							.getTag();
 					ICustomFragment mf = (ICustomFragment) getFragmentManager()
 							.findFragmentByTag(currentTag);
-					mf.showStrutturaData(currentGioco);
+					mf.showStrutturaData(currentStruttura);
 					// TODO: triggerare il salvataggio dei dati locali che poi
 					// scatena a sua volta il salvataggio remoto
 				} else {
@@ -349,11 +351,11 @@ public class MainActivity extends BaseActivity {
 			int rfid = Integer.parseInt(actualValues[1]);
 			// currentRFID = rfid;
 			if (partitiDaID) {
-				confirmLegaRFIDGioco(rfid, currentGioco);
+				confirmLegaRFIDGioco(rfid, currentStruttura);
 			} else {
 
-				if (currentGioco != null && currentGioco.hasDirtyData) {
-					db.salvaGiocoLocally(currentGioco);
+				if (currentStruttura != null && currentStruttura.hasDirtyData) {
+					db.salvaStrutturaLocally(currentStruttura);
 				}
 
 				// String name = getString(R.string.display_gioco_id)
@@ -441,12 +443,23 @@ public class MainActivity extends BaseActivity {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
-		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_GIOCO_ID_METHOD_NAME);
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("idgioco", "" + id);
 		currentQueriedId = id;
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
-		startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_ID);
+		
+		//Controlliamo di che tipo di struttura stiamo parlando:
+		//Gioco o Area
+		String currentTag = (String) actionBar.getSelectedTab().getTag();
+		if(currentTag.equals(AvailableFragment.RILEVAZIONE_AREA.label)){
+			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_AREA_ID_METHOD_NAME);			
+			serviceIntent.putExtra(Constants.EXTRAKEY_STRUCTURE_TYPE, Constants.CODICE_STRUTTURA_AREA);			
+			startActivityForResult(serviceIntent, Constants.SOAP_GET_AREA_REQUEST_CODE_BY_ID);
+		} else if(currentTag.equals(AvailableFragment.RILEVAZIONE_GIOCO.label)){
+			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_GIOCO_ID_METHOD_NAME);			
+			serviceIntent.putExtra(Constants.EXTRAKEY_STRUCTURE_TYPE, Constants.CODICE_STRUTTURA_GIOCO);			
+			startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_ID);
+		}
 	}
 	private void getStructureFotoByID(int id) {
 		Intent serviceIntent = new Intent();
@@ -477,19 +490,21 @@ public class MainActivity extends BaseActivity {
 		startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_REQUEST_CODE);
 	}
 
-	private void getStructureFoto(int id) {
+	private void getStructureFoto(int tipoStruttura, int id) {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
 		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_FOTO_METHOD_NAME);
 		HashMap<String, Object> map = new HashMap<String, Object>();
 //		map.put("idGioco", "" + id);
-		map.put("args0", "" + id);
+		map.put("args0", tipoStruttura);
+		map.put("args1", "" + id);
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
 		startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_FOTO_REQUEST_CODE);
 	}
 	
 	private void renewToken(){
+		Toast.makeText(this, "Rinnovo l'autenticazione",Toast.LENGTH_SHORT).show();
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
@@ -500,17 +515,36 @@ public class MainActivity extends BaseActivity {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		String username = prefs.getString(getString(R.string.settings_key_username), "UNSET");
 		String password = prefs.getString(getString(R.string.settings_key_password), "UNSET");
-		
 		map.put("args0", username);
 		map.put("args1", password);
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
-		startActivityForResult(serviceIntent, Constants.SOAP_GET_TOKEN_REQUEST_CODE);		
+		if(username.equals("UNSET")){
+			//Prima inizializzazione
+			AlertDialog.Builder changeCredentials = new AlertDialog.Builder(this);
+			changeCredentials.setTitle("Imposta le credenziali");
+			changeCredentials.setMessage("Per inizializzare il sistema è necessario avere una connessione dati attiva\n\nPer usare questo sistema occorre impostare username e password\nClicca su OK per inserire le credenziali\nUna volta inserite clicca su indietro e l'applicazione si inizializzerà");
+			changeCredentials.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Intent intent = new Intent();
+					intent.setClass(getApplicationContext(), SettingsActivity.class);
+					startActivityForResult(intent,Constants.CREDENTIALS_UPDATED_REQUEST_CODE);
+					return;
+				}
+				
+			});
+			changeCredentials.show();			
+		} else {		
+		startActivityForResult(serviceIntent, Constants.SOAP_GET_TOKEN_REQUEST_CODE);
+		}
 	}
 
 	@Override
 	public void onActivityResult(int requestCode, int returnCode, Intent intent) {
 		HashMap<String, Object> res;
 		String currentTag = "";
+		int tipoStruttura = -1;
 		if(actionBar != null && actionBar.getSelectedTab() != null){
 			currentTag = (String) actionBar.getSelectedTab().getTag();
 		}
@@ -559,87 +593,15 @@ public class MainActivity extends BaseActivity {
 			break;
 		case Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_ID:
 			res = SynchroSoapActivity.getRes(Constants.GET_GIOCO_ID_METHOD_NAME);
-			Gioco remoteGioco = null;
-			Gioco localGioco = null;
-			if(res!=null && !res.containsKey("success")) {
-				if(res.containsKey("mapped")){
-					remoteGioco = new Gioco((it.opencontent.android.ocparchitn.SOAPMappings.SOAPGioco) res.get("mapped"),
-							getApplicationContext());
-				} else {
-					remoteGioco = new Gioco(res.entrySet(),
-							getApplicationContext());
-				}
-				localGioco = db.readGiocoLocallyByID(remoteGioco.idGioco);
-			} else if(res.containsKey("success") && res.get("success").equals(false) ){
-				/********************************************************
-				 * TODO:                                                *
-				 * raggruppare la gestione dell'errore in un punto solo *
-				 ********************************************************/
-
-				AlertDialog.Builder alert = new AlertDialog.Builder(this);
-				alert.setTitle("Errore remoto nel recupero della struttura "+currentQueriedId);
-				TextView content = new TextView(getApplicationContext());
-				String outText = "";
-				if(res.get("faultcode") != null ){
-					outText += res.get("faultcode"); 
-				}
-				if(res.get("string") != null ){
-					outText += "\n"+res.get("string"); 
-				}
-				if(res.get("exception") != null){
-					KvmSerializable exception = (KvmSerializable) res.get("exception");
-					if(exception.getClass().equals(SOAPSrvGiocoArkAutException.class)){
-						outText += "\nCodice: "+((SOAPSrvGiocoArkAutException) exception).codice;
-						outText += "\nMessaggio: "+((SOAPSrvGiocoArkAutException) exception).message;
-					}else if(exception.getClass().equals(SOAPSrvGiocoArkGiochiException.class)){
-						outText += "\nCodice: "+((SOAPSrvGiocoArkGiochiException) exception).codice;
-						outText += "\nMessaggio: "+((SOAPSrvGiocoArkGiochiException) exception).message;
-					} else {
-						outText += "\nMessaggio: "+((SOAPSrvGiocoArkSrvException) exception).message;
-					}
-					
-				}
-				content.setText(outText);
-				alert.setView(content);
-				alert.setPositiveButton("OK", null);
-				alert.show();
-				/********************************
-				 * Fine abbozzo gestione errori *
-				 ********************************/
-				
-				
-				remoteGioco = new Gioco();				
-				localGioco = db.readGiocoLocallyByID(currentQueriedId);
-			}else {
-			 remoteGioco = new Gioco();				
-			 localGioco = db.readGiocoLocallyByID(currentQueriedId);
-			}
-			
-			
-			
-			//C'è da sistemare come viene gestita la concorrenza fra locale e remoto
-			if (localGioco != null) {
-				Toast.makeText(
-						getApplicationContext(),
-						"Gioco " + localGioco.idGioco
-								+ " ha modifiche ancora non salvate",
-						Toast.LENGTH_SHORT).show();
-				currentGioco = localGioco;
-				//Le foto le abbiamo già in locale
-			} else if(PlatformChecks.siamoOnline(getApplicationContext()) && remoteGioco !=null){
-				currentGioco = remoteGioco;
-				//Lo showStruttura viene chiamato dal loop delle foto
-				getStructureFoto(currentGioco.idGioco);			
-			} else {
-				currentGioco = db.readGiocoLocallyByID(remoteGioco.idGioco);
-				if(currentGioco == null){
-				currentGioco = new Gioco();
-				currentGioco.idGioco = currentQueriedId;
-				} 
-			}
-			
-			mf.showStrutturaData(currentGioco);
-			
+			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
+			manageSOAPGenericStrutturaResponse(res, tipoStruttura);
+			mf.showStrutturaData(currentStruttura);		
+			break;
+		case Constants.SOAP_GET_AREA_REQUEST_CODE_BY_ID:
+			res = SynchroSoapActivity.getRes(Constants.GET_AREA_ID_METHOD_NAME);
+			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
+			manageSOAPGenericStrutturaResponse(res, tipoStruttura);
+			mf.showStrutturaData(currentStruttura);			
 			break;
 		case Constants.SOAP_GET_GIOCO_REQUEST_CODE:
 
@@ -648,10 +610,10 @@ public class MainActivity extends BaseActivity {
 				res = SynchroSoapActivity.getRes(Constants.GET_GIOCO_METHOD_NAME);
 
 				if (res != null && res.size() > 0) {
-					currentGioco = new Gioco(res.entrySet(), currentRFID,
+					currentStruttura = new Gioco(res.entrySet(), currentRFID,
 							getApplicationContext());
-					mf.showStrutturaData(currentGioco);
-					getStructureFoto(currentGioco.idGioco);
+					mf.showStrutturaData(currentStruttura);
+					getStructureFoto(Constants.CODICE_STRUTTURA_GIOCO, currentStruttura.idGioco);
 				} else {
 					mf.showStrutturaData(new Gioco());
 					Toast.makeText(
@@ -682,7 +644,7 @@ public class MainActivity extends BaseActivity {
 								records.add(new RecordTabellaSupporto(id,(SOAPCodTabella) e.getValue()) );						
 							}
 						}
-						db.TabelleSupportoUpdate(records.toArray(new RecordTabellaSupporto[records.size()]));
+						db.tabelleSupportoUpdate(records.toArray(new RecordTabellaSupporto[records.size()]));
 					}
 				}
 			}
@@ -690,9 +652,9 @@ public class MainActivity extends BaseActivity {
 		case Constants.SOAP_GET_GIOCO_FOTO_REQUEST_CODE:
 			if (returnCode == RESULT_OK) {
 				res = SynchroSoapActivity.getRes(Constants.GET_FOTO_METHOD_NAME);
-				currentGioco.addImmagine(res.entrySet());
+				currentStruttura.addImmagine(res.entrySet());
 			}
-			mf.showStrutturaData(currentGioco);
+			mf.showStrutturaData(currentStruttura);
 			break;
 		case Constants.FOTO_REQUEST_CODE:
 			try {
@@ -702,10 +664,10 @@ public class MainActivity extends BaseActivity {
 				//codice per l'activity rgistrata a sistema
 				snapshot = (Bitmap) intent.getExtras().get("data");
 				
-				if (currentGioco == null) {
-					currentGioco = new Gioco();
-					currentGioco.sincronizzato = false;
-					currentGioco.hasDirtyData = true;
+				if (currentStruttura == null) {
+					currentStruttura = new Gioco();
+					currentStruttura.sincronizzato = false;
+					currentStruttura.hasDirtyData = true;
 					currentRFID = 0;
 				}
 				int whichOne;
@@ -730,27 +692,27 @@ public class MainActivity extends BaseActivity {
 				switch (whichOne) {
 				case 0:
 					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_0);
-					currentGioco.foto0 = Base64.encodeToString(image, Base64.DEFAULT);
+					currentStruttura.foto0 = Base64.encodeToString(image, Base64.DEFAULT);
 					break;
 				case 1:
 					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_1);
-					currentGioco.foto1 = Base64.encodeToString(image, Base64.DEFAULT);
+					currentStruttura.foto1 = Base64.encodeToString(image, Base64.DEFAULT);
 					break;
 				case 2:
 					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_2);
-					currentGioco.foto2 = Base64.encodeToString(image, Base64.DEFAULT);
+					currentStruttura.foto2 = Base64.encodeToString(image, Base64.DEFAULT);
 					break;
 				case 3:
 					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_3);
-					currentGioco.foto3 = Base64.encodeToString(image, Base64.DEFAULT);
+					currentStruttura.foto3 = Base64.encodeToString(image, Base64.DEFAULT);
 					break;
 				case 4:
 					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_4);
-					currentGioco.foto4 = Base64.encodeToString(image, Base64.DEFAULT);
+					currentStruttura.foto4 = Base64.encodeToString(image, Base64.DEFAULT);
 					break;
 				}
-				currentGioco.sincronizzato = false;
-				currentGioco.hasDirtyData = true;
+				currentStruttura.sincronizzato = false;
+				currentStruttura.hasDirtyData = true;
 
 				if (snapshot != null && mImageView != null) {
 					snapshots[whichOne] = snapshot;
@@ -782,9 +744,148 @@ public class MainActivity extends BaseActivity {
 
 	}
 
-	public static Gioco getCurrentGioco() {
-		return currentGioco;
+	/**
+	 * @param res
+	 * @param tipoStruttura
+	 */
+	private void manageSOAPGenericStrutturaResponse(
+			HashMap<String, Object> res, int tipoStruttura) {
+		Struttura remoteStruttura = null;
+		Struttura localGioco = null;
+		if(res!=null && !res.containsKey("success")) {
+			switch(tipoStruttura){
+			case Constants.CODICE_STRUTTURA_GIOCO:
+			if(res.containsKey("mapped")){
+				remoteStruttura = new Gioco((it.opencontent.android.ocparchitn.SOAPMappings.SOAPGioco) res.get("mapped"),
+						getApplicationContext());
+			} else {
+				remoteStruttura = new Gioco(res.entrySet(),
+						getApplicationContext());
+			}
+			localGioco = db.readGiocoLocallyByID(remoteStruttura.idGioco);
+			break;
+			case Constants.CODICE_STRUTTURA_AREA:
+				if(res.containsKey("mapped")){
+					remoteStruttura = new Area((it.opencontent.android.ocparchitn.SOAPMappings.SOAPArea) res.get("mapped"),
+							getApplicationContext());
+				} else {
+					remoteStruttura = new Area(res.entrySet(),
+							getApplicationContext());
+				}
+				localGioco = db.readAreaLocallyByID(remoteStruttura.idGioco);
+				break;
+			}
+		} else if(res.containsKey("success") && res.get("success").equals(false) ){
+			manageRemoteException(res);
+			remoteStruttura = new Gioco();				
+			localGioco = db.readGiocoLocallyByID(currentQueriedId);
+		}else {
+			//res == null
+		 remoteStruttura = new Gioco();				
+		 localGioco = db.readGiocoLocallyByID(currentQueriedId);
+		}
+		
+		
+		
+		//C'è da sistemare come viene gestita la concorrenza fra locale e remoto
+		if (localGioco != null) {
+			Toast.makeText(
+					getApplicationContext(),
+					"Gioco " + localGioco.idGioco
+							+ " ha modifiche ancora non salvate",
+					Toast.LENGTH_SHORT).show();
+			currentStruttura = localGioco;
+			//Le foto le abbiamo già in locale
+		} else if(PlatformChecks.siamoOnline(getApplicationContext()) && remoteStruttura !=null){
+			currentStruttura = remoteStruttura;
+			//Lo showStruttura viene chiamato dal loop delle foto
+			if(currentStruttura.numeroFotografie > 0){
+				switch(tipoStruttura){
+				case Constants.CODICE_STRUTTURA_AREA:
+					getStructureFoto(tipoStruttura, ((Area) currentStruttura).idArea);
+					break;
+				case Constants.CODICE_STRUTTURA_GIOCO:
+					getStructureFoto(tipoStruttura, currentStruttura.idGioco);
+					break;
+				}
+			}	
+		} else {
+			currentStruttura = db.readGiocoLocallyByID(remoteStruttura.idGioco);
+			if(currentStruttura == null){
+			currentStruttura = new Gioco();
+			currentStruttura.idGioco = currentQueriedId;
+			} 
+		}
+	}
 
+	/**
+	 * Gestiamo le eccezioni remote, fra cui anche quelle di autenticazione
+	 * 
+	 * @param res
+	 */
+	private void manageRemoteException(HashMap<String, Object> res) {
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Errore remoto nel recupero della struttura "+currentQueriedId);
+		TextView content = new TextView(getApplicationContext());
+		String outText = "";
+		
+		
+		if(res.get("exception") != null){
+			KvmSerializable exception = (KvmSerializable) res.get("exception");
+			if(exception.getClass().equals(SOAPSrvGiocoArkAutException.class)){
+				String codice = ((SOAPSrvGiocoArkAutException) exception).codice;
+				outText += "\nCodice: "+codice;
+				outText += "\nMessaggio: "+((SOAPSrvGiocoArkAutException) exception).message;
+				if(codice.equals(Constants.SOAP_EXCEPTION_ARKAUT_TOKEN_SCADUTO)){
+					 tokenIsValid = false;					
+				}
+			}else if(exception.getClass().equals(SOAPSrvGiocoArkGiochiException.class)){
+				outText += "\nCodice: "+((SOAPSrvGiocoArkGiochiException) exception).codice;
+				outText += "\nMessaggio: "+((SOAPSrvGiocoArkGiochiException) exception).message;
+			} else {
+				outText += "\nMessaggio: "+((SOAPSrvGiocoArkSrvException) exception).message;
+			}
+			
+		} else {
+			if(res.get("faultcode") != null ){
+				outText += res.get("faultcode"); 
+			}
+			if(res.get("string") != null ){
+				outText += "\n"+res.get("string"); 
+			}
+		}
+		content.setText(outText);
+		alert.setView(content);
+		alert.setPositiveButton("OK", new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if(!tokenIsValid){
+					renewToken();
+				}
+			}
+		});
+		alert.show();
+	}
+
+	public static Gioco getCurrentGioco() {
+		if (currentStruttura != null && currentStruttura.tipo.equals(Gioco.class)){
+			return (Gioco) currentStruttura;
+		} else {
+			return null;
+		}
+	}
+	public static Area getCurrentArea() {
+		if (currentStruttura != null && currentStruttura.getClass().equals(Area.class)){
+			return (Area) currentStruttura;
+		} else {
+			return null;
+		}
+	}
+	public static void setCurrentArea(Area a) {
+		if(a != null && a.getClass().equals(Area.class)){
+			currentStruttura = a;
+		}
 	}
 
 	public void editMe(View v) {
@@ -951,9 +1052,9 @@ public class MainActivity extends BaseActivity {
 //			showError(errorMessages);
 			currentLat = (float) location.getLatitude();
 			currentLon = (float) location.getLongitude();
-			if(currentGioco != null){
-				currentGioco.gpsx = currentLon;
-				currentGioco.gpsy = currentLat;
+			if(currentStruttura != null){
+				currentStruttura.gpsx = currentLon;
+				currentStruttura.gpsy = currentLat;
 			}
 
 			TextView tgpsx = (TextView) findViewById(R.id.display_gioco_gpsx);

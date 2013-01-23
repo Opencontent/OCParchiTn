@@ -8,8 +8,8 @@ public enum AvailableFragment {
 	
 	
 	//MAIN 				("main","Main",MainFragment.class),
-	RILEVAZIONE			("rilevazione","Rilevazione Gioco",MainFragment.class,Constants.PERMESSO_VISUALIZZA,Constants.PERMESSO_VISUALIZZA),
-	//RILEVAZIONE_AREA	("rilevazione_area","Rilevazione Area",RilevazioneAreaFragment.class),
+	RILEVAZIONE_GIOCO			("rilevazione","Rilevazione Gioco",RilevazioneGiocoFragment.class,Constants.PERMESSO_VISUALIZZA,Constants.PERMESSO_VISUALIZZA),
+	RILEVAZIONE_AREA	("rilevazione_area","Rilevazione Area",RilevazioneAreaFragment.class,Constants.PERMESSO_VISUALIZZA,Constants.PERMESSO_MODIFICA),
 	PERIODICA			("periodica","Verifica Periodica",PeriodicaFragment.class,Constants.PERMESSO_VISUALIZZA,Constants.PERMESSO_VISUALIZZA),
 //	RENDICONTAZIONE		("rendicontazione","Rendicontazione",RendicontazioneFragment.class,Constants.PERMESSO_VISUALIZZA,Constants.PERMESSO_MODIFICA),
 	RENDICONTAZIONE		("rendicontazione","Rendicontazione",RendicontazioneFragment.class,Constants.PERMESSO_MODIFICA,Constants.PERMESSO_MODIFICA),

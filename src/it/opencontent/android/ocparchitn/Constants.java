@@ -13,8 +13,11 @@ public class Constants {
 	public final static String EXTRAKEY_DATAMAP = "dataMap";
 	public final static String EXTRAKEY_DATAMAP_RESULT = "dataMapResult";
 	public final static String EXTRAKEY_METHOD_NAME = "methodName";
+	public final static String EXTRAKEY_STRUCTURE_TYPE = "tipoStruttura";
 	public final static String GET_GIOCO_METHOD_NAME = "getGioco";
 	public final static String GET_GIOCO_ID_METHOD_NAME = "getGiocoId";
+	public final static String GET_AREA_METHOD_NAME = "getArea";
+	public final static String GET_AREA_ID_METHOD_NAME = "getAreaId";
 	public final static String GET_FOTO_METHOD_NAME = "getFoto";
 	public final static String GET_INFO_METHOD_NAME = "getInfo";
 	public final static String GET_LOGINUSER_METHOD_NAME = "loginUser";
@@ -27,7 +30,22 @@ public class Constants {
 	public final static String EXTRAKEY_SYNC_ALL = "sync_all";
 	public final static String EXTRAKEY_ID_TABELLA_REMOTA = "id_tabella";
 	
-	public final static int[] ID_TABELLE_SUPPORTO = new int[]{1,2,5,6,7,8,9,10};
+	public final static int TABELLA_MARCHE = 1;
+	public final static int TABELLA_TIPO_INTERVENTI = 2;
+	public final static int TABELLA_TIPO_PAVIMENTAZIONI = 5;
+	public final static int TABELLA_TIPO_GIOCO = 6;
+	public final static int TABELLA_PRODUTTORI = 7;
+	public final static int TABELLA_TIPO_PARCO = 8;	
+	public final static int TABELLA_CIRCOSCRIZIONI = 9;
+	public final static int TABELLA_STATO_INTERVENTO = 10;
+	public final static int[] ID_TABELLE_SUPPORTO = new int[]{1,
+			TABELLA_TIPO_INTERVENTI,
+			TABELLA_TIPO_PAVIMENTAZIONI,
+			TABELLA_TIPO_GIOCO,
+			TABELLA_PRODUTTORI,
+			TABELLA_TIPO_PARCO,
+			TABELLA_CIRCOSCRIZIONI,
+			TABELLA_STATO_INTERVENTO};
 	
 	public final static int MAX_SNAPSHOTS_AMOUNT = 5;
 	
@@ -53,6 +71,12 @@ public class Constants {
     public final static String SOAP_NAMESPACE = "http://gioco.parcogiochi";
     public final static String SOAP_URL = "https://webapps.comune.trento.it/parcogiochiSrv/services/SrvGioco?wsdl";
 
+    /**
+     * Mapping dei codici struttura per come se li aspetta in firma il server
+     */
+    public static final int CODICE_STRUTTURA_GIOCO = 1;
+    public static final int CODICE_STRUTTURA_AREA = 2;
+    
 	public static final int FOTO_REQUEST_CODE = 1;
 	public static final int SOAP_GET_GIOCO_REQUEST_CODE = 2;
 	public static final int SOAP_GET_GIOCO_FOTO_REQUEST_CODE = 3;
@@ -65,8 +89,11 @@ public class Constants {
 	public static final int SOAP_SERVICE_INFO_REQUEST_CODE = 100;	
 	public static final int SOAP_GET_GIOCO_REQUEST_CODE_BY_ID = 101;
 	public static final int SOAP_GET_GIOCO_REQUEST_CODE_BY_RFID = 102;
+	public static final int SOAP_GET_AREA_REQUEST_CODE_BY_ID = 103;
+	public static final int SOAP_GET_AREA_REQUEST_CODE_BY_RFID = 104;
 
 	public static final int SOAP_GET_TOKEN_REQUEST_CODE = 200;
+	public static final String SOAP_EXCEPTION_ARKAUT_TOKEN_SCADUTO = "AUT104";
 	public static final int SOAP_GET_TOKEN_STATUS_REQUEST_CODE = 201;
 	public static final int SOAP_GET_INVALIDATE_TOKEN_REQUEST_CODE = 202;
 

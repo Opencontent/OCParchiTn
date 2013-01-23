@@ -22,7 +22,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView.FindListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,20 +29,12 @@ import android.widget.Toast;
 
 /**
  * 
- * @author marco
- *         getGiocoResponse{getGiocoReturn=anyType{descrizione_area=MATTARELLO -
- *         Parco Mattarello piazzale Ergolding; descrizione_gioco=3 casette;
- *         descrizione_marca=TLF; dt_acquisto=1900-01-01;
- *         dt_installazione=1999-01-01; dt_posizionamento_al=1999-01-01;
- *         dt_posizionamento_dal=1999-01-01; dt_prossimointervento=2050-12-31;
- *         gpsx=0E-9; gpsy=0E-9; id_gioco=null; id_modello=anyType{};
- *         id_tipogioco=null; note=anyType{}; numeroserie=0;
- *         posizione_rfid=anyType{}; rfid=5; rfid_area=anyType{}; }; }
+ * @author Marco Albarelli <info@marcoalbarelli.eu>
  */
 
-public class MainFragment extends Fragment implements ICustomFragment{
+public class RilevazioneGiocoFragment extends Fragment implements ICustomFragment{
 
-	private static final String TAG = MainFragment.class.getSimpleName();
+	private static final String TAG = RilevazioneGiocoFragment.class.getSimpleName();
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -146,13 +137,13 @@ public class MainFragment extends Fragment implements ICustomFragment{
 		saveLocal(g);
 	}
 	public void showError(HashMap<String,String> map){
-		TextView errorView = (TextView) getActivity().findViewById(R.id.display_gioco_warning);
-		errorView.setText("");
-		Iterator<Entry<String,String>> i = map.entrySet().iterator();
-		while(i.hasNext()){
-			Entry<String,String> n = (Entry<String, String>) i.next();
-			errorView.append("\n"+n.getValue());
-		}
+//		TextView errorView = (TextView) getActivity().findViewById(R.id.display_gioco_warning);
+//		errorView.setText("");
+//		Iterator<Entry<String,String>> i = map.entrySet().iterator();
+//		while(i.hasNext()){
+//			Entry<String,String> n = (Entry<String, String>) i.next();
+//			errorView.append("\n"+n.getValue());
+//		}
 	}
 
 	@Override
@@ -167,7 +158,7 @@ public class MainFragment extends Fragment implements ICustomFragment{
 	
 	private long saveLocal(Gioco gioco){
 		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
-		long id = db.salvaGiocoLocally(gioco);
+		long id = db.salvaStrutturaLocally(gioco);
 		if(id > 0){
 			Toast.makeText(getActivity().getApplicationContext(),"Gioco salvato localmente", Toast.LENGTH_SHORT).show();
 			MainActivity ma = (MainActivity) getActivity();
@@ -185,6 +176,10 @@ public class MainFragment extends Fragment implements ICustomFragment{
 		v.setText(""+gioco.idGioco);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_marca);
 		v.setText(gioco.descrizioneMarca);
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_descrizione);
+		v.setText(gioco.descrizioneGioco);
+		v = (TextView) getActivity().findViewById(R.id.display_area_descrizione);
+		v.setText(gioco.descrizioneArea);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_nota);
 		v.setText(gioco.note);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_seriale);
@@ -192,7 +187,7 @@ public class MainFragment extends Fragment implements ICustomFragment{
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_rfid);
 		v.setText(gioco.rfid+"");
 		v = (TextView) getActivity().findViewById(R.id.display_area_rfid);
-		v.setText(gioco.rfidArea);
+		v.setText(gioco.rfidArea+"");
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsx);
 		v.setText(gioco.gpsx + "");
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsy);

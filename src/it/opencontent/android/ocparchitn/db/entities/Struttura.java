@@ -10,7 +10,6 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.Log;
 
 public class Struttura {
@@ -23,7 +22,6 @@ public class Struttura {
 
 	public void addImmagine(Set<Entry<String, Object>> set) {
 		Iterator<Entry<String, Object>> i = set.iterator();
-		Bitmap bmp = null;
 		String raw = "";
 		int index = 0;
 		while (i.hasNext()) {
@@ -109,7 +107,7 @@ public class Struttura {
 						e.getKey());
 			}
 			if (e.getKey().equals("descrizioneGioco")) {
-				descrizione_gioco = bindStringToProperty(e.getValue(),
+				descrizioneGioco = bindStringToProperty(e.getValue(),
 						e.getKey());
 			}
 			if (e.getKey().equals("gpsx") && e.getValue() != null) {
@@ -129,7 +127,7 @@ public class Struttura {
 				rfid = bindIntToProperty(e.getValue(), e.getKey());
 			}
 			if (e.getKey().equals("rfidArea")) {
-				rfidArea = bindStringToProperty(e.getValue(), e.getKey());
+				rfidArea = bindIntToProperty(e.getValue(), e.getKey());
 			}
 			if (e.getKey().equals("idGioco") && e.getValue() != null) {
 				idGioco = bindIntToProperty(e.getValue(), e.getKey());
@@ -236,7 +234,7 @@ public class Struttura {
 
 	public String dirtyElements = "0";
 	public int rfid = 0;
-	public String rfidArea = "0";
+	public int rfidArea = 0;
 	public int idGioco = 0;
 	public int numeroFotografie = 0;
 
@@ -246,7 +244,7 @@ public class Struttura {
 	public String numeroSerie = "0";
 	public String descrizioneMarca = "";
 	public String descrizioneArea = "";
-	public String descrizione_gioco = "";
+	public String descrizioneGioco = "";
 
 	public String note = "";
 	public String foto0 = "";

@@ -9,11 +9,12 @@ import it.opencontent.android.ocparchitn.utils.FileNameCreator;
 
 import java.lang.reflect.Field;
 import java.security.InvalidParameterException;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import android.content.ContentValues;
@@ -155,8 +156,22 @@ public class OCParchiDB {
 			return null;
 		}
 	}
+	public Area readAreaLocallyByID(int id) {
+		String selection = " idArea  = ? ";
+		
+		String[] selectionArgs = new String[] { id + "" };
+		Cursor c = mDatabaseOpenHelper.getReadableDatabase().query(
+				StruttureEnum.AREE.tipo, getDefaultColumns(Gioco.class), selection,
+				selectionArgs, null, null, null);
+		try {
+			return deserializeAreaSingola(c);
+		} catch (InvalidParameterException ipe) {
+			ipe.printStackTrace();
+			return null;
+		}
+	}
 	
-	public void TabelleSupportoUpdate(RecordTabellaSupporto[] records){
+	public void tabelleSupportoUpdate(RecordTabellaSupporto[] records){
 		mDatabaseOpenHelper.getWritableDatabase().beginTransaction();
 		for(RecordTabellaSupporto r : records){
 			ContentValues cv  = new ContentValues();
@@ -171,7 +186,50 @@ public class OCParchiDB {
 		mDatabaseOpenHelper.getWritableDatabase().setTransactionSuccessful();
 		mDatabaseOpenHelper.getWritableDatabase().endTransaction();
 	}
-	
+	public List<RecordTabellaSupporto> tabelleSupportoGetAllRecords(int tabella){
+		String selection = " numeroTabella  = ?  ";
+		String[] selectionArgs = new String[] { tabella+""  };
+		String orderBy = " codice ASC ";
+		Cursor c = mDatabaseOpenHelper.getReadableDatabase().query(
+				RecordTabellaSupporto.class.getSimpleName(), getDefaultColumns(RecordTabellaSupporto.class), selection,
+				selectionArgs, null, null, orderBy);
+		if(c.moveToFirst()){
+			List<RecordTabellaSupporto> output = new ArrayList<RecordTabellaSupporto>();
+			do{		
+				RecordTabellaSupporto r = new RecordTabellaSupporto();
+				r.tipo = "";
+				r.validita = c.getLong(c.getColumnIndex("validita"));
+				r.codice = c.getInt(c.getColumnIndex("codice"));
+				r.numeroTabella = tabella;
+				r.descrizione = c.getString(c.getColumnIndex("descrizione"));
+				output.add(r);
+			}while(c.moveToNext());
+			
+			return output;
+		}else {
+			return null;
+		}
+	}
+	public RecordTabellaSupporto tabelleSupportoGetRecord(int tabella, int codice){
+		String selection = " numeroTabella  = ? AND codice = ? ";
+		
+		String[] selectionArgs = new String[] { tabella+"" , codice+"" };
+		Cursor c = mDatabaseOpenHelper.getReadableDatabase().query(
+				RecordTabellaSupporto.class.getSimpleName(), getDefaultColumns(RecordTabellaSupporto.class), selection,
+				selectionArgs, null, null, null);
+		if(c.moveToFirst()){
+			RecordTabellaSupporto r = new RecordTabellaSupporto();
+			r.tipo = "";
+			r.validita = c.getLong(c.getColumnIndex("validita"));
+			r.codice = c.getInt(c.getColumnIndex("codice"));
+			r.numeroTabella = tabella;
+			r.descrizione = c.getString(c.getColumnIndex("descrizione"));
+			
+			return r;
+		}else {
+			return null;
+		}
+	}
 	
 	public boolean tabelleSupportoScadute(){
 		String timestamp = new Date().getTime() + "";
@@ -226,6 +284,39 @@ public class OCParchiDB {
 			return g;
 		}
 	}
+	private Area deserializeAreaSingola(Cursor c)
+			throws InvalidParameterException {
+		HashMap<String, Object> data = new HashMap<String, Object>();
+		Area a = null;
+		if (c.getCount() > 1) {
+			throw new InvalidParameterException(
+					"the deserializeAreaSingola must be used only with a 1row resultset. Use the deserielizeAreaMultipli for multiple rows");
+		} else {
+			
+			if (c != null && c.moveToFirst()) {
+				do {
+					int cc = c.getColumnCount();
+					for (int i = 0; i < cc; i++) {
+						int type = c.getType(i);
+						switch (type) {
+						case Cursor.FIELD_TYPE_INTEGER:
+							data.put(c.getColumnName(i), c.getInt(i));
+							break;
+						default:
+							data.put(c.getColumnName(i), c.getString(i));
+							break;
+							
+						}
+						
+					}
+				} while (c.moveToNext());
+			}
+			if (data.size() > 0) {
+				a = new Area(data.entrySet(), null);
+			}
+			return a;
+		}
+	}
 
 	public long insertScannedGioco(int rfid) {
 		ContentValues cv = new ContentValues();
@@ -248,31 +339,57 @@ public class OCParchiDB {
 				StruttureEnum.GIOCHI.tipo, cv, whereClause, whereArgs);
 	}
 
-	public long salvaGiocoLocally(Gioco gioco) {
+	public long salvaStrutturaLocally(Struttura struttura) {
 		ContentValues cv = new ContentValues();
-
-		cv.put("sincronizzato", false);
-		cv.put("rfid", gioco.rfid);
-		cv.put("descrizioneMarca", gioco.descrizioneMarca);
-		cv.put("idGioco", gioco.idGioco);
-		cv.put("numeroserie", gioco.numeroSerie);
-		cv.put("gpsx", gioco.gpsx);
-		cv.put("gpsy", gioco.gpsy);
-		cv.put("note", gioco.note);
-		cv.put("foto0",gioco.foto0);
-		cv.put("foto1",gioco.foto1);
-		cv.put("foto2",gioco.foto2);
-		cv.put("foto3",gioco.foto3);
-		cv.put("foto4",gioco.foto4);
-
+		String tabella = "";
+		if(struttura.getClass().equals(Gioco.class)){
+			tabella = StruttureEnum.GIOCHI.tipo;
+			Gioco g = (Gioco) struttura;
+			cv.put("sincronizzato", false);
+			cv.put("rfid", g.rfid);
+			cv.put("descrizioneMarca", g.descrizioneMarca);
+			cv.put("idGioco", g.idGioco);
+			cv.put("numeroserie", g.numeroSerie);
+			cv.put("gpsx", g.gpsx);
+			cv.put("gpsy", g.gpsy);
+			cv.put("note", g.note);
+			cv.put("foto0",g.foto0);
+			cv.put("foto1",g.foto1);
+			cv.put("foto2",g.foto2);
+			cv.put("foto3",g.foto3);
+			cv.put("foto4",g.foto4);
+		} else if(struttura.getClass().equals(Area.class)){
+			tabella = StruttureEnum.AREE.tipo;
+			Area a = (Area) struttura;
+			cv.put("sincronizzato", false);
+			cv.put("rfid", a.rfid);
+			cv.put("descrizioneMarca", a.descrizioneMarca);
+			cv.put("idArea", a.idArea);
+			cv.put("idParco", a.idParco);
+			cv.put("idGioco", a.idGioco);
+			cv.put("spessore", a.spessore);
+			cv.put("superficie", a.superficie);
+			cv.put("tipoPavimentazione", a.tipoPavimentazione);
+			
+			cv.put("numeroserie", a.numeroSerie);
+			cv.put("gpsx", a.gpsx);
+			cv.put("gpsy", a.gpsy);
+			cv.put("note", a.note);
+			cv.put("foto0",a.foto0);
+			cv.put("foto1",a.foto1);
+			cv.put("foto2",a.foto2);
+			cv.put("foto3",a.foto3);
+			cv.put("foto4",a.foto4);
+		}
 		long id = -1;
 		try {
 			id = mDatabaseOpenHelper.getWritableDatabase().insertWithOnConflict(
-					StruttureEnum.GIOCHI.tipo, null, cv,SQLiteDatabase.CONFLICT_REPLACE);
+					tabella, null, cv,SQLiteDatabase.CONFLICT_REPLACE);
 		} catch (SQLiteConstraintException e) {
 			Log.e(TAG, e.getMessage());
 			id = -2;
 		}
+		
 		return id;
 	}
 	
@@ -453,7 +570,7 @@ public class OCParchiDB {
 				}
 			}
 			
-			sqlCreateCode += ",UNIQUE (numeroTabella,Codice) ) ";
+			sqlCreateCode += ",UNIQUE (numeroTabella,codice) ) ";
 			Log.d(TAG, sqlCreateCode);
 			mDatabase.execSQL(sqlCreateCode);
 

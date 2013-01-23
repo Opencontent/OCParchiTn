@@ -1,5 +1,7 @@
 package it.opencontent.android.ocparchitn.db.entities;
 
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGioco;
+
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -13,16 +15,16 @@ public class Gioco extends Struttura {
 		tipo = "gioco";
 	}
 
-	public Gioco(it.opencontent.android.ocparchitn.SOAPMappings.SOAPGioco remote,Context context){
+	public Gioco(SOAPGioco remote,Context context){
 		super();
 		tipo="gioco";
 		gpsx = Float.parseFloat(remote.gpsx);
 		gpsy = Float.parseFloat(remote.gpsy);
 		descrizioneMarca = remote.descrizioneMarca;
 		descrizioneArea = remote.descrizioneArea;
-		descrizione_gioco = remote.descrizioneGioco;
+		descrizioneGioco = remote.descrizioneGioco;
 		rfid = Integer.parseInt(remote.rfid);
-		rfidArea = remote.rfidArea;
+		rfidArea = Integer.parseInt(remote.rfidArea);
 		idGioco = Integer.parseInt(remote.idGioco);
 		note = remote.note;
 		numeroFotografie = remote.numeroFotografie;

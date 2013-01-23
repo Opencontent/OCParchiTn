@@ -2,11 +2,8 @@
 
     <string name="app_name">OCParchiTN</string>
     
-
-    
-    
-    
-    
+	<string name="loremipsum">Lorem ipsum dolor sit amet</string>
+	
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">Gestione Parchi</string>
     <string name="take_snapshot_btn">Fai una foto</string>
@@ -19,7 +16,9 @@
 	<string name="settings_field_password2">(ripeti)</string>
 	
 	<!--  schermata main della struttura -->
-	<string name="display_gioco_id">ID: </string>
+	<string name="display_area_tipoPavimentazione">PAvimentazione: </string>
+	<string name="display_area_id">ID Area: </string>
+	<string name="display_gioco_id">ID Gioco: </string>
 	<string name="display_gioco_seriale">Seriale: </string>
 	<string name="display_gioco_gps">Coordinate GPS: </string>
 	<string name="display_gioco_marca">Marca: </string>
@@ -45,6 +44,8 @@
 	
 	
 	<string name="pulsante_start_by_rfid_testo">Parti da un RFID</string>
+	<string name="pulsante_associa_rfid_a_gioco_testo">RFID Gioco</string>
+	<string name="pulsante_associa_rfid_a_area_testo">RFIDI Area</string>
 	<string name="pulsante_start_by_id_testo">Parti da un ID</string>
 	<string name="pulsante_salva_modifiche_gioco_testo">Salva le modifiche</string>
 	<string name="pulsante_sincronizza_modifiche_gioco_testo">Sincronizza le modifiche</string>

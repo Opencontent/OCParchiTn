@@ -15,6 +15,9 @@ public class SOAPArea implements KvmSerializable {
 	public String tipoPavimentazione;
 	public String idArea;
 
+	public String descrizione;
+	public int numeroFotografie;
+
 	@Override
 	public Object getProperty(int arg0) {
 		switch(arg0){
@@ -32,13 +35,17 @@ public class SOAPArea implements KvmSerializable {
 			return tipoPavimentazione;
 		case 6:
 			return idArea;
+		case 7:
+			return descrizione;
+		case 8:
+			return numeroFotografie;
 		}
 		return null;
 	}
 
 	@Override
 	public int getPropertyCount() {
-		return 7;
+		return 9;
 	}
 
 	@Override
@@ -46,7 +53,7 @@ public class SOAPArea implements KvmSerializable {
 		arg2.type = PropertyInfo.STRING_CLASS;
 		switch(arg0){
 		case 0:
-			arg2.name = "id_parco";
+			arg2.name = "idParco";
 			break;
 		case 1:
 			arg2.name = "note";
@@ -61,10 +68,17 @@ public class SOAPArea implements KvmSerializable {
 			arg2.name = "superficie";
 			break;
 		case 5:
-			arg2.name = "tipo_pavimentazione";
+			arg2.name = "tipoPavimentazione";
 			break;
 		case 6:
 			arg2.name = "idArea";
+			break;
+		case 7:
+			arg2.name = "descrizione";
+			break;
+		case 8:
+			arg2.type = PropertyInfo.INTEGER_CLASS;
+			arg2.name = "numeroFotografie";
 			break;
 		}
 	}
@@ -95,6 +109,12 @@ public class SOAPArea implements KvmSerializable {
 			break;
 		case 6:
 			idArea=arg1.toString();
+			break;
+		case 7:
+			descrizione=arg1.toString();
+			break;
+		case 8:
+			numeroFotografie=Integer.parseInt(arg1.toString());
 			break;
 		}
 	}
