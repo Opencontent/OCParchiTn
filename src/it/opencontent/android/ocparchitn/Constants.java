@@ -10,6 +10,8 @@ public class Constants {
 	public final static int PERMESSO_MODIFICA = 32;
 	public final static int PERMESSO_ADMIN = 1000;
 	
+	public final static String PREFISSO_NDEF = "parchi://struttura";
+	
 	public final static String EXTRAKEY_DATAMAP = "dataMap";
 	public final static String EXTRAKEY_DATAMAP_RESULT = "dataMapResult";
 	public final static String EXTRAKEY_METHOD_NAME = "methodName";
@@ -76,9 +78,14 @@ public class Constants {
 
     /**
      * Mapping dei codici struttura per come se li aspetta in firma il server
+     * Validi anche per sttare il tipo di foto
      */
     public static final int CODICE_STRUTTURA_GIOCO = 1;
     public static final int CODICE_STRUTTURA_AREA = 2;
+    public static final int CODICE_STRUTTURA_VERIFICA = 3;
+    public static final int CODICE_STRUTTURA_MANUTENZIONE = 4;
+    public static final int CODICE_STRUTTURA_CONTROLLO_VISIVO = 5;
+    public static final int CODICE_STRUTTURA_INTERVENTO = 6; 
     
 	public static final int FOTO_REQUEST_CODE = 1;
 	public static final int SOAP_GET_GIOCO_REQUEST_CODE = 2;
@@ -100,5 +107,5 @@ public class Constants {
 	public static final int SOAP_GET_TOKEN_STATUS_REQUEST_CODE = 201;
 	public static final int SOAP_GET_INVALIDATE_TOKEN_REQUEST_CODE = 202;
 
-
+	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO = 999;
 }

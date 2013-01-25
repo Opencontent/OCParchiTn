@@ -344,35 +344,44 @@ public class MainActivity extends BaseActivity {
 				res[i - 5] = rawMsg.toByteArray()[i];
 			}
 			String out = new String(res);
-			String[] pieces = out.split("://");
-
-			String[] actualValues = pieces[1].split("/");
-
-			int rfid = Integer.parseInt(actualValues[1]);
-			// currentRFID = rfid;
-			if (partitiDaID) {
-				confirmLegaRFIDGioco(rfid, currentStruttura);
-			} else {
-
-				if (currentStruttura != null && currentStruttura.hasDirtyData) {
-					db.salvaStrutturaLocally(currentStruttura);
-				}
-
-				// String name = getString(R.string.display_gioco_id)
-				// + currentRFID;
-				// String ser = getString(R.string.display_gioco_seriale) + out;
-				//
-				// TextView giocoId = (TextView)
-				// findViewById(R.id.display_gioco_id);
-				// giocoId.setText(name);
-				// TextView giocoSeriale = (TextView)
-				// findViewById(R.id.display_gioco_seriale);
-				// giocoSeriale.setText(ser);
-				// Log.d(TAG, "Qualcosa è successo " + name + " " + res);
-			}
+			
+			parseNDEFForRFID(out);
 		} catch (Exception e) {
 			// Non è un intent che ci interessa in questo caso
 		}
+	}
+
+	/**
+	 * @param out
+	 */
+	public int parseNDEFForRFID(String out) {
+		String[] pieces = out.split("://");
+
+		String[] actualValues = pieces[1].split("/");
+
+		int rfid = Integer.parseInt(actualValues[1]);
+		// currentRFID = rfid;
+		if (partitiDaID) {
+			confirmLegaRFIDGioco(rfid, currentStruttura);
+		} else {
+
+			if (currentStruttura != null && currentStruttura.hasDirtyData) {
+				db.salvaStrutturaLocally(currentStruttura);
+			}
+
+			// String name = getString(R.string.display_gioco_id)
+			// + currentRFID;
+			// String ser = getString(R.string.display_gioco_seriale) + out;
+			//
+			// TextView giocoId = (TextView)
+			// findViewById(R.id.display_gioco_id);
+			// giocoId.setText(name);
+			// TextView giocoSeriale = (TextView)
+			// findViewById(R.id.display_gioco_seriale);
+			// giocoSeriale.setText(ser);
+			// Log.d(TAG, "Qualcosa è successo " + name + " " + res);
+		}
+		return rfid;
 	}
 
 	public void startRilevazioneDaID(View v) {
@@ -414,6 +423,13 @@ public class MainActivity extends BaseActivity {
 
 		alert.show();
 
+	}
+	
+	public void startRilevazioneDaRFID(View v){
+		Log.d(TAG,"Partiamo da rfid, lancio l'activity");
+		Intent leggiRFID = new Intent();
+		leggiRFID.setClass(this, NDEFReadActivity.class);
+		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO);
 	}
 
 	private void parseIntent(Intent intent) {
@@ -552,6 +568,10 @@ public class MainActivity extends BaseActivity {
 				.findFragmentByTag(currentTag);
 
 		switch (requestCode) {
+		case Constants.LEGGI_RFID_DA_LETTORE_ESTERNO:
+//			int rfid = Integer.parseInt(intent.getExtras().get(Constants.EXTRAKEY_RFID)+"");
+			Toast.makeText(this, intent.getExtras().get(Constants.EXTRAKEY_RFID)+"", Toast.LENGTH_LONG).show();
+			break;
 		case Constants.CREDENTIALS_UPDATED_REQUEST_CODE:
 			renewToken();
 			break;
