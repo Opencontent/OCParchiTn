@@ -13,6 +13,7 @@ public class SOAPFotoupdate implements KvmSerializable {
 	public String nomeImmagine;
 	public String idGioco;
 	public boolean sovrascrittura;
+	public String tipoFoto;
 	
 	public SOAPFotoupdate(){
 		estensioneImmagine = "png";
@@ -29,13 +30,14 @@ public class SOAPFotoupdate implements KvmSerializable {
 			return estensioneImmagine;
 		case 1:
 			return nomeImmagine;
-		case 4:
-			return immagine;
-		case 3:
-			return idGioco;
 		case 2:
 			return sovrascrittura;
-		
+		case 3:
+			return idGioco;
+		case 4:
+			return immagine;
+		case 5:
+			return tipoFoto;
 		}
 		return null;
 	}
@@ -43,7 +45,7 @@ public class SOAPFotoupdate implements KvmSerializable {
 	@Override
 	public int getPropertyCount() {
 		// TODO Auto-generated method stub
-		return 5;
+		return 6;
 	}
 
 	@Override
@@ -57,14 +59,17 @@ public class SOAPFotoupdate implements KvmSerializable {
 		case 1:
 			info.name ="nomeImmagine";
 			break;
-		case 4:
-			info.name ="immagine";
+		case 2:
+			info.name ="sovrascrittura";
 			break;
 		case 3:
 			info.name ="idGioco";
 			break;
-		case 2:
-			info.name ="sovrascrittura";
+		case 4:
+			info.name ="immagine";
+			break;
+		case 5:
+			info.name ="tipoFoto";
 			break;
 		}
 	}
@@ -81,14 +86,17 @@ public class SOAPFotoupdate implements KvmSerializable {
 		case 1:
 			nomeImmagine = arg1.toString();
 			break;
-		case 4:
-			immagine = arg1.toString();
+		case 2:
+			sovrascrittura = Boolean.getBoolean(arg1.toString());
 			break;
 		case 3:
 			idGioco = arg1.toString();
 			break;
-		case 2:
-			sovrascrittura = Boolean.getBoolean(arg1.toString());
+		case 4:
+			immagine = arg1.toString();
+			break;
+		case 5:
+			tipoFoto = arg1.toString();
 			break;
 		}		
 	}

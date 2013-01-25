@@ -9,6 +9,7 @@ import android.content.Context;
 
 public class Gioco extends Struttura {
 
+	public String posizioneRfid;
 	  
 	
 	public Gioco() {
@@ -29,6 +30,7 @@ public class Gioco extends Struttura {
 		note = remote.note;
 		numeroFotografie = remote.numeroFotografie;
 		numeroSerie = remote.numeroSerie;
+		posizioneRfid = remote.posizioneRfid;
 	}
 	
 	public Gioco(Set<Entry<String, Object>> entrySet,int rfid,Context context) {

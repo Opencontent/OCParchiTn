@@ -14,6 +14,7 @@ public class Area extends Struttura {
 	public float spessore;
 	public float superficie;
 	public int tipoPavimentazione;	
+	public String posizioneRfid;	
 
 	public Area() {
 		this.tipo = "area";
@@ -29,7 +30,8 @@ public class Area extends Struttura {
 		rfid = Integer.parseInt(remote.rfid);
 		spessore = Float.parseFloat(remote.spessore);
 		superficie = Float.parseFloat(remote.superficie);
-		tipoPavimentazione = Integer.parseInt(remote.tipoPavimentazione);		
+		tipoPavimentazione = Integer.parseInt(remote.tipoPavimentazione);
+		posizioneRfid = remote.posizioneRfid;
 	}
 	public Area(Set<Entry<String, Object>> entrySet,int rfid,Context context) {
 		// TODO Auto-generated constructor stub

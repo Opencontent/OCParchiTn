@@ -118,17 +118,9 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				gu.rfid = "" + g.rfid;
 				gu.gpsx = "" + g.gpsx;
 				gu.gpsy = "" + g.gpsy;
-				gu.tabletUserName = PreferenceManager.getDefaultSharedPreferences(this).getString("username", "unset");
-				// map.put("tabletDataModifica",);
-				// String uuid =
-				// Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
-				String uuid = "Android tablet n° 1234567890"; //TODO: sistemare l'UUID del tablet
-				gu.tabletDispositivoName = uuid;
 				gu.note = g.note;
-		
-				// map.put("tabletDispositivoName",newuuid);
-				// map.put("tabletTimeModifica",);
-				// map.put("tabletUserName", "Utente Di Test");
+				gu.rfidArea = "" + g.rfidArea;
+				gu.posizioneRfid = ""+ 
 				map.put("Giocoupdate", gu);
 				getRemoteResponse(Constants.SET_GIOCO_METHOD_NAME, map, false,Constants.SET_GIOCO_METHOD_NAME);
 				sincronizzaTutteLeFoto(g);

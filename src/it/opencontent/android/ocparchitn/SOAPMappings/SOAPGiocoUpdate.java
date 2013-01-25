@@ -13,16 +13,10 @@ public class SOAPGiocoUpdate implements KvmSerializable {
 	public String idGioco;
 	public String note;
 	public String rfid;
-	public String tabletDataModifica;
-	public String tabletDispositivoName;
-	public String tabletTimeModifica;
-	public String tabletUserName;
+	public String rfidArea;
+	public String posizioneRfid;
 	
 	public SOAPGiocoUpdate(){
-		tabletDataModifica = "";
-		tabletDispositivoName ="";
-		tabletTimeModifica = "";
-		tabletUserName = "Qualcuno";
 		
 	}
 
@@ -41,13 +35,9 @@ public class SOAPGiocoUpdate implements KvmSerializable {
 		case 4:
 			return rfid;
 		case 5:
-			return tabletDataModifica;
+			return rfidArea;
 		case 6:
-			return tabletDispositivoName;
-		case 7:
-			return tabletTimeModifica;
-		case 8:
-			return tabletUserName;
+			return posizioneRfid;
 		}
 		return null;
 	}
@@ -55,7 +45,7 @@ public class SOAPGiocoUpdate implements KvmSerializable {
 	@Override
 	public int getPropertyCount() {
 		// TODO Auto-generated method stub
-		return 9;
+		return 7;
 	}
 
 	@Override
@@ -79,17 +69,12 @@ public class SOAPGiocoUpdate implements KvmSerializable {
 			info.name ="rfid";
 			break;
 		case 5:
-			info.name ="tabletDataModifica";
+			info.name ="rfidArea";
 			break;
 		case 6:
-			info.name ="tabletDispositivoName";
+			info.name ="posizioneRfid";
 			break;
-		case 7:
-			info.name ="tabletTimeModifica";
-			break;
-		case 8:
-			info.name ="tabletUserName";
-			break;
+
         }
 	}
 
@@ -115,17 +100,12 @@ public class SOAPGiocoUpdate implements KvmSerializable {
 			rfid = arg1.toString();
 			break;
 		case 5:
-			tabletDataModifica = arg1.toString();
+			rfidArea = arg1.toString();
 			break;
 		case 6:
-			tabletDispositivoName = arg1.toString();
+			posizioneRfid = arg1.toString();
 			break;
-		case 7:
-			tabletTimeModifica = arg1.toString();
-			break;
-		case 8:
-			tabletUserName = arg1.toString();
-			break;
+
 		}		
 	}
 

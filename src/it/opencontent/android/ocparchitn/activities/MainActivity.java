@@ -185,7 +185,16 @@ public class MainActivity extends BaseActivity {
 					.setTabListener(
 							new CustomTabListener<ICustomFragment>(this,
 									f.label, specific));
-			actionBar.addTab(tab);
+			boolean alreadyThere = false;
+			for(int i = 0 ; i < actionBar.getTabCount(); i++){
+				Tab t = actionBar.getTabAt(i);
+				if(t.getTag().equals(tab.getTag())){
+					alreadyThere = true;
+				}
+			}
+			if(!alreadyThere){			
+				actionBar.addTab(tab);
+			}
 			} else {
 				Log.d(TAG,"Tab non mostrato causa permessi: "+f.label);
 			}
@@ -460,7 +469,7 @@ public class MainActivity extends BaseActivity {
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("idgioco", "" + id);
+		map.put("args0", "" + id);
 		currentQueriedId = id;
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
 		
@@ -570,7 +579,12 @@ public class MainActivity extends BaseActivity {
 		switch (requestCode) {
 		case Constants.LEGGI_RFID_DA_LETTORE_ESTERNO:
 //			int rfid = Integer.parseInt(intent.getExtras().get(Constants.EXTRAKEY_RFID)+"");
-			Toast.makeText(this, intent.getExtras().get(Constants.EXTRAKEY_RFID)+"", Toast.LENGTH_LONG).show();
+			//TODO: integrare la risposta esterna dell'rfid
+			if(intent.getExtras() != null && intent.getExtras().get(Constants.EXTRAKEY_RFID) != null){
+				parseNDEFForRFID(intent.getExtras().get(Constants.EXTRAKEY_RFID).toString());
+			} else {
+				Toast.makeText(this, "Tag non riconosciuto", Toast.LENGTH_LONG).show();
+			}
 			break;
 		case Constants.CREDENTIALS_UPDATED_REQUEST_CODE:
 			renewToken();

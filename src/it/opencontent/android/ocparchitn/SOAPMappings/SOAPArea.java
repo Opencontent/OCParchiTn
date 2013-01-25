@@ -17,6 +17,7 @@ public class SOAPArea implements KvmSerializable {
 
 	public String descrizione;
 	public int numeroFotografie;
+	public String posizioneRfid;
 
 	@Override
 	public Object getProperty(int arg0) {
@@ -39,13 +40,15 @@ public class SOAPArea implements KvmSerializable {
 			return descrizione;
 		case 8:
 			return numeroFotografie;
+		case 9:
+			return posizioneRfid;
 		}
 		return null;
 	}
 
 	@Override
 	public int getPropertyCount() {
-		return 9;
+		return 10;
 	}
 
 	@Override
@@ -79,6 +82,9 @@ public class SOAPArea implements KvmSerializable {
 		case 8:
 			arg2.type = PropertyInfo.INTEGER_CLASS;
 			arg2.name = "numeroFotografie";
+			break;
+		case 9:
+			arg2.name = "posizioneRfid";
 			break;
 		}
 	}
@@ -115,6 +121,9 @@ public class SOAPArea implements KvmSerializable {
 			break;
 		case 8:
 			numeroFotografie=Integer.parseInt(arg1.toString());
+			break;
+		case 9:
+			posizioneRfid=arg1.toString();
 			break;
 		}
 	}
