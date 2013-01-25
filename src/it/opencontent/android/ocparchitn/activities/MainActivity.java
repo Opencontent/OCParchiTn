@@ -869,7 +869,7 @@ public class MainActivity extends BaseActivity {
 	}
 
 	public static Gioco getCurrentGioco() {
-		if (currentStruttura != null && currentStruttura.tipo.equals(Gioco.class)){
+		if (currentStruttura != null && currentStruttura.getClass().equals(Gioco.class)){
 			return (Gioco) currentStruttura;
 		} else {
 			return null;

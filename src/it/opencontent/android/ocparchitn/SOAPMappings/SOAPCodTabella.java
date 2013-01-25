@@ -70,7 +70,6 @@ public class SOAPCodTabella implements KvmSerializable {
 				String pattern = "yyyy-MM-dd";
 				SimpleDateFormat sdf = new SimpleDateFormat(pattern,Locale.US);
 				dtValidita = sdf.parse(arg1+"");
-				Log.d("LEVAMI",arg1+" mappato a "+dtValidita);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			} 

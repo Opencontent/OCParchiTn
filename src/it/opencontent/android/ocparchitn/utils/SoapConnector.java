@@ -1,6 +1,7 @@
 package it.opencontent.android.ocparchitn.utils;
 
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPArea;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAreaUpdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAutGiochi;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPCodTabella;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotografia;
@@ -39,6 +40,7 @@ public class SoapConnector {
 	public HashMap<String, Object> getMap(){
 		return map;
 	}
+	
 	@SuppressWarnings("rawtypes")
 	public HashMap<String, Object> soap(String METHOD_NAME, String SOAP_ACTION,
 			String NAMESPACE, String URL, PropertyInfo[] properties)
@@ -70,13 +72,18 @@ public class SoapConnector {
         envelope.setAddAdornments(false);
         envelope.implicitTypes= true;
 
-		envelope.addMapping("http://gioco.parcogiochi/xsd", "Giocoupdate", SOAPGiocoUpdate.class);
-		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotoupdate", SOAPFotoupdate.class);
-		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotografia", SOAPFotografia.class);
-		envelope.addMapping("http://gioco.parcogiochi/xsd", "Gioco", SOAPGioco.class);
-		envelope.addMapping("http://gioco.parcogiochi/xsd", "Info", SOAPInfo.class);
+        envelope.addMapping("http://gioco.parcogiochi/xsd", "Info", SOAPInfo.class);
+
+        envelope.addMapping("http://gioco.parcogiochi/xsd", "Gioco", SOAPGioco.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Area", SOAPArea.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotografia", SOAPFotografia.class);
+
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "Giocoupdate", SOAPGiocoUpdate.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "AreaUpdate", SOAPAreaUpdate.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotoupdate", SOAPFotoupdate.class);
+
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "AutGiochi", SOAPAutGiochi.class);
+
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "CodTabella", SOAPCodTabella.class);
 
 		//Eccezioni

@@ -15,6 +15,9 @@ public class Constants {
 	public final static String EXTRAKEY_METHOD_NAME = "methodName";
 	public final static String EXTRAKEY_STRUCTURE_TYPE = "tipoStruttura";
 	public final static String GET_GIOCO_METHOD_NAME = "getGioco";
+	public final static String SET_GIOCO_METHOD_NAME = "setGioco";
+	public final static String SET_AREA_METHOD_NAME = "setArea";
+	public final static String SET_FOTO_METHOD_NAME = "setFoto";
 	public final static String GET_GIOCO_ID_METHOD_NAME = "getGiocoId";
 	public final static String GET_AREA_METHOD_NAME = "getArea";
 	public final static String GET_AREA_ID_METHOD_NAME = "getAreaId";

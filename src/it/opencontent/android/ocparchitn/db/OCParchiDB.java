@@ -1,5 +1,7 @@
 package it.opencontent.android.ocparchitn.db;
 
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAreaUpdate;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGiocoUpdate;
 import it.opencontent.android.ocparchitn.db.entities.Area;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
@@ -37,6 +39,10 @@ public class OCParchiDB {
 
 	private static final HashMap<String, Struttura> mSchemaMap = buildSchemaMap();
 
+	public  void close(){
+		mDatabaseOpenHelper.close();
+	} 
+	
 	public OCParchiDB(Context context) {
 		mDatabaseOpenHelper = new OCParchiOpenHelper(context);
 		this.context = context;
@@ -105,7 +111,7 @@ public class OCParchiDB {
 		Cursor cursor = builder.query(
 				mDatabaseOpenHelper.getReadableDatabase(), columns, selection,
 				selectionArgs, null, null, ascending);
-
+		Log.d(TAG,SQLiteQueryBuilder.buildQueryString(false, table, columns, selection, null, null, null, null));
 		if (cursor == null) {
 			return null;
 		} else if (!cursor.moveToFirst()) {
@@ -362,7 +368,7 @@ public class OCParchiDB {
 			tabella = StruttureEnum.AREE.tipo;
 			Area a = (Area) struttura;
 			cv.put("sincronizzato", false);
-			cv.put("rfid", a.rfid);
+			cv.put("rfidArea", a.rfid);
 			cv.put("descrizioneMarca", a.descrizioneMarca);
 			cv.put("idArea", a.idArea);
 			cv.put("idParco", a.idParco);
@@ -370,6 +376,7 @@ public class OCParchiDB {
 			cv.put("spessore", a.spessore);
 			cv.put("superficie", a.superficie);
 			cv.put("tipoPavimentazione", a.tipoPavimentazione);
+			cv.put("descrizioneArea", a.descrizioneArea);
 			
 			cv.put("numeroserie", a.numeroSerie);
 			cv.put("gpsx", a.gpsx);
@@ -393,13 +400,31 @@ public class OCParchiDB {
 		return id;
 	}
 	
-	public void marcaStrutturaSincronizzata(Gioco gioco){
+	public void marcaStrutturaSincronizzata(HashMap<String,Object> map){
 		ContentValues cv = new ContentValues();
-
 		cv.put(" sincronizzato ", true);
-				
+			
+		String campo = "";
+		String id = "";
+		String tipo = "";
+		Entry<String,Object> entry = null;
+		if(!map.isEmpty()){
+		 entry = map.entrySet().iterator().next();
+		}
+		if( entry != null && entry.getValue().getClass().equals(SOAPAreaUpdate.class)){
+			SOAPAreaUpdate sau = (SOAPAreaUpdate) map.entrySet().iterator().next().getValue();
+			campo = "idArea = ? ";
+			id = sau.idArea;
+			tipo =StruttureEnum.AREE.tipo;
+		} else if( entry != null && entry.getValue().getClass().equals(SOAPGiocoUpdate.class)){
+			SOAPGiocoUpdate sgu = (SOAPGiocoUpdate) map.entrySet().iterator().next().getValue();
+			campo = "idGioco = ? ";
+			id = sgu.idGioco;
+			tipo =StruttureEnum.GIOCHI.tipo;
+		}
+		
 		try{
-			int res = mDatabaseOpenHelper.getWritableDatabase().update(StruttureEnum.GIOCHI.tipo, cv, "idGioco = ?", new String[]{""+gioco.idGioco});
+			int res = mDatabaseOpenHelper.getWritableDatabase().update(tipo, cv, campo, new String[]{id});
 			Log.d(TAG,"Aggiornate "+res+" righe");
 		}catch(SQLiteConstraintException e){
 			Log.e(TAG, e.getMessage());
@@ -427,7 +452,7 @@ public class OCParchiDB {
 			Entry<String, Struttura> entry = strutture.next();
 			String[] columns = new String[] { " sincronizzato as sincronizzato " };
 			String tableName = entry.getKey();
-			String selection = " sincronizzato = ? "; // TODO: trovare un modo
+			String selection = " sincronizzato = ? AND ( rfid > 0 OR rfidArea >  0 ) "; // TODO: trovare un modo
 														// per metterli in
 														// qualche costante,
 														// probabilmente in
@@ -470,17 +495,26 @@ public class OCParchiDB {
 					Struttura s;
 					if (tableName.equals(StruttureEnum.GIOCHI.tipo)) {
 						s = new Gioco();
-					} else {
+					} else if(tableName.equals(StruttureEnum.AREE.tipo)) {
 						s = new Area();
+						((Area) s).spessore = c.getFloat(c.getColumnIndex("spessore"));
+						((Area) s).superficie = c.getFloat(c.getColumnIndex("superficie"));
+						((Area) s).tipoPavimentazione = c.getInt(c.getColumnIndex("tipoPavimentazione"));
+						((Area) s).idArea = c.getInt(c.getColumnIndex("idArea"));	
+					} else {
+						s = new Struttura();
 					}
 					
+					s.descrizioneArea = c.getString(c.getColumnIndex("descrizioneArea"));
 					s.gpsx = Float.parseFloat(c.getString(c
 							.getColumnIndex("gpsx")));
 					s.gpsy = Float.parseFloat(c.getString(c
 							.getColumnIndex("gpsy")));
 					s.note = c.getString(c.getColumnIndex("note"));
 					s.idGioco = c.getInt(c.getColumnIndex("idGioco"));
+					
 					s.rfid = c.getInt(c.getColumnIndex("rfid"));
+					s.rfidArea = c.getInt(c.getColumnIndex("rfidArea"));
 					s.foto0 = c.getString(c.getColumnIndex("foto0"));
 					s.foto1 = c.getString(c.getColumnIndex("foto1"));
 					s.foto2 = c.getString(c.getColumnIndex("foto2"));
@@ -538,10 +572,12 @@ public class OCParchiDB {
 						}
 					}
 				}
-				sqlCreateCode += ",UNIQUE (idGioco,rfid) "; // TODO fare
-																// qualcosa per
-																// non
-																// hardcodarli
+				
+				if(entry.getKey().equals(StruttureEnum.GIOCHI.tipo)){
+				sqlCreateCode += ",UNIQUE (idGioco) "; // TODO fare qualcosa per non hardcodarli
+				} else if(entry.getKey().equals(StruttureEnum.AREE.tipo)){
+					sqlCreateCode += ",UNIQUE (idArea) "; // TODO fare qualcosa per non hardcodarli
+				}
 				sqlCreateCode += ")";
 				Log.d(TAG, sqlCreateCode);
 				mDatabase.execSQL(sqlCreateCode);

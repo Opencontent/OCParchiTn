@@ -6,6 +6,6 @@ public interface IRemoteConnection {
 
 	public void sendRequest(Object data);
 
-	public void returnResponse(String methodName, HashMap<String, Object> data,boolean finish,String forcedMapIndex);
+	public void getRemoteResponse(String methodName, HashMap<String, Object> data,boolean finish,String forcedMapIndex);
 
 }

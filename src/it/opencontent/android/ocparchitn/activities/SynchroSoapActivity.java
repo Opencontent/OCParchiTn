@@ -2,9 +2,11 @@ package it.opencontent.android.ocparchitn.activities;
 
 import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAreaUpdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotoupdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGiocoUpdate;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
+import it.opencontent.android.ocparchitn.db.entities.Area;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.services.IRemoteConnection;
@@ -18,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import org.ksoap2.serialization.PropertyInfo;
-import org.kxml2.kdom.Element;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
@@ -41,6 +42,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 	private HashMap<String, Object> requestParameters;
 	private HashMap<String, Object> res;
 	private Thread remoteThread;
+	private static OCParchiDB db;
 	private static HashMap<String,HashMap<String,Object>> allmaps = new HashMap<String, HashMap<String,Object>>();
 
 	private static int queueLength = 0;
@@ -61,10 +63,10 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				Constants.EXTRAKEY_METHOD_NAME);
 		requestParameters = (HashMap<String, Object>) intent.getExtras().get(
 				Constants.EXTRAKEY_DATAMAP);
-		
+		db = new OCParchiDB(getApplicationContext());
 		
 		if (methodName.equals(Constants.EXTRAKEY_SYNC_ALL)) {
-			OCParchiDB db = new OCParchiDB(getApplicationContext());
+			
 			LinkedHashMap<String, Struttura> set = db
 					.getStruttureDaSincronizzare();
 			if (!set.isEmpty() && PlatformChecks.siamoOnline(getApplicationContext())) {
@@ -72,96 +74,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				while (keyIterator.hasNext()) {
 					String k = keyIterator.next();
 					Struttura s = set.get(k);
-					if (s.getClass().equals(Gioco.class)) {
-						Gioco g = (Gioco) s;
-
-						HashMap<String, Object> map = new HashMap<String, Object>();
-						SOAPGiocoUpdate gu = new SOAPGiocoUpdate();
-						gu.idGioco = "" + g.idGioco;
-						if (g.rfid > 0) {
-							gu.rfid = "" + g.rfid;
-						
-						gu.gpsx = "" + g.gpsx;
-						gu.gpsy = "" + g.gpsy;
-						gu.tabletUserName = PreferenceManager.getDefaultSharedPreferences(this).getString("username", "unset");
-
-						// map.put("tabletDataModifica",);
-						// String uuid =
-						// Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
-						String uuid = "Android tablet n° 1234567890";
-						gu.tabletDispositivoName = uuid;
-						gu.note = g.note;
-
-						// map.put("tabletDispositivoName",newuuid);
-						// map.put("tabletTimeModifica",);
-						// map.put("tabletUserName", "Utente Di Test");
-
-						map.put("Giocoupdate", gu);
-						returnResponse("setGioco", map, false,"setGioco");
-
-						// cicliamo le foto eventuali
-
-						if (g.foto0 != null && !g.foto0.equals("")) {
-							SOAPFotoupdate fu = new SOAPFotoupdate();
-							fu.idGioco = "" + g.idGioco;
-							fu.sovrascrittura = true;
-							fu.estensioneImmagine = "jpg";
-							fu.immagine = g.foto0;
-							fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_0";
-							map = new HashMap<String, Object>();
-							map.put("Fotoupdate", fu);
-							returnResponse("setFoto", map, false,"setFoto");
-						}
-						if (g.foto1 != null && !g.foto1.equals("")) {
-							SOAPFotoupdate fu = new SOAPFotoupdate();
-							fu.idGioco = "" + g.idGioco;
-							fu.sovrascrittura = true;
-							fu.estensioneImmagine = "jpg";
-							fu.immagine = g.foto1;
-							fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_1";
-							map = new HashMap<String, Object>();
-							map.put("Fotoupdate", fu);
-							returnResponse("setFoto", map, false,"setFoto");
-						}
-						if (g.foto2 != null && !g.foto2.equals("")) {
-							SOAPFotoupdate fu = new SOAPFotoupdate();
-							fu.idGioco = "" + g.idGioco;
-							fu.sovrascrittura = true;
-							fu.estensioneImmagine = "jpg";
-							fu.immagine = g.foto2;
-							fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_2";
-							map = new HashMap<String, Object>();
-							map.put("Fotoupdate", fu);
-							returnResponse("setFoto", map, false,"setFoto");
-						}
-						if (g.foto3 != null && !g.foto3.equals("")) {
-							SOAPFotoupdate fu = new SOAPFotoupdate();
-							fu.idGioco = "" + g.idGioco;
-							fu.sovrascrittura = true;
-							fu.estensioneImmagine = "jpg";
-							fu.immagine = g.foto3;
-							fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_3";
-							map = new HashMap<String, Object>();
-							map.put("Fotoupdate", fu);
-							returnResponse("setFoto", map, false,"setFoto");
-						}
-						if (g.foto4 != null && !g.foto4.equals("")) {
-							SOAPFotoupdate fu = new SOAPFotoupdate();
-							fu.idGioco = "" + g.idGioco;
-							fu.sovrascrittura = true;
-							fu.estensioneImmagine = "jpg";
-							fu.immagine = g.foto4;
-							fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_4";
-							map = new HashMap<String, Object>();
-							map.put("Fotoupdate", fu);
-							returnResponse("setFoto", map, false,"setFoto");
-						}
-
-						db.marcaStrutturaSincronizzata(g);
-						}else {
-							Log.d(TAG,"Gioco senza rfid, non sincronizzato "+g.idGioco);
-						}
-					}
+						sincronizzaLaStruttura(s);
 				}
 			} else {
 				setResult(RESULT_OK,getIntent());
@@ -181,13 +94,137 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				 * L'ultima lancia il finish() di questa activity
 				 * L'onResult della main si va a prendere i risultati con un ciclo identico
 				 */
-				returnResponse(methodName, thismap, false,methodName+"_"+tid);	
+				getRemoteResponse(methodName, thismap, false,methodName+"_"+tid);	
 			}
 			
 		}else {
-			returnResponse(methodName, requestParameters, true,methodName);
+			getRemoteResponse(methodName, requestParameters, true,methodName);
 		}
 		
+	}
+
+	/**
+	 * @param db
+	 * @param s
+	 */
+	private void sincronizzaLaStruttura(Struttura s) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		if(s.getClass().equals(Gioco.class)){
+			Gioco g = (Gioco) s;
+	
+			SOAPGiocoUpdate gu = new SOAPGiocoUpdate();
+			gu.idGioco = "" + g.idGioco;
+			if (g.rfid > 0) {
+				gu.rfid = "" + g.rfid;
+				gu.gpsx = "" + g.gpsx;
+				gu.gpsy = "" + g.gpsy;
+				gu.tabletUserName = PreferenceManager.getDefaultSharedPreferences(this).getString("username", "unset");
+				// map.put("tabletDataModifica",);
+				// String uuid =
+				// Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
+				String uuid = "Android tablet n° 1234567890"; //TODO: sistemare l'UUID del tablet
+				gu.tabletDispositivoName = uuid;
+				gu.note = g.note;
+		
+				// map.put("tabletDispositivoName",newuuid);
+				// map.put("tabletTimeModifica",);
+				// map.put("tabletUserName", "Utente Di Test");
+				map.put("Giocoupdate", gu);
+				getRemoteResponse(Constants.SET_GIOCO_METHOD_NAME, map, false,Constants.SET_GIOCO_METHOD_NAME);
+				sincronizzaTutteLeFoto(g);
+			}else {
+				Log.d(TAG,"Gioco senza rfid, non sincronizzato "+g.idGioco);
+				if (queueLength <= 0) {
+					setResult(RESULT_OK, getIntent());
+					finish();
+				}
+			}
+		} else if(s.getClass().equals(Area.class)){
+			Area a = (Area) s;
+			SOAPAreaUpdate au = new SOAPAreaUpdate();
+			if(a.rfidArea>0){
+				au.idArea = "" + a.idArea;
+				au.idParco = "" + a.idParco ;
+				au.note = a.note;
+				au.rfid = "" + a.rfidArea;
+				au.spessore = "" + a.spessore;
+				au.superficie = "" + a.superficie;
+				au.tipoPavimentazione = "" + a.tipoPavimentazione;
+				map.put("Areaupdate", au);
+				getRemoteResponse(Constants.SET_AREA_METHOD_NAME, map, false,Constants.SET_AREA_METHOD_NAME);
+				sincronizzaTutteLeFoto(a);				
+			}else {
+				Log.d(TAG,"Area senza rfid, non sincronizzato "+a.idArea);
+				if (queueLength <= 0) {
+					setResult(RESULT_OK, getIntent());
+					finish();
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param g
+	 */
+	private void sincronizzaTutteLeFoto(Struttura g) {
+		HashMap<String, Object> map;
+		// cicliamo le foto eventuali
+
+		if (g.foto0 != null && !g.foto0.equals("")) {
+			SOAPFotoupdate fu = new SOAPFotoupdate();
+			fu.idGioco = "" + g.idGioco;
+			fu.sovrascrittura = true;
+			fu.estensioneImmagine = "jpg";
+			fu.immagine = g.foto0;
+			fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_0";
+			map = new HashMap<String, Object>();
+			map.put("Fotoupdate", fu);
+			getRemoteResponse("setFoto", map, false,"setFoto");
+		}
+		if (g.foto1 != null && !g.foto1.equals("")) {
+			SOAPFotoupdate fu = new SOAPFotoupdate();
+			fu.idGioco = "" + g.idGioco;
+			fu.sovrascrittura = true;
+			fu.estensioneImmagine = "jpg";
+			fu.immagine = g.foto1;
+			fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_1";
+			map = new HashMap<String, Object>();
+			map.put("Fotoupdate", fu);
+			getRemoteResponse("setFoto", map, false,"setFoto");
+		}
+		if (g.foto2 != null && !g.foto2.equals("")) {
+			SOAPFotoupdate fu = new SOAPFotoupdate();
+			fu.idGioco = "" + g.idGioco;
+			fu.sovrascrittura = true;
+			fu.estensioneImmagine = "jpg";
+			fu.immagine = g.foto2;
+			fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_2";
+			map = new HashMap<String, Object>();
+			map.put("Fotoupdate", fu);
+			getRemoteResponse("setFoto", map, false,"setFoto");
+		}
+		if (g.foto3 != null && !g.foto3.equals("")) {
+			SOAPFotoupdate fu = new SOAPFotoupdate();
+			fu.idGioco = "" + g.idGioco;
+			fu.sovrascrittura = true;
+			fu.estensioneImmagine = "jpg";
+			fu.immagine = g.foto3;
+			fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_3";
+			map = new HashMap<String, Object>();
+			map.put("Fotoupdate", fu);
+			getRemoteResponse("setFoto", map, false,"setFoto");
+		}
+		if (g.foto4 != null && !g.foto4.equals("")) {
+			SOAPFotoupdate fu = new SOAPFotoupdate();
+			fu.idGioco = "" + g.idGioco;
+			fu.sovrascrittura = true;
+			fu.estensioneImmagine = "jpg";
+			fu.immagine = g.foto4;
+			fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_4";
+			map = new HashMap<String, Object>();
+			map.put("Fotoupdate", fu);
+			getRemoteResponse("setFoto", map, false,"setFoto");
+		}
 	}
 
 	@Override
@@ -214,6 +251,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				&& !remoteThread.isInterrupted()) {
 			remoteThread.interrupt();
 		}
+		db.close();
 	}
 
 	public final void updateCounter(int amount) {
@@ -224,16 +262,23 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 	}
 
 	@Override
-	public void returnResponse(String m, HashMap<String, Object> data,
+	public void getRemoteResponse(String m, HashMap<String, Object> d,
 			boolean f,String md) {
-		//methodName = method;
+
+		//Abbiamo bisogno di tutti questi elementi nel runnable
+		//per cui li definiamo come final
+		
 		final String method = m;
 		final boolean finish = f;
 		final Handler h = new Handler();
 		final String mapid = md; 
-
-		if (data == null) {
+		final HashMap<String,Object> data;
+		
+		if (d == null) {
 			data = new HashMap<String, Object>();
+		} else {
+			data = d;
+			
 		}
 
 		if (!finish) {
@@ -254,7 +299,6 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 			properties[i] = pi;
 			i++;
 		}
-		// TODO Auto-generated method stub
 		if (PlatformChecks.siamoOnline(this.getApplicationContext())) {
 			Runnable runnable = new Runnable() {
 				@Override
@@ -267,7 +311,10 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 
 //							allmaps.put(method, res);
 							allmaps.put(mapid, res);
-						
+							if(method.equals(Constants.SET_AREA_METHOD_NAME)
+							|| method.equals(Constants.SET_GIOCO_METHOD_NAME)){
+								db.marcaStrutturaSincronizzata(data);
+							}
 						
 						if (!finish) {
 							queueLength--;

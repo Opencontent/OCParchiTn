@@ -71,7 +71,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 					a.tipoPavimentazione = r.codice;
 					MainActivity.setCurrentArea(a);
 					removeEmptyItemFromAdapterTipoPavimentazione();
-					salvaModifiche(null);
+//					salvaModifiche(null);
 				}
 			}
 
