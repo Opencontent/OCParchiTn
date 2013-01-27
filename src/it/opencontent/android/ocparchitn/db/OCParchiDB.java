@@ -31,7 +31,7 @@ import android.util.Log;
 public class OCParchiDB {
 
 	private final static String TAG = OCParchiDB.class.getSimpleName();
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	private static final String DATABASE_NAME = "parchitn";
 	private final OCParchiOpenHelper mDatabaseOpenHelper;
 	@SuppressWarnings("unused")
@@ -167,7 +167,7 @@ public class OCParchiDB {
 		
 		String[] selectionArgs = new String[] { id + "" };
 		Cursor c = mDatabaseOpenHelper.getReadableDatabase().query(
-				StruttureEnum.AREE.tipo, getDefaultColumns(Gioco.class), selection,
+				StruttureEnum.AREE.tipo, getDefaultColumns(Area.class), selection,
 				selectionArgs, null, null, null);
 		try {
 			return deserializeAreaSingola(c);
@@ -210,9 +210,10 @@ public class OCParchiDB {
 				r.descrizione = c.getString(c.getColumnIndex("descrizione"));
 				output.add(r);
 			}while(c.moveToNext());
-			
+			c.close();
 			return output;
 		}else {
+			c.close();
 			return null;
 		}
 	}
@@ -262,10 +263,10 @@ public class OCParchiDB {
 		HashMap<String, Object> data = new HashMap<String, Object>();
 		Gioco g = null;
 		if (c.getCount() > 1) {
+			c.close();
 			throw new InvalidParameterException(
 					"the deserializeGiocoSingolo must be used only with a 1row resultset. Use the deserielizeGiocoMultipli for multiple rows");
 		} else {
-
 			if (c != null && c.moveToFirst()) {
 				do {
 					int cc = c.getColumnCount();
@@ -284,6 +285,7 @@ public class OCParchiDB {
 					}
 				} while (c.moveToNext());
 			}
+			c.close();
 			if (data.size() > 0) {
 				g = new Gioco(data.entrySet(), null);
 			}
@@ -295,6 +297,7 @@ public class OCParchiDB {
 		HashMap<String, Object> data = new HashMap<String, Object>();
 		Area a = null;
 		if (c.getCount() > 1) {
+			c.close();
 			throw new InvalidParameterException(
 					"the deserializeAreaSingola must be used only with a 1row resultset. Use the deserielizeAreaMultipli for multiple rows");
 		} else {
@@ -317,6 +320,7 @@ public class OCParchiDB {
 					}
 				} while (c.moveToNext());
 			}
+			c.close();
 			if (data.size() > 0) {
 				a = new Area(data.entrySet(), null);
 			}
@@ -400,7 +404,7 @@ public class OCParchiDB {
 		return id;
 	}
 	
-	public void marcaStrutturaSincronizzata(HashMap<String,Object> map){
+	public void eliminaCopiaLocaleDiStrutturaSincronizzata(HashMap<String,Object> map){
 		ContentValues cv = new ContentValues();
 		cv.put(" sincronizzato ", true);
 			
@@ -424,7 +428,8 @@ public class OCParchiDB {
 		}
 		
 		try{
-			int res = mDatabaseOpenHelper.getWritableDatabase().update(tipo, cv, campo, new String[]{id});
+//			int res = mDatabaseOpenHelper.getWritableDatabase().update(tipo, cv, campo, new String[]{id});
+			int res = mDatabaseOpenHelper.getWritableDatabase().delete(tipo, campo, new String[]{ id }); 
 			Log.d(TAG,"Aggiornate "+res+" righe");
 		}catch(SQLiteConstraintException e){
 			Log.e(TAG, e.getMessage());
@@ -524,6 +529,7 @@ public class OCParchiDB {
 
 				} while (c.moveToNext());
 			}
+			c.close();
 		}
 
 		return res;
@@ -532,18 +538,26 @@ public class OCParchiDB {
 	private class OCParchiOpenHelper extends SQLiteOpenHelper {
 
 		private final String TAG = OCParchiOpenHelper.class.getSimpleName();
-		// private final Context mHelperContext;
+		private final Context mHelperContext;
 		private SQLiteDatabase mDatabase;
 
 		public OCParchiOpenHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
-			// mHelperContext = context;
+			mHelperContext = context;
 
 		}
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			mDatabase = db;
+			setupDBFromScratch();
+
+		}
+
+		/**
+		 * 
+		 */
+		private void setupDBFromScratch() {
 			Iterator<Entry<String, Struttura>> strutture = mSchemaMap
 					.entrySet().iterator();
 
@@ -609,12 +623,17 @@ public class OCParchiDB {
 			sqlCreateCode += ",UNIQUE (numeroTabella,codice) ) ";
 			Log.d(TAG, sqlCreateCode);
 			mDatabase.execSQL(sqlCreateCode);
-
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+			//Seghiamo tutto e non se ne parla più
+			Log.d(TAG,"Upgrade del db da versione "+oldVersion+" a versione "+newVersion);
+			mDatabase = db;
+			Log.d(TAG,"Cancellazione del vecchio DB");
+			mHelperContext.deleteDatabase(DATABASE_NAME);
+			Log.d(TAG,"Creazione del nuovo DB");
+			setupDBFromScratch();
 		}
 
 	}

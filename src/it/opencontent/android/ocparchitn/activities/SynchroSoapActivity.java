@@ -305,7 +305,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 							allmaps.put(mapid, res);
 							if(method.equals(Constants.SET_AREA_METHOD_NAME)
 							|| method.equals(Constants.SET_GIOCO_METHOD_NAME)){
-								db.marcaStrutturaSincronizzata(data);
+								db.eliminaCopiaLocaleDiStrutturaSincronizzata(data);
 							}
 						
 						if (!finish) {

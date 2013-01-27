@@ -124,10 +124,14 @@ public class Struttura {
 				numeroSerie = bindStringToProperty(e.getValue(), e.getKey());
 			}
 			if (e.getKey().equals("rfid")) {
+				if(e.getValue() != null){
 				rfid = bindIntToProperty(e.getValue(), e.getKey());
+				}
 			}
 			if (e.getKey().equals("rfidArea")) {
+				if(e.getValue() != null){
 				rfidArea = bindIntToProperty(e.getValue(), e.getKey());
+				}
 			}
 			if (e.getKey().equals("idGioco") && e.getValue() != null) {
 				idGioco = bindIntToProperty(e.getValue(), e.getKey());
@@ -156,7 +160,7 @@ public class Struttura {
 
 	}
 
-	private int bindIntToProperty(Object value, String key) {
+	protected int bindIntToProperty(Object value, String key) {
 		int res = 0;
 		if (value.getClass().equals(Integer.class)) {
 			res = ((Integer) value).intValue();
@@ -180,7 +184,7 @@ public class Struttura {
 		return res;
 	}
 
-	private String bindStringToProperty(Object value, String key) {
+	protected String bindStringToProperty(Object value, String key) {
 		String res = "";
 		if (value != null && value.getClass().equals(SoapObject.class)) {
 			Log.d(TAG, "Arrivato un valore non gestibile, " + key);
@@ -203,7 +207,7 @@ public class Struttura {
 		return res;
 	}
 
-	private float bindFloatToProperty(Object value, String key) {
+	protected float bindFloatToProperty(Object value, String key) {
 		float res = 0;
 		if (value.getClass().equals(Integer.class)) {
 			res = ((Integer) value).floatValue();

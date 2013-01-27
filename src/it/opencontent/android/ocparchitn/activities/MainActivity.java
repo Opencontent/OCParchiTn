@@ -564,23 +564,31 @@ public class MainActivity extends BaseActivity {
 		startActivityForResult(serviceIntent, Constants.SOAP_GET_TOKEN_REQUEST_CODE);
 		}
 	}
-
-	@Override
-	public void onActivityResult(int requestCode, int returnCode, Intent intent) {
-		HashMap<String, Object> res;
+	
+	private void displayStruttura(){
 		String currentTag = "";
-		int tipoStruttura = -1;
 		if(actionBar != null && actionBar.getSelectedTab() != null){
 			currentTag = (String) actionBar.getSelectedTab().getTag();
 		}
 		ICustomFragment mf = (ICustomFragment) getFragmentManager()
 				.findFragmentByTag(currentTag);
+		mf.showStrutturaData(currentStruttura);		
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int returnCode, Intent intent) {
+		HashMap<String, Object> res;
+		int tipoStruttura = -1;
+		
+
 
 		switch (requestCode) {
 		case Constants.LEGGI_RFID_DA_LETTORE_ESTERNO:
 //			int rfid = Integer.parseInt(intent.getExtras().get(Constants.EXTRAKEY_RFID)+"");
 			//TODO: integrare la risposta esterna dell'rfid
-			if(intent.getExtras() != null && intent.getExtras().get(Constants.EXTRAKEY_RFID) != null){
+			if(intent == null){
+				Toast.makeText(this, "Lettura annullata", Toast.LENGTH_LONG).show();
+			} else if( intent.getExtras() != null && intent.getExtras().get(Constants.EXTRAKEY_RFID) != null){
 				parseNDEFForRFID(intent.getExtras().get(Constants.EXTRAKEY_RFID).toString());
 			} else {
 				Toast.makeText(this, "Tag non riconosciuto", Toast.LENGTH_LONG).show();
@@ -629,13 +637,13 @@ public class MainActivity extends BaseActivity {
 			res = SynchroSoapActivity.getRes(Constants.GET_GIOCO_ID_METHOD_NAME);
 			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
 			manageSOAPGenericStrutturaResponse(res, tipoStruttura);
-			mf.showStrutturaData(currentStruttura);		
+					
 			break;
 		case Constants.SOAP_GET_AREA_REQUEST_CODE_BY_ID:
 			res = SynchroSoapActivity.getRes(Constants.GET_AREA_ID_METHOD_NAME);
 			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
 			manageSOAPGenericStrutturaResponse(res, tipoStruttura);
-			mf.showStrutturaData(currentStruttura);			
+				
 			break;
 		case Constants.SOAP_GET_GIOCO_REQUEST_CODE:
 
@@ -646,10 +654,11 @@ public class MainActivity extends BaseActivity {
 				if (res != null && res.size() > 0) {
 					currentStruttura = new Gioco(res.entrySet(), currentRFID,
 							getApplicationContext());
-					mf.showStrutturaData(currentStruttura);
+					displayStruttura();
 					getStructureFoto(Constants.CODICE_STRUTTURA_GIOCO, currentStruttura.idGioco);
 				} else {
-					mf.showStrutturaData(new Gioco());
+					currentStruttura = new Gioco();
+					displayStruttura();
 					Toast.makeText(
 							getApplicationContext(),
 							getString(R.string.errore_generico_soap) + " "
@@ -688,7 +697,7 @@ public class MainActivity extends BaseActivity {
 				res = SynchroSoapActivity.getRes(Constants.GET_FOTO_METHOD_NAME);
 				currentStruttura.addImmagine(res.entrySet());
 			}
-			mf.showStrutturaData(currentStruttura);
+			displayStruttura();
 			break;
 		case Constants.FOTO_REQUEST_CODE:
 			try {
@@ -785,7 +794,7 @@ public class MainActivity extends BaseActivity {
 	private void manageSOAPGenericStrutturaResponse(
 			HashMap<String, Object> res, int tipoStruttura) {
 		Struttura remoteStruttura = null;
-		Struttura localGioco = null;
+		Struttura localStruttura = null;
 		if(res!=null && !res.containsKey("success")) {
 			switch(tipoStruttura){
 			case Constants.CODICE_STRUTTURA_GIOCO:
@@ -796,7 +805,7 @@ public class MainActivity extends BaseActivity {
 				remoteStruttura = new Gioco(res.entrySet(),
 						getApplicationContext());
 			}
-			localGioco = db.readGiocoLocallyByID(remoteStruttura.idGioco);
+			localStruttura = db.readGiocoLocallyByID(remoteStruttura.idGioco);
 			break;
 			case Constants.CODICE_STRUTTURA_AREA:
 				if(res.containsKey("mapped")){
@@ -806,29 +815,66 @@ public class MainActivity extends BaseActivity {
 					remoteStruttura = new Area(res.entrySet(),
 							getApplicationContext());
 				}
-				localGioco = db.readAreaLocallyByID(remoteStruttura.idGioco);
+				localStruttura = db.readAreaLocallyByID(((Area)remoteStruttura).idArea);
 				break;
 			}
 		} else if(res.containsKey("success") && res.get("success").equals(false) ){
 			manageRemoteException(res);
 			remoteStruttura = new Gioco();				
-			localGioco = db.readGiocoLocallyByID(currentQueriedId);
+			localStruttura = db.readGiocoLocallyByID(currentQueriedId);
 		}else {
 			//res == null
 		 remoteStruttura = new Gioco();				
-		 localGioco = db.readGiocoLocallyByID(currentQueriedId);
+		 localStruttura = db.readGiocoLocallyByID(currentQueriedId);
 		}
 		
 		
 		
-		//C'è da sistemare come viene gestita la concorrenza fra locale e remoto
-		if (localGioco != null) {
-			Toast.makeText(
-					getApplicationContext(),
-					"Gioco " + localGioco.idGioco
-							+ " ha modifiche ancora non salvate",
-					Toast.LENGTH_SHORT).show();
-			currentStruttura = localGioco;
+		if (localStruttura != null) {
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			alert.setTitle("Decidi quali dati tenere");
+			TextView content = new TextView(this);
+			final Struttura loc = localStruttura;
+			final Struttura rem = remoteStruttura;
+			final int tipo = tipoStruttura;
+			content.setText("La struttura "+localStruttura.idGioco+" ha delle modifiche non sincronizzate col server "+
+			"\n Decidi quali vuoi: quelle locali ancora non inviate o quelle remote "+
+			"\n Se scegli di tenere valide quelle remote saranno cancellate le modifiche locali "+
+			"\n Se scegli di tenere valide quelle locali quelle remote saranno ignorate"+
+			"\n Se scegli nessuna delle due sarà creata una nova struttura localmente, che cancellerà i dati locali precedenti (foto comprese) ");
+			alert.setView(content);
+			
+			alert.setItems(new String[] {"Versione Server","Versione Locale","Nessuna delle due"}, new OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					switch(which){
+					case 0:
+						currentStruttura = rem;
+						break;
+					case 1:
+						currentStruttura = loc;
+						break;
+					case 2:
+					default:
+						currentStruttura=null;
+						switch(tipo){
+						case Constants.CODICE_STRUTTURA_AREA:
+							currentStruttura = new Area();
+							break;
+						case Constants.CODICE_STRUTTURA_GIOCO:
+							currentStruttura = new Gioco();
+							break;
+						}
+						currentStruttura.idGioco = currentQueriedId;
+						break;
+					}
+					displayStruttura();
+				}
+			});
+			alert.show();
+			
+
 			//Le foto le abbiamo già in locale
 		} else if(PlatformChecks.siamoOnline(getApplicationContext()) && remoteStruttura !=null){
 			currentStruttura = remoteStruttura;
@@ -843,12 +889,14 @@ public class MainActivity extends BaseActivity {
 					break;
 				}
 			}	
+			displayStruttura();
 		} else {
 			currentStruttura = db.readGiocoLocallyByID(remoteStruttura.idGioco);
 			if(currentStruttura == null){
 			currentStruttura = new Gioco();
 			currentStruttura.idGioco = currentQueriedId;
 			} 
+			displayStruttura();
 		}
 	}
 

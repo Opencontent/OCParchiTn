@@ -1,5 +1,6 @@
 package it.opencontent.android.ocparchitn.db.entities;
 
+import java.util.Iterator;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -42,5 +43,26 @@ public class Area extends Struttura {
 		// TODO Auto-generated constructor stub
 		super(entrySet,context);
 		tipo = "area";
+		Iterator<Entry<String, Object>> iterator = entrySet.iterator();
+
+		while (iterator.hasNext()) {
+			Entry<String, Object> e = iterator.next();
+			if (e.getKey().equals("tipoPavimentazione")) {
+				tipoPavimentazione = bindIntToProperty(e.getValue(),
+						e.getKey());
+			}
+			if (e.getKey().equals("superficie")) {
+				superficie = bindFloatToProperty(e.getValue(),
+						e.getKey());
+			}
+			if (e.getKey().equals("spessore")) {
+				spessore = bindFloatToProperty(e.getValue(),
+						e.getKey());
+			}
+			if (e.getKey().equals("idParco") && e.getValue() != null) {
+				idParco = bindIntToProperty(e.getValue(), e.getKey());
+			}
+			
+		}		
 	}
 }
