@@ -34,9 +34,11 @@
 	<string name="display_area_rfid">Rfid area: </string>
 	<string name="display_gioco_tipo">Tipo gioco: </string>
 	<string name="display_gioco_modello">modello gioco: </string>
-	<string name="display_gioco_gpsx">GPSX:</string>
-	<string name="display_gioco_gpsy">GPSY:</string>
-	<string name="display_gioco_posizione_rfid">Posizione RFID</string>
+	<string name="display_gioco_gpsx">GPSX: </string>
+	<string name="display_gioco_gpsy">GPSY: </string>
+	<string name="display_gioco_posizione_rfid">Posizione RFID: </string>
+	<string name="display_area_superficie">Superficie: </string>
+	<string name="display_area_spessore">Spessore: </string>
 	
 	<string name="pulsante_invalidate_token_testo">Invalida il token</string>
 	<string name="pulsante_status_token_testo">Status del token</string>
@@ -51,8 +53,8 @@
 	<string name="intervento_testo">Intervento</string>
 	
 	<string name="pulsante_start_by_rfid_testo">Parti da un RFID</string>
-	<string name="pulsante_associa_rfid_a_gioco_testo">RFID Gioco</string>
-	<string name="pulsante_associa_rfid_a_area_testo">RFIDI Area</string>
+	<string name="pulsante_associa_rfid_a_gioco_testo">Associa RFID Gioco</string>
+	<string name="pulsante_associa_rfid_a_area_testo">Associa RFID Area</string>
 	<string name="pulsante_start_by_id_testo">Parti da un ID</string>
 	<string name="pulsante_salva_modifiche_gioco_testo">Salva le modifiche</string>
 	<string name="pulsante_sincronizza_modifiche_gioco_testo">Sincronizza le modifiche</string>

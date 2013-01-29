@@ -120,7 +120,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				gu.gpsy = "" + g.gpsy;
 				gu.note = g.note;
 				gu.rfidArea = "" + g.rfidArea;
-				gu.posizioneRfid = ""+ 
+				gu.posizioneRfid =  g.posizioneRfid;
 				map.put("Giocoupdate", gu);
 				getRemoteResponse(Constants.SET_GIOCO_METHOD_NAME, map, false,Constants.SET_GIOCO_METHOD_NAME);
 				sincronizzaTutteLeFoto(g);
@@ -142,6 +142,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				au.spessore = "" + a.spessore;
 				au.superficie = "" + a.superficie;
 				au.tipoPavimentazione = "" + a.tipoPavimentazione;
+				au.posizioneRfid = a.posizioneRfid;
 				map.put("Areaupdate", au);
 				getRemoteResponse(Constants.SET_AREA_METHOD_NAME, map, false,Constants.SET_AREA_METHOD_NAME);
 				sincronizzaTutteLeFoto(a);				

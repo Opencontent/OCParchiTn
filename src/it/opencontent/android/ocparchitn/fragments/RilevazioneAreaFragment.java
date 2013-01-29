@@ -17,6 +17,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -124,9 +126,6 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 		Log.d(TAG,"editme nel fragment");	
 		switch(v.getId()){
 		case R.id.display_area_tipoPavimentazione:
-			/**
-			 * TODO: creare il listAdapter per popolare la lista di scelta
-			 */
 			break;
 		default: 
 			TextView t = (TextView) v;
@@ -148,19 +147,30 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 		final EditText input = new EditText(getActivity());
 		input.setText(t.getText());
 		input.setTag(R.integer.tag_view_id, t.getId());
-		
+		final int viewId =Integer.parseInt(input.getTag(R.integer.tag_view_id).toString());
+		switch(viewId){
+		case R.id.display_gioco_gpsx:
+		case R.id.display_gioco_gpsy:
+		case R.id.display_area_spessore:
+		case R.id.display_area_superficie:
+			input.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_CLASS_NUMBER);
+			break;
+			
+		}
 		
 		alert.setView(input);
 
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String value = input.getText().toString();
-				int viewId;
+				
 				try {
-					viewId = Integer.parseInt(input.getTag(R.integer.tag_view_id).toString());
 					updateText(viewId,value);
 					Area a = MainActivity.getCurrentArea();
 					switch(viewId){
+					case R.id.display_gioco_posizione_rfid:
+						a.posizioneRfid = value;
+						break;
 					case R.id.display_gioco_nota:
 						a.note = value;
 						break;
@@ -169,6 +179,12 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 						break;
 					case R.id.display_gioco_gpsy:
 						a.gpsy = Float.parseFloat(value);
+						break;
+					case R.id.display_area_spessore:
+						a.spessore = Float.parseFloat(value);
+						break;
+					case R.id.display_area_superficie:
+						a.superficie = Float.parseFloat(value);
 						break;
 					}
 					saveLocal(a);
@@ -232,26 +248,38 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 	public void showStrutturaData(Struttura a) {
 		Area area = (Area) a;
 		TextView v;
-		v = (TextView) getActivity().findViewById(R.id.display_gioco_id);
-		v.setText(""+area.idGioco);
 		v = (TextView) getActivity().findViewById(R.id.display_area_id);
 		v.setText(""+area.idArea);
-		v = (TextView) getActivity().findViewById(R.id.display_gioco_marca);
-		v.setText(area.descrizioneMarca);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_nota);
 		v.setText(area.note);
-		v = (TextView) getActivity().findViewById(R.id.display_gioco_seriale);
-		v.setText(area.numeroSerie);
-		v = (TextView) getActivity().findViewById(R.id.display_gioco_rfid);
-		v.setText(area.rfid+"");
 		v = (TextView) getActivity().findViewById(R.id.display_area_rfid);
 		v.setText(area.rfidArea+"");
+		if(area.rfidArea>0){ //&& !possiamoModificareGliRFID
+			Button b = (Button) getActivity().findViewById(R.id.pulsante_associa_rfid_a_area);
+					if(b!= null){
+						b.setEnabled(false);
+					}
+		}		
+		if(area.rfidArea<=0){ //&& !possiamoModificareGliRFID
+			Button b = (Button) getActivity().findViewById(R.id.pulsante_salva_modifiche_gioco);
+					if(b!= null){
+						b.setEnabled(false);
+					}
+		} else {
+			Button b = (Button) getActivity().findViewById(R.id.pulsante_salva_modifiche_gioco);
+			if(b!= null){
+				b.setEnabled(true);
+			}			
+		}		
+		
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsx);
 		v.setText(area.gpsx + "");
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsy);
 		v.setText(area.gpsy + "");
 		v = (TextView) getActivity().findViewById(R.id.display_area_descrizione);
 		v.setText(area.descrizioneArea + "");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_posizione_rfid);
+		v.setText(area.posizioneRfid + "");
 		
 		Spinner s = (Spinner) getActivity().findViewById(R.id.display_area_tipoPavimentazione);
 		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());

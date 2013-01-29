@@ -9,8 +9,6 @@ import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.utils.Utils;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -22,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -186,6 +185,30 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 		v.setText(gioco.numeroSerie);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_rfid);
 		v.setText(gioco.rfid+"");
+		if(gioco.rfid>0){ //&& !possiamoModificareGliRFID
+			Button b = (Button) getActivity().findViewById(R.id.pulsante_associa_rfid_a_gioco);
+					if(b!= null){
+						b.setEnabled(false);
+					}
+		}
+		if(gioco.rfid<=0){ //&& !possiamoModificareGliRFID
+			Button b = (Button) getActivity().findViewById(R.id.pulsante_salva_modifiche_gioco);
+					if(b!= null){
+						b.setEnabled(false);
+					}
+		} else {
+			Button b = (Button) getActivity().findViewById(R.id.pulsante_salva_modifiche_gioco);
+			if(b!= null){
+				b.setEnabled(true);
+			}			
+		}
+		if(gioco.rfidArea>0){ //&& !possiamoModificareGliRFID
+			Button b = (Button) getActivity().findViewById(R.id.pulsante_associa_rfid_a_area);
+					if(b!= null){
+						b.setEnabled(false);
+					}
+		}
+		
 		v = (TextView) getActivity().findViewById(R.id.display_area_rfid);
 		v.setText(gioco.rfidArea+"");
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsx);

@@ -14,6 +14,7 @@ public class SOAPAreaUpdate implements KvmSerializable {
 	public String superficie;
 	public String tipoPavimentazione;
 	public String idArea;
+	public String posizioneRfid;
 
 	
 	@Override
@@ -33,6 +34,8 @@ public class SOAPAreaUpdate implements KvmSerializable {
 			return tipoPavimentazione;
 		case 6:
 			return idArea;
+		case 7:
+			return posizioneRfid;
 	
 		}
 		return null;
@@ -40,7 +43,7 @@ public class SOAPAreaUpdate implements KvmSerializable {
 
 	@Override
 	public int getPropertyCount() {
-		return 7;
+		return 8;
 	}
 
 	@Override
@@ -67,6 +70,9 @@ public class SOAPAreaUpdate implements KvmSerializable {
 			break;
 		case 6:
 			arg2.name = "idArea";
+			break;
+		case 7:
+			arg2.name = "posizioneRfid";
 			break;
 
 		}
@@ -98,6 +104,9 @@ public class SOAPAreaUpdate implements KvmSerializable {
 			break;
 		case 6:
 			idArea=arg1.toString();
+			break;
+		case 7:
+			posizioneRfid=arg1.toString();
 			break;
 		}
 	}

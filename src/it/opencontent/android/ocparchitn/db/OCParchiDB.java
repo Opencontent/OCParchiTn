@@ -357,6 +357,15 @@ public class OCParchiDB {
 	public long salvaStrutturaLocally(Struttura struttura) {
 		ContentValues cv = new ContentValues();
 		String tabella = "";
+		cv.put("gpsx", struttura.gpsx);
+		cv.put("gpsy", struttura.gpsy);
+		cv.put("note", struttura.note);
+		cv.put("foto0", struttura.foto0);
+		cv.put("foto1", struttura.foto1);
+		cv.put("foto2", struttura.foto2);
+		cv.put("foto3", struttura.foto3);
+		cv.put("foto4", struttura.foto4);
+		cv.put("numeroserie", struttura.numeroSerie);
 		if(struttura.getClass().equals(Gioco.class)){
 			tabella = StruttureEnum.GIOCHI.tipo;
 			Gioco g = (Gioco) struttura;
@@ -364,16 +373,8 @@ public class OCParchiDB {
 			cv.put("rfid", g.rfid);
 			cv.put("descrizioneMarca", g.descrizioneMarca);
 			cv.put("idGioco", g.idGioco);
-			cv.put("numeroserie", g.numeroSerie);
 			cv.put("rfidArea", g.rfidArea);
-			cv.put("gpsx", g.gpsx);
-			cv.put("gpsy", g.gpsy);
-			cv.put("note", g.note);
-			cv.put("foto0",g.foto0);
-			cv.put("foto1",g.foto1);
-			cv.put("foto2",g.foto2);
-			cv.put("foto3",g.foto3);
-			cv.put("foto4",g.foto4);
+			cv.put("posizioneRfid", g.posizioneRfid);
 		} else if(struttura.getClass().equals(Area.class)){
 			tabella = StruttureEnum.AREE.tipo;
 			Area a = (Area) struttura;
@@ -387,16 +388,7 @@ public class OCParchiDB {
 			cv.put("superficie", a.superficie);
 			cv.put("tipoPavimentazione", a.tipoPavimentazione);
 			cv.put("descrizioneArea", a.descrizioneArea);
-			
-			cv.put("numeroserie", a.numeroSerie);
-			cv.put("gpsx", a.gpsx);
-			cv.put("gpsy", a.gpsy);
-			cv.put("note", a.note);
-			cv.put("foto0",a.foto0);
-			cv.put("foto1",a.foto1);
-			cv.put("foto2",a.foto2);
-			cv.put("foto3",a.foto3);
-			cv.put("foto4",a.foto4);
+			cv.put("posizioneRfid", a.posizioneRfid);
 		}
 		long id = -1;
 		try {
@@ -529,6 +521,8 @@ public class OCParchiDB {
 					Struttura s;
 					if (tableName.equals(StruttureEnum.GIOCHI.tipo)) {
 						s = new Gioco();
+						((Gioco) s).posizioneRfid = c.getString(c.getColumnIndex("posizioneRfid"));
+						
 					} else if(tableName.equals(StruttureEnum.AREE.tipo)) {
 						s = new Area();
 						((Area) s).spessore = c.getFloat(c.getColumnIndex("spessore"));
@@ -536,6 +530,7 @@ public class OCParchiDB {
 						((Area) s).tipoPavimentazione = c.getInt(c.getColumnIndex("tipoPavimentazione"));
 						((Area) s).idArea = c.getInt(c.getColumnIndex("idArea"));	
 						((Area) s).rfidArea = c.getInt(c.getColumnIndex("rfidArea"));	
+						((Area) s).posizioneRfid = c.getString(c.getColumnIndex("posizioneRfid"));
 					} else {
 						s = new Struttura();
 					}

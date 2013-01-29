@@ -1,97 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:weightSum="7" >
+    android:orientation="horizontal"
+    android:weightSum="6" >
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:weightSum="3"
-        android:orientation="horizontal" >
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="2"
+        android:orientation="vertical"
+        android:weightSum="5" >
 
         <Button
             android:id="@+id/pulsante_start_by_rfid"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="startRilevazioneDaRFID"
             android:text="@string/pulsante_start_by_rfid_testo" />
-        
+
+        <Button
+            android:id="@+id/pulsante_start_by_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="startRilevazioneDaID"
+            android:text="@string/pulsante_start_by_id_testo" />
+
         <Button
             android:id="@+id/pulsante_associa_rfid_a_area"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="associaRFIDStruttura"
             android:text="@string/pulsante_associa_rfid_a_area_testo" />
 
         <Button
-            android:id="@+id/pulsante_start_by_id"
-            android:layout_width="wrap_content"
+            android:id="@+id/pulsante_salva_modifiche_gioco"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="startRilevazioneDaID"
-            android:text="@string/pulsante_start_by_id_testo" />
+            android:onClick="salvaModifiche"
+            android:text="@string/pulsante_salva_modifiche_gioco_testo" />
 
+        <Button
+            android:id="@+id/pulsante_sincronizza_modifiche_gioco"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="sincronizzaModifiche"
+            android:text="@string/pulsante_sincronizza_modifiche_gioco_testo" />
     </LinearLayout>
 
     <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5" >
-
-        <LinearLayout
-            android:id="@+id/wrapper_dati_e_istruzioni"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:orientation="horizontal" >
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="4" >
 
             <LinearLayout
                 android:id="@+id/wrapper_dati_gioco"
-                android:layout_width="0dp"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
                 android:orientation="vertical" >
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="4" >
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/display_gioco_marca"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                        android:layout_weight="1"
+                        android:text="@string/display_area_id"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="32sp" />
 
                     <TextView
-                        android:id="@+id/display_gioco_marca"
+                        android:id="@+id/display_area_id"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="editMe"
-                        android:tag="gioco_marca"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                        android:layout_weight="1"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="32sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/display_area_rfid"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="32sp" />
+
+                    <TextView
+                        android:id="@+id/display_area_rfid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="32sp" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_gioco_descrizione"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_gioco_descrizione"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" >
@@ -108,72 +118,7 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
                 </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_gioco_rfid"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_gioco_rfid"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_area_id"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_area_id"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_gioco_id"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_gioco_id"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_area_rfid"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_area_rfid"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" >
@@ -189,36 +134,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:prompt="@string/prompt_spinner_tipo_pavimentazione"
-                        android:spinnerMode="dialog"
-                        />
+                        android:spinnerMode="dialog" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_gioco_seriale"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_gioco_seriale"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:tag="gioco_seriale"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content" >
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/display_gioco_gpsx"
+                        android:layout_weight="1"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
 
                     <TextView
@@ -227,17 +154,15 @@
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:onClick="editMe"
+                        android:layout_weight="1"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/display_gioco_gpsy"
+                        android:layout_weight="1"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
 
                     <TextView
@@ -246,8 +171,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:onClick="editMe"
+                        android:layout_weight="1"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
 
                 <TextView
                     android:id="@+id/display_gioco_gps_confidence"
@@ -255,8 +180,65 @@
                     android:layout_height="wrap_content"
                     android:clickable="false"
                     android:text="Cofidence: nd"
+                    android:layout_weight="1"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/display_area_superficie"
+                        android:layout_weight="1"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/display_area_superficie"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="editMe"
+                        android:layout_weight="1"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/display_area_spessore"
+                        android:layout_weight="1"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/display_area_spessore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="editMe"
+                        android:layout_weight="1"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />                                    
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/display_gioco_posizione_rfid"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/display_gioco_posizione_rfid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:minHeight="150dp"
+                        android:minWidth="150dp"
+                        android:onClick="editMe"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" >
@@ -278,33 +260,7 @@
                         android:textAppearance="?android:attr/textAppearanceLarge" />
                 </LinearLayout>
             </LinearLayout>
-
-
-        </LinearLayout>
     </ScrollView>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/pulsante_salva_modifiche_gioco"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="salvaModifiche"
-            android:text="@string/pulsante_salva_modifiche_gioco_testo" />
-
-        <Button
-            android:id="@+id/pulsante_sincronizza_modifiche_gioco"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="sincronizzaModifiche"
-            android:text="@string/pulsante_sincronizza_modifiche_gioco_testo" />
-
-    </LinearLayout>
 
 </LinearLayout>

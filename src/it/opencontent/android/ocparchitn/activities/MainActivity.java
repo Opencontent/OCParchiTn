@@ -638,14 +638,13 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	private void renewAuthenticationToken(){
-		Toast.makeText(this, "Rinnovo l'autenticazione",Toast.LENGTH_SHORT).show();
+//		Toast.makeText(this, "Rinnovo l'autenticazione",Toast.LENGTH_SHORT).show();
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
 		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_LOGINUSER_METHOD_NAME);
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		
-		//SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		String username = prefs.getString(getString(R.string.settings_key_username), "UNSET");
 		String password = prefs.getString(getString(R.string.settings_key_password), "UNSET");
