@@ -11,14 +11,15 @@ public class SOAPFotoupdate implements KvmSerializable {
 	public String estensioneImmagine;
 	public String immagine;
 	public String nomeImmagine;
-	public String idGioco;
+	public String idRiferimento;
 	public boolean sovrascrittura;
 	public String tipoFoto;
+	
 	
 	public SOAPFotoupdate(){
 		estensioneImmagine = "png";
 		nomeImmagine = "foto_1";
-		idGioco = "0";
+		idRiferimento = "0";
 		sovrascrittura = false;
 	}
 
@@ -33,7 +34,7 @@ public class SOAPFotoupdate implements KvmSerializable {
 		case 2:
 			return sovrascrittura;
 		case 3:
-			return idGioco;
+			return idRiferimento;
 		case 4:
 			return immagine;
 		case 5:
@@ -63,7 +64,7 @@ public class SOAPFotoupdate implements KvmSerializable {
 			info.name ="sovrascrittura";
 			break;
 		case 3:
-			info.name ="idGioco";
+			info.name ="idRiferimento";
 			break;
 		case 4:
 			info.name ="immagine";
@@ -90,7 +91,7 @@ public class SOAPFotoupdate implements KvmSerializable {
 			sovrascrittura = Boolean.getBoolean(arg1.toString());
 			break;
 		case 3:
-			idGioco = arg1.toString();
+			idRiferimento = arg1.toString();
 			break;
 		case 4:
 			immagine = arg1.toString();

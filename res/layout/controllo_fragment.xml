@@ -1,42 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:weightSum="3" >
+<LinearLayout 
     android:layout_width="wrap_content"
     android:layout_height="fill_parent"
     android:orientation="vertical"
+    android:layout_weight="2"
     android:weightSum="7" >
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:weightSum="2" >
 
-        <Button
-            android:id="@+id/pulsante_start_by_rfid"
+        <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="startRilevazioneDaRFID"
-            android:text="@string/pulsante_start_by_rfid_testo" />
-        <Button
-            android:id="@+id/pulsante_associa_rfid_a_gioco"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="associaRFIDStruttura"
-            android:text="@string/pulsante_associa_rfid_a_gioco_testo" />
-        <Button
-            android:id="@+id/pulsante_associa_rfid_a_area"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="associaRFIDArea"
-            android:text="@string/pulsante_associa_rfid_a_area_testo" />
+            android:layout_weight="1"
+            android:orientation="vertical" >
 
+            <RadioButton
+                android:id="@+id/radio_gioco"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:onClick="clickedMe"
+                android:text="@string/struttura_gioco_testo" />
 
-        <Button
-            android:id="@+id/pulsante_start_by_id"
+            <RadioButton
+                android:id="@+id/radio_area"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="clickedMe"
+                android:text="@string/struttura_area_testo" />
+        </RadioGroup>
+
+        <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="startRilevazioneDaID"
-            android:text="@string/pulsante_start_by_id_testo" />
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <RadioButton
+                android:id="@+id/radio_controllo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:onClick="clickedMe"
+                android:text="@string/controllo_testo" />
+
+            <RadioButton
+                android:id="@+id/radio_verifica"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="clickedMe"
+                android:text="@string/verifica_testo" />
+
+            <RadioButton
+                android:id="@+id/radio_manutenzione"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="clickedMe"
+                android:text="@string/manutenzione_testo" />
+
+            <RadioButton
+                android:id="@+id/radio_intervento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="clickedMe"
+                android:text="@string/intervento_testo" />
+        </RadioGroup>
     </LinearLayout>
 
     <ScrollView
@@ -93,6 +131,7 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" >
@@ -109,6 +148,7 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" >
@@ -246,7 +286,8 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- LinearLayout
+            <!--
+            LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -266,15 +307,23 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="@color/warning" />
-            </LinearLayout -->
+            </LinearLayout
+            -->
         </LinearLayout>
     </ScrollView>
-
+</LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="horizontal" >
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/pulsante_start_by_rfid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="startRilevazioneDaRFID"
+            android:text="@string/pulsante_start_by_rfid_testo" />
 
         <Button
             android:id="@+id/pulsante_salva_modifiche_gioco"

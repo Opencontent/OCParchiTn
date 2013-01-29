@@ -36,21 +36,38 @@ public class Constants {
 	public final static String EXTRAKEY_ID_TABELLA_REMOTA = "id_tabella";
 	
 	public final static int TABELLA_MARCHE = 1;
-	public final static int TABELLA_TIPO_INTERVENTI = 2;
+	public final static int TABELLA_TIPO_MAUNTENZIONI = 2;
 	public final static int TABELLA_TIPO_PAVIMENTAZIONI = 5;
 	public final static int TABELLA_TIPO_GIOCO = 6;
 	public final static int TABELLA_PRODUTTORI = 7;
 	public final static int TABELLA_TIPO_PARCO = 8;	
 	public final static int TABELLA_CIRCOSCRIZIONI = 9;
-	public final static int TABELLA_STATO_INTERVENTO = 10;
+	public final static int TABELLA_TIOLOGIA_INTERVENTO = 10;
+	public final static int TABELLA_RIFERIMENTO_INTERVENTO = 11;
+	public final static int TABELLA_STATO_GIOCO = 12;
+	public final static int TABELLA_SEGNALAZIONI = 13;
+	public final static int TABELLA_ESITI_INTERVENTO = 14;
+	
 	public final static int[] ID_TABELLE_SUPPORTO = new int[]{1,
-			TABELLA_TIPO_INTERVENTI,
+			TABELLA_TIPO_MAUNTENZIONI,
 			TABELLA_TIPO_PAVIMENTAZIONI,
 			TABELLA_TIPO_GIOCO,
 			TABELLA_PRODUTTORI,
 			TABELLA_TIPO_PARCO,
 			TABELLA_CIRCOSCRIZIONI,
-			TABELLA_STATO_INTERVENTO};
+			TABELLA_TIOLOGIA_INTERVENTO,
+			TABELLA_RIFERIMENTO_INTERVENTO,
+			TABELLA_STATO_GIOCO,
+			TABELLA_SEGNALAZIONI,
+			TABELLA_ESITI_INTERVENTO };
+	
+	public final static int RIFERIMENTO_INTERVENTO_VERIFICA_PROGRAMMATA = 1;
+	public final static int RIFERIMENTO_INTERVENTO_MANUTENZIONE_PROGRAMMATA = 2;
+	public final static int RIFERIMENTO_INTERVENTO_CONTROLLO_OCCASIONALE = 3;
+	public final static int RIFERIMENTO_INTERVENTO_INTERVENTO = 3;
+	
+	public final static int ESITO_INTERVENTO_POSITIVO = 1;
+	public final static int ESITO_INTERVENTO_NEGATIVO = 2;
 	
 	public final static int MAX_SNAPSHOTS_AMOUNT = 5;
 	
@@ -108,4 +125,8 @@ public class Constants {
 	public static final int SOAP_GET_INVALIDATE_TOKEN_REQUEST_CODE = 202;
 
 	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO = 999;
+	public static final int LEGGI_RFID_AREA_DA_LETTORE_ESTERNO_E_LEGALO_A_GIOCO = 998;
+	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO_E_LEGALO_A_STRUTTURA = 997;
+	
+	
 }

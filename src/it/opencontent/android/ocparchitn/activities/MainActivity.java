@@ -9,11 +9,13 @@ import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkGiochiExcep
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkSrvException;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Area;
+import it.opencontent.android.ocparchitn.db.entities.Controllo;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.db.entities.StruttureEnum;
 import it.opencontent.android.ocparchitn.fragments.AvailableFragment;
+import it.opencontent.android.ocparchitn.fragments.ControlloFragment;
 import it.opencontent.android.ocparchitn.fragments.ICustomFragment;
 import it.opencontent.android.ocparchitn.utils.AuthCheck;
 import it.opencontent.android.ocparchitn.utils.PlatformChecks;
@@ -107,7 +109,7 @@ public class MainActivity extends BaseActivity {
 			serviceInfoTaken = true;
 		}
 		if(!AuthCheck.getTokenValid()){
-			renewToken();
+			renewAuthenticationToken();
 		} else {
 			setupActionBar();
 			setupTabelleAppoggio();
@@ -132,11 +134,6 @@ public class MainActivity extends BaseActivity {
 		}
 		ifa = new IntentFilter[] { ndef, };
 
-		// setContentView(R.layout.activity_main);
-
-		Intent intent = getIntent();
-		parseIntent(intent);
-
 		// La techListArray per il momento la tengo vuota, così filtro per
 		// qualsiasi
 		// TODO: definire un set di techList specifiche e corrette per il
@@ -145,9 +142,7 @@ public class MainActivity extends BaseActivity {
 	}
 
 	private void setupTabelleAppoggio(){
-		
 		//setup della tabella recordTabellaSupporto importandoli da remoto se vuota
-		//vogliamo le tabelle con id remoto 5 e 3
 		if(!db.tabelleSupportoPopolate() || db.tabelleSupportoScadute()){
 			getTabellaSupporto();
 		} else {
@@ -270,12 +265,33 @@ public class MainActivity extends BaseActivity {
 		LocationManager locationManager = (LocationManager) getSystemService(BaseActivity.LOCATION_SERVICE);
 		locationManager.removeUpdates(locationListener);
 	}
+	
 
-	private boolean legaRFIDGioco(int rfid, Struttura struttura) {
-		struttura.rfid = rfid;
-		struttura.hasDirtyData = true;
-		currentStruttura = struttura;
-		return true;
+
+	private boolean legaRFIDStruttura(int rfid) {
+		if(currentStruttura!=null && rfid >0){
+			if(currentStruttura.getClass().equals(Gioco.class)){
+				currentStruttura.rfid = rfid;
+			} else if(currentStruttura.getClass().equals(Area.class)){
+				currentStruttura.rfidArea = rfid;
+			}
+			salvaModifiche(null);		
+			return true;		
+		}
+		return false;
+	}
+	
+	private boolean legaRFIDAreaAGioco(int rfid){
+		if(currentStruttura != null && rfid >0){
+			if(currentStruttura.getClass().equals(Gioco.class)){
+				currentStruttura.rfidArea = rfid;
+				salvaModifiche(null);		
+				return true;		
+			} else if(currentStruttura.getClass().equals(Area.class)){
+				return false;
+			}
+		}
+		return false;		
 	}
 
 	private void feedback(String message) {
@@ -292,30 +308,96 @@ public class MainActivity extends BaseActivity {
 
 		alert.show();
 	}
-
-
-
-	private void confirmLegaRFIDGioco(int rfid, Struttura struttura) {
-		final int mrfid = rfid;
-		final Struttura mStruttura = struttura;
+	private void confirmLegaRFIDAreaAGioco() {
+		final int mrfid = currentRFID;
+		final Struttura mStruttura = currentStruttura;
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-		alert.setTitle("Vuoi associare l'RFID " + rfid + " al Gioco "
-				+ struttura.idGioco + " ?");
-		if (struttura.rfid > 0) {
-			alert.setMessage("il Gioco " + struttura.idGioco
-					+ " attualmente ha l'RFID " + struttura.rfid);
+		if(!currentStruttura.getClass().equals(Gioco.class)){
+			Log.e(TAG,"La struttura non è un gioco, non posso legare un idArea");
+			return;
+		}
+			
+		
+		if(mStruttura != null)
+			alert.setTitle("Vuoi associare l'RFID di area " + mrfid + " al Gioco "
+				+ mStruttura.idGioco + " ?");
+		if (mStruttura.rfidArea > 0) {
+			alert.setMessage(" Il Gioco " + mStruttura.idGioco + "attualmente è legato all'area "+ mStruttura.rfidArea );
 		} else {
-			alert.setMessage("il Gioco " + struttura.idGioco
+			alert.setMessage(" Il Gioco " + mStruttura.idGioco + 
+					" attualmente non ha Aree associate");
+		}
+
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+
+				if (legaRFIDAreaAGioco(mrfid)) {
+					feedback("Ok, ora il Gioco " + mStruttura.idGioco 
+							+ " è associato all'RFID " + mrfid);
+					String currentTag = (String) actionBar.getSelectedTab()
+							.getTag();
+					ICustomFragment mf = (ICustomFragment) getFragmentManager()
+							.findFragmentByTag(currentTag);
+					mf.showStrutturaData(currentStruttura);
+					// TODO: triggerare il salvataggio dei dati locali che poi
+					// scatena a sua volta il salvataggio remoto
+				} else {
+					feedback("Qualcosa non ha funzionato, ritentare l'operazione");
+				}
+			}
+		});
+
+		alert.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+
+					}
+				});
+
+		alert.show();
+
+	}
+
+
+	private void confirmLegaRFIDAStruttura() {
+		final int mrfid = currentRFID;
+		final Struttura mStruttura = currentStruttura;
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+		final String aCosa;
+		final String cosa;
+		final String idMostra;
+		final int rfidLegato;
+		if(currentStruttura.getClass().equals(Gioco.class)){
+			aCosa = " al Gioco ";
+			cosa = " Il Gioco ";
+			idMostra = ((Gioco) mStruttura).idGioco+"";
+			rfidLegato = mStruttura.rfid;
+		} else {
+			aCosa = " all'Area ";
+			cosa = " L'Area ";
+			idMostra = ((Area) mStruttura).idArea+"";
+			rfidLegato = mStruttura.rfidArea;
+		}
+		
+		if(mStruttura != null)
+			alert.setTitle("Vuoi associare l'RFID " + mrfid + aCosa
+				+ idMostra + " ?");
+		if (rfidLegato > 0) {
+			alert.setMessage(cosa + idMostra
+					+ " attualmente ha l'RFID " + rfidLegato);
+		} else {
+			alert.setMessage(cosa + idMostra
 					+ " attualmente non ha RFID associati");
 		}
 
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 
-				if (legaRFIDGioco(mrfid, mStruttura)) {
-					feedback("Ok, ora il gioco " + mStruttura.idGioco
-							+ " è associato all'RFID " + mStruttura.rfid);
+				if (legaRFIDStruttura(mrfid)) {
+					feedback("Ok, ora "+ cosa  + idMostra
+							+ " è associato all'RFID " + mrfid);
 					String currentTag = (String) actionBar.getSelectedTab()
 							.getTag();
 					ICustomFragment mf = (ICustomFragment) getFragmentManager()
@@ -354,7 +436,7 @@ public class MainActivity extends BaseActivity {
 			}
 			String out = new String(res);
 			
-			parseNDEFForRFID(out);
+			currentRFID = parseNDEFForRFID(out);
 		} catch (Exception e) {
 			// Non è un intent che ci interessa in questo caso
 		}
@@ -365,31 +447,17 @@ public class MainActivity extends BaseActivity {
 	 */
 	public int parseNDEFForRFID(String out) {
 		String[] pieces = out.split("://");
-
 		String[] actualValues = pieces[1].split("/");
-
-		int rfid = Integer.parseInt(actualValues[1]);
-		// currentRFID = rfid;
-		if (partitiDaID) {
-			confirmLegaRFIDGioco(rfid, currentStruttura);
-		} else {
-
-			if (currentStruttura != null && currentStruttura.hasDirtyData) {
-				db.salvaStrutturaLocally(currentStruttura);
-			}
-
-			// String name = getString(R.string.display_gioco_id)
-			// + currentRFID;
-			// String ser = getString(R.string.display_gioco_seriale) + out;
-			//
-			// TextView giocoId = (TextView)
-			// findViewById(R.id.display_gioco_id);
-			// giocoId.setText(name);
-			// TextView giocoSeriale = (TextView)
-			// findViewById(R.id.display_gioco_seriale);
-			// giocoSeriale.setText(ser);
-			// Log.d(TAG, "Qualcosa è successo " + name + " " + res);
+		String trimmedAndStripped = actualValues[1].replaceAll("]", "").trim();
+		int rfid;
+		try{
+			
+			rfid = Integer.parseInt(trimmedAndStripped );
+		} catch (Exception e){
+			Log.d(TAG,"Messaggio NDEF non valido: "+out);
+			rfid = -1;
 		}
+		
 		return rfid;
 	}
 
@@ -438,12 +506,39 @@ public class MainActivity extends BaseActivity {
 		Log.d(TAG,"Partiamo da rfid, lancio l'activity");
 		Intent leggiRFID = new Intent();
 		leggiRFID.setClass(this, NDEFReadActivity.class);
+		partitiDaID = false;
+		partitiDaRFID = true;
 		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO);
 	}
-
-	private void parseIntent(Intent intent) {
-
+	
+	public void startControlloDaRFID(View v){
+		Log.d(TAG,"Partiamo col controllo da rfid, lancio l'activity");
+		Intent leggiRFID = new Intent();
+		leggiRFID.setClass(this, NDEFReadActivity.class);
+		partitiDaID = false;
+		partitiDaRFID = true;
+		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO);
 	}
+	
+	public void associaRFIDStruttura(View v){
+		Log.d(TAG,"Leghiamo l'rfid dell'area, lancio l'activity");
+		Intent leggiRFID = new Intent();
+		leggiRFID.setClass(this, NDEFReadActivity.class);
+		partitiDaID = false;
+		partitiDaRFID = true;
+		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO_E_LEGALO_A_STRUTTURA);		
+	}
+	
+	public void associaRFIDArea(View v){
+		Log.d(TAG,"Leghiamo l'rfid dell'area al gioco, lancio l'activity");
+		Intent leggiRFID = new Intent();
+		leggiRFID.setClass(this, NDEFReadActivity.class);
+		partitiDaID = false;
+		partitiDaRFID = true;
+		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_AREA_DA_LETTORE_ESTERNO_E_LEGALO_A_GIOCO);		
+	}
+	
+	
 
 	private void getServiceInfo() {
 		Intent serviceIntent = new Intent();
@@ -471,6 +566,7 @@ public class MainActivity extends BaseActivity {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("args0", "" + id);
 		currentQueriedId = id;
+		currentStruttura = null;
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
 		
 		//Controlliamo di che tipo di struttura stiamo parlando:
@@ -504,15 +600,28 @@ public class MainActivity extends BaseActivity {
 		startActivityForResult(serviceIntent, Constants.SOAP_GET_TABELLA_REQUEST_CODE);
 	}
 
-	private void getStructureDataByRFID(int id) {
+	private void getStructureDataByRFID() {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
-		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_GIOCO_METHOD_NAME);
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("rfid", "" + id);
+		map.put("rfid", "" + currentRFID);
+		currentStruttura = null;
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
-		startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_REQUEST_CODE);
+		String currentTag = (String) actionBar.getSelectedTab().getTag();
+		if(currentTag.equals(AvailableFragment.RILEVAZIONE_AREA.label)){
+			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_AREA_METHOD_NAME);			
+			serviceIntent.putExtra(Constants.EXTRAKEY_STRUCTURE_TYPE, Constants.CODICE_STRUTTURA_AREA);			
+			startActivityForResult(serviceIntent, Constants.SOAP_GET_AREA_REQUEST_CODE_BY_RFID);
+		} else if(currentTag.equals(AvailableFragment.RILEVAZIONE_GIOCO.label)){
+			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_GIOCO_METHOD_NAME);			
+			serviceIntent.putExtra(Constants.EXTRAKEY_STRUCTURE_TYPE, Constants.CODICE_STRUTTURA_GIOCO);			
+			startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_RFID);
+		} else if(currentTag.equals(AvailableFragment.CONTROLLO.label)){
+			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, ControlloFragment.methodName );			
+			serviceIntent.putExtra(Constants.EXTRAKEY_STRUCTURE_TYPE, ControlloFragment.tipoStruttura);			
+			startActivityForResult(serviceIntent, ControlloFragment.soapMethodName);
+		}		
 	}
 
 	private void getStructureFoto(int tipoStruttura, int id) {
@@ -528,7 +637,7 @@ public class MainActivity extends BaseActivity {
 		startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_FOTO_REQUEST_CODE);
 	}
 	
-	private void renewToken(){
+	private void renewAuthenticationToken(){
 		Toast.makeText(this, "Rinnovo l'autenticazione",Toast.LENGTH_SHORT).show();
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
@@ -579,23 +688,44 @@ public class MainActivity extends BaseActivity {
 	public void onActivityResult(int requestCode, int returnCode, Intent intent) {
 		HashMap<String, Object> res;
 		int tipoStruttura = -1;
-		
-
-
 		switch (requestCode) {
 		case Constants.LEGGI_RFID_DA_LETTORE_ESTERNO:
-//			int rfid = Integer.parseInt(intent.getExtras().get(Constants.EXTRAKEY_RFID)+"");
-			//TODO: integrare la risposta esterna dell'rfid
 			if(intent == null){
 				Toast.makeText(this, "Lettura annullata", Toast.LENGTH_LONG).show();
 			} else if( intent.getExtras() != null && intent.getExtras().get(Constants.EXTRAKEY_RFID) != null){
-				parseNDEFForRFID(intent.getExtras().get(Constants.EXTRAKEY_RFID).toString());
+				currentRFID = parseNDEFForRFID(intent.getExtras().get(Constants.EXTRAKEY_RFID).toString());
+				
+				if (partitiDaID) {
+					confirmLegaRFIDAStruttura();
+				} else if (partitiDaRFID) {
+					getStructureDataByRFID();
+				}
 			} else {
 				Toast.makeText(this, "Tag non riconosciuto", Toast.LENGTH_LONG).show();
 			}
 			break;
+		case Constants.LEGGI_RFID_AREA_DA_LETTORE_ESTERNO_E_LEGALO_A_GIOCO:
+			if(intent == null){
+				Toast.makeText(this, "Lettura annullata", Toast.LENGTH_LONG).show();
+			} else if( intent.getExtras() != null && intent.getExtras().get(Constants.EXTRAKEY_RFID) != null){
+				currentRFID = parseNDEFForRFID(intent.getExtras().get(Constants.EXTRAKEY_RFID).toString());
+				confirmLegaRFIDAreaAGioco();				
+			} else {
+				Toast.makeText(this, "Tag non riconosciuto", Toast.LENGTH_LONG).show();
+			}
+			break;
+		case Constants.LEGGI_RFID_DA_LETTORE_ESTERNO_E_LEGALO_A_STRUTTURA:
+			if(intent == null){
+				Toast.makeText(this, "Lettura annullata", Toast.LENGTH_LONG).show();
+			} else if( intent.getExtras() != null && intent.getExtras().get(Constants.EXTRAKEY_RFID) != null){
+				currentRFID = parseNDEFForRFID(intent.getExtras().get(Constants.EXTRAKEY_RFID).toString());
+				confirmLegaRFIDAStruttura();				
+			} else {
+				Toast.makeText(this, "Tag non riconosciuto", Toast.LENGTH_LONG).show();
+			}			
+			break;			
 		case Constants.CREDENTIALS_UPDATED_REQUEST_CODE:
-			renewToken();
+			renewAuthenticationToken();
 			break;
 		case Constants.SOAP_GET_TOKEN_REQUEST_CODE:
 			res = SynchroSoapActivity.getRes(Constants.GET_LOGINUSER_METHOD_NAME);
@@ -637,44 +767,24 @@ public class MainActivity extends BaseActivity {
 			res = SynchroSoapActivity.getRes(Constants.GET_GIOCO_ID_METHOD_NAME);
 			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
 			manageSOAPGenericStrutturaResponse(res, tipoStruttura);
-					
 			break;
 		case Constants.SOAP_GET_AREA_REQUEST_CODE_BY_ID:
 			res = SynchroSoapActivity.getRes(Constants.GET_AREA_ID_METHOD_NAME);
 			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
 			manageSOAPGenericStrutturaResponse(res, tipoStruttura);
-				
 			break;
-		case Constants.SOAP_GET_GIOCO_REQUEST_CODE:
-
-			if (returnCode == RESULT_OK) {
-
-				res = SynchroSoapActivity.getRes(Constants.GET_GIOCO_METHOD_NAME);
-
-				if (res != null && res.size() > 0) {
-					currentStruttura = new Gioco(res.entrySet(), currentRFID,
-							getApplicationContext());
-					displayStruttura();
-					getStructureFoto(Constants.CODICE_STRUTTURA_GIOCO, currentStruttura.idGioco);
-				} else {
-					currentStruttura = new Gioco();
-					displayStruttura();
-					Toast.makeText(
-							getApplicationContext(),
-							getString(R.string.errore_generico_soap) + " "
-									+ currentRFID, Toast.LENGTH_SHORT).show();
-				}
-			} else {
-				// TODO: recuperare i dati dal device
-				Toast.makeText(
-						getApplicationContext(),
-						"Recupero dei dati remoti impossibile: assenza di connettività",
-						Toast.LENGTH_SHORT).show();
-			}
+		case Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_RFID:
+			res = SynchroSoapActivity.getRes(Constants.GET_GIOCO_METHOD_NAME);
+			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
+			manageSOAPGenericStrutturaResponse(res, tipoStruttura);	
+			break;
+		case Constants.SOAP_GET_AREA_REQUEST_CODE_BY_RFID:
+			res = SynchroSoapActivity.getRes(Constants.GET_AREA_METHOD_NAME);
+			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
+			manageSOAPGenericStrutturaResponse(res, tipoStruttura);			
 			break;
 		case Constants.SOAP_GET_TABELLA_REQUEST_CODE:
 			if (returnCode == RESULT_OK) {
-				//TODO: attaccare la gestione dell'errore
 				for(int id : Constants.ID_TABELLE_SUPPORTO){
 					res = SynchroSoapActivity.getRes(Constants.GET_TABELLA_METHOD_NAME+"_"+id);
 					if(res!=null && !res.containsKey("success")){
@@ -688,6 +798,8 @@ public class MainActivity extends BaseActivity {
 							}
 						}
 						db.tabelleSupportoUpdate(records.toArray(new RecordTabellaSupporto[records.size()]));
+					} else {
+						manageRemoteException(res);
 					}
 				}
 			}
@@ -708,7 +820,7 @@ public class MainActivity extends BaseActivity {
 				snapshot = (Bitmap) intent.getExtras().get("data");
 				
 				if (currentStruttura == null) {
-					currentStruttura = new Gioco();
+					currentStruttura = new Struttura();
 					currentStruttura.sincronizzato = false;
 					currentStruttura.hasDirtyData = true;
 					currentRFID = 0;
@@ -820,11 +932,25 @@ public class MainActivity extends BaseActivity {
 			}
 		} else if(res.containsKey("success") && res.get("success").equals(false) ){
 			manageRemoteException(res);
-			remoteStruttura = new Gioco();				
+			switch(tipoStruttura){
+			case Constants.CODICE_STRUTTURA_GIOCO:
+				remoteStruttura = new Gioco();
+				break;
+			case Constants.CODICE_STRUTTURA_AREA:
+				remoteStruttura = new Area();
+				break;
+			}
 			localStruttura = db.readGiocoLocallyByID(currentQueriedId);
 		}else {
 			//res == null
-		 remoteStruttura = new Gioco();				
+			switch(tipoStruttura){
+			case Constants.CODICE_STRUTTURA_GIOCO:
+				remoteStruttura = new Gioco();
+				break;
+			case Constants.CODICE_STRUTTURA_AREA:
+				remoteStruttura = new Area();
+				break;
+			}				
 		 localStruttura = db.readGiocoLocallyByID(currentQueriedId);
 		}
 		
@@ -907,7 +1033,7 @@ public class MainActivity extends BaseActivity {
 	 */
 	private void manageRemoteException(HashMap<String, Object> res) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-		alert.setTitle("Errore remoto nel recupero della struttura "+currentQueriedId);
+		alert.setTitle("Errore remoto nel recupero dei dati ");
 		TextView content = new TextView(getApplicationContext());
 		String outText = "";
 		
@@ -943,7 +1069,7 @@ public class MainActivity extends BaseActivity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				if(!tokenIsValid){
-					renewToken();
+					renewAuthenticationToken();
 				}
 			}
 		});

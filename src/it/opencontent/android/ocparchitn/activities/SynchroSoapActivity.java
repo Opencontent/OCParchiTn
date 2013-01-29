@@ -161,62 +161,62 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 	private void sincronizzaTutteLeFoto(Struttura g) {
 		HashMap<String, Object> map;
 		// cicliamo le foto eventuali
+		String tipoFoto = "";
+		String idRiferimento = "";
+		String suffissoImmagine = "";
+		if(g.getClass().equals(Gioco.class)){
+			tipoFoto = Constants.CODICE_STRUTTURA_GIOCO+"";
+			idRiferimento = g.idGioco +"";
+			suffissoImmagine = "gioco_";
+		}else if(g.getClass().equals(Area.class)){
+			tipoFoto = Constants.CODICE_STRUTTURA_AREA+"";			
+			idRiferimento = ((Area) g).idArea+"";
+			suffissoImmagine = "area_";
+		}
+		
 
+		SOAPFotoupdate fu = new SOAPFotoupdate();
+		fu.tipoFoto = tipoFoto;
+		fu.idRiferimento = idRiferimento;
+		fu.sovrascrittura = true;
+		fu.estensioneImmagine = "jpg";
+		
 		if (g.foto0 != null && !g.foto0.equals("")) {
-			SOAPFotoupdate fu = new SOAPFotoupdate();
-			fu.idGioco = "" + g.idGioco;
-			fu.sovrascrittura = true;
-			fu.estensioneImmagine = "jpg";
 			fu.immagine = g.foto0;
-			fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_0";
+			fu.nomeImmagine = suffissoImmagine + idRiferimento + "_foto_0";
 			map = new HashMap<String, Object>();
 			map.put("Fotoupdate", fu);
 			getRemoteResponse("setFoto", map, false,"setFoto");
 		}
 		if (g.foto1 != null && !g.foto1.equals("")) {
-			SOAPFotoupdate fu = new SOAPFotoupdate();
-			fu.idGioco = "" + g.idGioco;
-			fu.sovrascrittura = true;
-			fu.estensioneImmagine = "jpg";
 			fu.immagine = g.foto1;
-			fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_1";
+			fu.nomeImmagine = suffissoImmagine + idRiferimento + "_foto_1";
 			map = new HashMap<String, Object>();
 			map.put("Fotoupdate", fu);
 			getRemoteResponse("setFoto", map, false,"setFoto");
 		}
 		if (g.foto2 != null && !g.foto2.equals("")) {
-			SOAPFotoupdate fu = new SOAPFotoupdate();
-			fu.idGioco = "" + g.idGioco;
-			fu.sovrascrittura = true;
-			fu.estensioneImmagine = "jpg";
 			fu.immagine = g.foto2;
-			fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_2";
+			fu.nomeImmagine = suffissoImmagine + idRiferimento + "_foto_2";
 			map = new HashMap<String, Object>();
 			map.put("Fotoupdate", fu);
 			getRemoteResponse("setFoto", map, false,"setFoto");
 		}
 		if (g.foto3 != null && !g.foto3.equals("")) {
-			SOAPFotoupdate fu = new SOAPFotoupdate();
-			fu.idGioco = "" + g.idGioco;
-			fu.sovrascrittura = true;
-			fu.estensioneImmagine = "jpg";
 			fu.immagine = g.foto3;
-			fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_3";
+			fu.nomeImmagine = suffissoImmagine + idRiferimento + "_foto_3";
 			map = new HashMap<String, Object>();
 			map.put("Fotoupdate", fu);
 			getRemoteResponse("setFoto", map, false,"setFoto");
 		}
 		if (g.foto4 != null && !g.foto4.equals("")) {
-			SOAPFotoupdate fu = new SOAPFotoupdate();
-			fu.idGioco = "" + g.idGioco;
-			fu.sovrascrittura = true;
-			fu.estensioneImmagine = "jpg";
 			fu.immagine = g.foto4;
-			fu.nomeImmagine = "gioco_" + g.idGioco + "_foto_4";
+			fu.nomeImmagine = suffissoImmagine + idRiferimento + "_foto_4";
 			map = new HashMap<String, Object>();
 			map.put("Fotoupdate", fu);
 			getRemoteResponse("setFoto", map, false,"setFoto");
 		}
+
 	}
 
 	@Override

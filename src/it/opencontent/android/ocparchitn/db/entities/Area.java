@@ -47,6 +47,10 @@ public class Area extends Struttura {
 
 		while (iterator.hasNext()) {
 			Entry<String, Object> e = iterator.next();
+			if (e.getKey().equals("idArea")) {
+				idArea = bindIntToProperty(e.getValue(),
+						e.getKey());
+			}
 			if (e.getKey().equals("tipoPavimentazione")) {
 				tipoPavimentazione = bindIntToProperty(e.getValue(),
 						e.getKey());

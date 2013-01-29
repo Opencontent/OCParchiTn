@@ -6,16 +6,10 @@ public enum AvailableFragment {
 
 	//Livelli di autenticazione: 0 none - 15 visualizzazione, 32 modifica
 	
-	
-	//MAIN 				("main","Main",MainFragment.class),
-	RILEVAZIONE_GIOCO			("rilevazione","Rilevazione Gioco",RilevazioneGiocoFragment.class,Constants.PERMESSO_VISUALIZZA,Constants.PERMESSO_VISUALIZZA),
 	RILEVAZIONE_AREA	("rilevazione_area","Rilevazione Area",RilevazioneAreaFragment.class,Constants.PERMESSO_VISUALIZZA,Constants.PERMESSO_MODIFICA),
-	PERIODICA			("periodica","Verifica Periodica",PeriodicaFragment.class,Constants.PERMESSO_VISUALIZZA,Constants.PERMESSO_VISUALIZZA),
-//	RENDICONTAZIONE		("rendicontazione","Rendicontazione",RendicontazioneFragment.class,Constants.PERMESSO_VISUALIZZA,Constants.PERMESSO_MODIFICA),
-	RENDICONTAZIONE		("rendicontazione","Rendicontazione",RendicontazioneFragment.class,Constants.PERMESSO_MODIFICA,Constants.PERMESSO_MODIFICA),
-	SPOSTAMENTO 		("spostamento","Spostamento",SpostamentoFragment.class,Constants.PERMESSO_MODIFICA,Constants.PERMESSO_MODIFICA),
-	DEBUG				("debug","Sys",DebugFragment.class,Constants.PERMESSO_NONE,Constants.PERMESSO_NONE);
-//	DEBUG				("debug","Sys",DebugFragment.class,Constants.PERMESSO_ADMIN,Constants.PERMESSO_ADMIN);
+	RILEVAZIONE_GIOCO	("rilevazione","Rilevazione Gioco",RilevazioneGiocoFragment.class,Constants.PERMESSO_VISUALIZZA,Constants.PERMESSO_VISUALIZZA),
+	CONTROLLO   		("controllo","Controllo",ControlloFragment.class,Constants.PERMESSO_MODIFICA,Constants.PERMESSO_MODIFICA),
+	SPOSTAMENTO 		("spostamento","Spostamento",SpostamentoFragment.class,Constants.PERMESSO_MODIFICA,Constants.PERMESSO_MODIFICA);
 	
 	public final String label;
 	public final String title;

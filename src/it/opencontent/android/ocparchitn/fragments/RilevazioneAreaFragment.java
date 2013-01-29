@@ -53,8 +53,15 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 		 * Setup spinners
 		 */
 		List<RecordTabellaSupporto> records = db.tabelleSupportoGetAllRecords(Constants.TABELLA_TIPO_PAVIMENTAZIONI);
+		if(records != null){
+		setupSpinnerTipiPavimentazione(view, records);
+		}
+		return view;
+	}
+
+
+	private void setupSpinnerTipiPavimentazione(View view, List<RecordTabellaSupporto> records) {
 		adapterTipoPavimentazione = new ArrayAdapter<RecordTabellaSupporto>(getActivity(), R.layout.default_spinner_layout,records);
-		adapterTipoPavimentazione.insert(new RecordTabellaSupporto(), 0);
 		adapterTipoPavimentazione.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		final Spinner spinnerTipoPavimentazione = (Spinner) view.findViewById(R.id.display_area_tipoPavimentazione);
 		spinnerTipoPavimentazione.setAdapter(adapterTipoPavimentazione);
@@ -81,7 +88,6 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 				
 			}
 		});
-		return view;
 	}
 
 	@Override
@@ -270,12 +276,14 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 	}
 	
 	private int getAdapterRecordPosition(RecordTabellaSupporto record){
-		int count = adapterTipoPavimentazione.getCount();
-		for(int i = 0; i < count ; i++){
-			RecordTabellaSupporto r = adapterTipoPavimentazione.getItem(i);
-			if( r.codice == record.codice){
-				return i;
-			}			
+		if(record!=null){
+			int count = adapterTipoPavimentazione.getCount();
+			for(int i = 0; i < count ; i++){
+				RecordTabellaSupporto r = adapterTipoPavimentazione.getItem(i);
+				if( r.codice == record.codice){
+					return i;
+				}			
+			}
 		}
 		return -1;
 	}

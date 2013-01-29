@@ -72,6 +72,8 @@ public class ReaderStateChangeListener implements OnStateChangeListener {
 				//basically a IllegalState Exception in case we forgot 
 				//to properly set-up the reader
 				e.printStackTrace();
+			} catch (Exception e){
+				e.printStackTrace();
 			}
 		}
 	}

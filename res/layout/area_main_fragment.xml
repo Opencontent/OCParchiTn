@@ -9,21 +9,33 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:weightSum="3"
         android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/pulsante_start_by_rfid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="startRilevazioneDaRFID"
+            android:text="@string/pulsante_start_by_rfid_testo" />
+        
         <Button
             android:id="@+id/pulsante_associa_rfid_a_area"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="associaRFIDArea"
+            android:layout_weight="1"
+            android:onClick="associaRFIDStruttura"
             android:text="@string/pulsante_associa_rfid_a_area_testo" />
-        
 
         <Button
             android:id="@+id/pulsante_start_by_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:onClick="startRilevazioneDaID"
             android:text="@string/pulsante_start_by_id_testo" />
+
     </LinearLayout>
 
     <ScrollView
@@ -279,6 +291,7 @@
             android:id="@+id/pulsante_salva_modifiche_gioco"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:onClick="salvaModifiche"
             android:text="@string/pulsante_salva_modifiche_gioco_testo" />
 
@@ -286,8 +299,10 @@
             android:id="@+id/pulsante_sincronizza_modifiche_gioco"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:onClick="sincronizzaModifiche"
             android:text="@string/pulsante_sincronizza_modifiche_gioco_testo" />
+
     </LinearLayout>
 
 </LinearLayout>

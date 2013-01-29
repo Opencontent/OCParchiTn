@@ -24,6 +24,7 @@ public class LoggingNdefOperationsListener implements NdefOperationsListener {
 
 	@Override
 	public void onNdefOperations(NdefOperations ndefOperations) {
+		try {
 		if (ndefOperations.isFormatted()) {
 			if (ndefOperations.hasNdefMessage()) {
 				List<Record> messages = ndefOperations.readNdefMessage();
@@ -32,7 +33,6 @@ public class LoggingNdefOperationsListener implements NdefOperationsListener {
 					Log.i(NFCTOOLS, "NDEF: " + record);
 					final String recordOut = record+"";
 					caller.runOnUiThread(new Runnable() {
-						
 				        @Override
 				        public void run() {
 				            caller.manageNDEF(recordOut);
@@ -43,11 +43,13 @@ public class LoggingNdefOperationsListener implements NdefOperationsListener {
 			}
 			else {
 				Log.i(NFCTOOLS, "no messages on TAG");
-				UriRecord uriRecord = new UriRecord("http://www.grundid.de/nfc");
-				ndefOperations.writeNdefMessage(uriRecord);
 			}
 		}
-		else
+		else{
 			Log.i(NFCTOOLS, "not formatted");
+		}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 }
