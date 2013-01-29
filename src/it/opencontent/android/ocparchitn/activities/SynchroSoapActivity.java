@@ -119,7 +119,9 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				gu.gpsx = "" + g.gpsx;
 				gu.gpsy = "" + g.gpsy;
 				gu.note = g.note;
+				if(g.rfidArea > 0){
 				gu.rfidArea = "" + g.rfidArea;
+				}
 				gu.posizioneRfid =  g.posizioneRfid;
 				map.put("Giocoupdate", gu);
 				getRemoteResponse(Constants.SET_GIOCO_METHOD_NAME, map, false,Constants.SET_GIOCO_METHOD_NAME);

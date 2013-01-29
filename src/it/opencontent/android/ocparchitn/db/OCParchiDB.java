@@ -373,8 +373,8 @@ public class OCParchiDB {
 			cv.put("rfid", g.rfid);
 			cv.put("descrizioneMarca", g.descrizioneMarca);
 			cv.put("idGioco", g.idGioco);
-			cv.put("rfidArea", g.rfidArea);
 			cv.put("posizioneRfid", g.posizioneRfid);
+			cv.put("rfidArea", g.rfidArea);
 		} else if(struttura.getClass().equals(Area.class)){
 			tabella = StruttureEnum.AREE.tipo;
 			Area a = (Area) struttura;

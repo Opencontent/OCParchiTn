@@ -36,12 +36,10 @@ public class Area extends Struttura {
 		posizioneRfid = remote.posizioneRfid;
 	}
 	public Area(Set<Entry<String, Object>> entrySet,int rfid,Context context) {
-		// TODO Auto-generated constructor stub
 		super(entrySet,rfid,context);
 		tipo = "area";	
 	}
 	public Area(Set<Entry<String, Object>> entrySet,Context context) {
-		// TODO Auto-generated constructor stub
 		super(entrySet,context);
 		tipo = "area";
 		Iterator<Entry<String, Object>> iterator = entrySet.iterator();

@@ -136,10 +136,10 @@ public class SOAPGioco implements KvmSerializable {
 			arg2.type = PropertyInfo.INTEGER_CLASS;
 			break;
 		case 16:
-			arg2.name = "posizioneRfid";
+			arg2.name = "numeroSerie";
 			break;
 		case 17:
-			arg2.name = "numeroSerie";
+			arg2.name = "posizioneRfid";
 			break;
 		case 18:
 			arg2.name = "rfid";

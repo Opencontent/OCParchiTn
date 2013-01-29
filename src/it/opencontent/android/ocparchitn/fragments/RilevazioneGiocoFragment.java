@@ -104,6 +104,9 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 					case R.id.display_gioco_nota:
 						g.note = value;
 						break;
+					case R.id.display_gioco_posizione_rfid:
+						g.posizioneRfid = value;
+						break;
 					case R.id.display_gioco_gpsx:
 						g.gpsx = Float.parseFloat(value);
 						break;
@@ -183,6 +186,8 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 		v.setText(gioco.note);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_seriale);
 		v.setText(gioco.numeroSerie);
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_posizione_rfid);
+		v.setText(((Gioco) gioco).posizioneRfid);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_rfid);
 		v.setText(gioco.rfid+"");
 		if(gioco.rfid>0){ //&& !possiamoModificareGliRFID

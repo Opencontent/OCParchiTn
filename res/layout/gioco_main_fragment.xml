@@ -196,13 +196,14 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content" >
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/display_gioco_gpsx"
+                        android:layout_weight="1"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
 
                     <TextView
@@ -211,17 +212,15 @@
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:onClick="editMe"
+                        android:layout_weight="1"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/display_gioco_gpsy"
+                        android:layout_weight="1"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
 
                     <TextView
@@ -230,8 +229,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:onClick="editMe"
+                        android:layout_weight="1"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
 
                 <TextView
                     android:id="@+id/display_gioco_gps_confidence"
@@ -239,8 +238,30 @@
                     android:layout_height="wrap_content"
                     android:clickable="false"
                     android:text="Cofidence: nd"
+                    android:layout_weight="1"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
+                </LinearLayout>
+                 <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/display_gioco_posizione_rfid"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/display_gioco_posizione_rfid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:minHeight="150dp"
+                        android:minWidth="150dp"
+                        android:onClick="editMe"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" >
