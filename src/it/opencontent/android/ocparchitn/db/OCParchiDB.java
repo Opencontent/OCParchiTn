@@ -365,6 +365,7 @@ public class OCParchiDB {
 			cv.put("descrizioneMarca", g.descrizioneMarca);
 			cv.put("idGioco", g.idGioco);
 			cv.put("numeroserie", g.numeroSerie);
+			cv.put("rfidArea", g.rfidArea);
 			cv.put("gpsx", g.gpsx);
 			cv.put("gpsy", g.gpsy);
 			cv.put("note", g.note);

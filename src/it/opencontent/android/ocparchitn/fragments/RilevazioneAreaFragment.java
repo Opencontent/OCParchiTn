@@ -77,8 +77,6 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 				if(a!=null){
 					a.tipoPavimentazione = r.codice;
 					MainActivity.setCurrentArea(a);
-					removeEmptyItemFromAdapterTipoPavimentazione();
-//					salvaModifiche(null);
 				}
 			}
 
@@ -259,21 +257,12 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
 		RecordTabellaSupporto tipoPavimentazione = db.tabelleSupportoGetRecord(Constants.TABELLA_TIPO_PAVIMENTAZIONI, area.tipoPavimentazione);
 		int position = getAdapterRecordPosition(tipoPavimentazione);
-		removeEmptyItemFromAdapterTipoPavimentazione();
 		s.setSelection(position);
 		
 		setupSnapshots(area);
 	}
 
-	/**
-	 * 
-	 */
-	private void removeEmptyItemFromAdapterTipoPavimentazione() {
-		if(adapterTipoPavimentazione.getItem(0).codice == -1){
-			//Facciamo pulizia del segnaposto vuoto, così da non poterlo impostare per un oggetto esistente
-			adapterTipoPavimentazione.remove(adapterTipoPavimentazione.getItem(0));
-		}
-	}
+	
 	
 	private int getAdapterRecordPosition(RecordTabellaSupporto record){
 		if(record!=null){

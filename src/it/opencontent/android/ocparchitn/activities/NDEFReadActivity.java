@@ -4,18 +4,10 @@ import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.utils.nfc.LoggingNdefOperationsListener;
 import it.opencontent.android.ocparchitn.utils.nfc.ReaderStateChangeListener;
-
-import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
@@ -23,10 +15,8 @@ import android.hardware.usb.UsbManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -41,8 +31,6 @@ import com.acs.smartcard.PinProperties;
 import com.acs.smartcard.PinVerify;
 import com.acs.smartcard.ReadKeyOption;
 import com.acs.smartcard.Reader;
-import com.acs.smartcard.Reader.OnStateChangeListener;
-import com.acs.smartcard.ReaderException;
 import com.acs.smartcard.TlvProperties;
 
 
@@ -196,7 +184,32 @@ public class NDEFReadActivity extends Activity {
             }
         }
     };
+	public boolean openTheReader(boolean requested,String selectedDevice) {
+//		String deviceName = (String) mReaderSpinner.getSelectedItem();
+		String deviceName = selectedDevice;
 
+        if (deviceName != null) {
+
+            // For each device
+            for (UsbDevice device : mManager.getDeviceList().values()) {
+
+                // If device name is found
+                if (deviceName.equals(device.getDeviceName())) {
+
+                    // Request permission
+                    mManager.requestPermission(device,
+                            mPermissionIntent);
+                    TextView textview = (TextView) findViewById(R.id.ndefread_main_text_view_response);
+                    if(textview!=null){
+                    	textview.setText("Lettore pronto");
+                    }
+                    requested = true;
+                    break;
+                }
+            }
+        }
+		return requested;
+	}
 	private class OpenTask extends AsyncTask<UsbDevice, Void, Exception> {
 
         @Override
@@ -604,11 +617,18 @@ public class NDEFReadActivity extends Activity {
         //TODO: Qui prendo il nome del device
         mReaderAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item);
+        
         for (UsbDevice device : mManager.getDeviceList().values()) {
             if (mReader.isSupported(device)) {
                 mReaderAdapter.add(device.getDeviceName());
+                openTheReader(true, device.getDeviceName());
             }
         }
+        
+                
+        /***
+         * Da qui in poi credo si possa segare tutto
+         */
         mReaderSpinner = (Spinner) findViewById(R.id.ndefread_main_spinner_reader);
         mReaderSpinner.setAdapter(mReaderAdapter);
 
@@ -653,27 +673,9 @@ public class NDEFReadActivity extends Activity {
                 // Disable open button
                 mOpenButton.setEnabled(false);
                 
-                //TODO: estrarre metodo a partire da qui per accendere il lettore
 
-                String deviceName = (String) mReaderSpinner.getSelectedItem();
-
-                if (deviceName != null) {
-
-                    // For each device
-                    for (UsbDevice device : mManager.getDeviceList().values()) {
-
-                        // If device name is found
-                        if (deviceName.equals(device.getDeviceName())) {
-
-                            // Request permission
-                            mManager.requestPermission(device,
-                                    mPermissionIntent);
-
-                            requested = true;
-                            break;
-                        }
-                    }
-                }
+                //requested = openTheReader(requested);
+                requested = openTheReader(requested,(String) mReaderSpinner.getSelectedItem());
 
                 if (!requested) {
 
@@ -681,6 +683,8 @@ public class NDEFReadActivity extends Activity {
                     mOpenButton.setEnabled(true);
                 }
             }
+
+
         });
 
         // Initialize close button

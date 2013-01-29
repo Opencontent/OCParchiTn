@@ -76,11 +76,59 @@
                 android:text="@string/intervento_testo" />
         </RadioGroup>
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:weightSum="5"
+        android:orientation="vertical" >
 
-    <ScrollView
+        <Spinner
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:prompt="@string/app_name"
+            android:spinnerMode="dropdown" />
+
+</LinearLayout>
+    
+</LinearLayout>
+	
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:weightSum="5"
+        android:orientation="vertical" >
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/pulsante_start_by_rfid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="startRilevazioneDaRFID"
+            android:text="@string/pulsante_start_by_rfid_testo" />
+
+        <Button
+            android:id="@+id/pulsante_salva_modifiche_gioco"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="salvaModifiche"
+            android:text="@string/pulsante_salva_modifiche_gioco_testo" />
+
+        <Button
+            android:id="@+id/pulsante_sincronizza_modifiche_gioco"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="sincronizzaModifiche"
+            android:text="@string/pulsante_sincronizza_modifiche_gioco_testo" />
+    </LinearLayout>
+<ScrollView
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="5" >
+        android:layout_weight="4" >
 
         <LinearLayout
             android:id="@+id/wrapper_dati_e_istruzioni"
@@ -310,34 +358,6 @@
             </LinearLayout
             -->
         </LinearLayout>
-    </ScrollView>
-</LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical" >
-
-        <Button
-            android:id="@+id/pulsante_start_by_rfid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="startRilevazioneDaRFID"
-            android:text="@string/pulsante_start_by_rfid_testo" />
-
-        <Button
-            android:id="@+id/pulsante_salva_modifiche_gioco"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="salvaModifiche"
-            android:text="@string/pulsante_salva_modifiche_gioco_testo" />
-
-        <Button
-            android:id="@+id/pulsante_sincronizza_modifiche_gioco"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="sincronizzaModifiche"
-            android:text="@string/pulsante_sincronizza_modifiche_gioco_testo" />
-    </LinearLayout>
-
+    </ScrollView>    
+	</LinearLayout>
 </LinearLayout>

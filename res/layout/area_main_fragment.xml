@@ -188,7 +188,9 @@
                         android:id="@+id/display_area_tipoPavimentazione"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                        android:prompt="@string/prompt_spinner_tipo_pavimentazione"
+                        android:spinnerMode="dialog"
+                        />
                 </LinearLayout>
 
                 <LinearLayout
