@@ -1,6 +1,7 @@
 package it.opencontent.android.ocparchitn.db;
 
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAreaUpdate;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPControlloUpdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGiocoUpdate;
 import it.opencontent.android.ocparchitn.db.entities.Area;
 import it.opencontent.android.ocparchitn.db.entities.Controllo;
@@ -494,8 +495,8 @@ public class OCParchiDB {
 	
 
 
-	public LinkedHashMap<String,Struttura> getStruttureDaSincronizzare() {
-		LinkedHashMap<String, Struttura> res = new LinkedHashMap<String, Struttura>();
+	public LinkedHashMap<String,Object> getStruttureDaSincronizzare() {
+		LinkedHashMap<String, Object> res = new LinkedHashMap<String, Object>();
 
 		Iterator<Entry<String, Struttura>> strutture = mSchemaMap.entrySet()
 				.iterator();
@@ -556,7 +557,31 @@ public class OCParchiDB {
 				c.close();
 			}
 		}
+		
+		
 
+		String[] columns = getDefaultColumns(Controllo.class);
+
+		String tableName = Controllo.class.getSimpleName();
+		String selection = " idRiferimento > 0 AND noteControllo is not null ";
+
+		Cursor c = query(tableName, selection, null, columns, null);		
+		if(c!=null && c.moveToFirst()){
+			do{
+				Controllo cont = new Controllo();
+				cont.controllo = c.getInt(c.getColumnIndex("controllo"));
+				cont.dtScadenzaControllo = c.getString(c.getColumnIndex("dtScadenzaControllo")); 
+				cont.foto = c.getString(c.getColumnIndex("foto"));
+				cont.idRiferimento = c.getString(c.getColumnIndex("idRiferimento"));
+				cont.noteControllo = c.getString(c.getColumnIndex("noteControllo"));
+				cont.rfid = c.getInt(c.getColumnIndex("rfid"));
+				cont.tipoControllo = c.getInt(c.getColumnIndex("tipoControllo"));
+				cont.tipoEsito = c.getInt(c.getColumnIndex("tipoEsito"));
+				cont.tipoSegnalazione = c.getInt(c.getColumnIndex("tipoSegnalazione"));
+				
+				res.put(tableName+"_"+cont.idRiferimento, cont);
+			}while(c.moveToNext());
+		}
 		return res;
 	}
 

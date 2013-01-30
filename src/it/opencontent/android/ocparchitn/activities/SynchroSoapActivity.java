@@ -3,10 +3,15 @@ package it.opencontent.android.ocparchitn.activities;
 import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAreaUpdate;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPControlloUpdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotoupdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGiocoUpdate;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkAutException;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkGiochiException;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkSrvException;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Area;
+import it.opencontent.android.ocparchitn.db.entities.Controllo;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.services.IRemoteConnection;
@@ -14,11 +19,16 @@ import it.opencontent.android.ocparchitn.utils.PlatformChecks;
 import it.opencontent.android.ocparchitn.utils.SoapConnector;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map.Entry;
 
+import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -26,7 +36,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -34,6 +43,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 
@@ -67,14 +77,22 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		
 		if (methodName.equals(Constants.EXTRAKEY_SYNC_ALL)) {
 			
-			LinkedHashMap<String, Struttura> set = db
+			LinkedHashMap<String, Object> set = db
 					.getStruttureDaSincronizzare();
 			if (!set.isEmpty() && PlatformChecks.siamoOnline(getApplicationContext())) {
 				Iterator<String> keyIterator = set.keySet().iterator();
 				while (keyIterator.hasNext()) {
 					String k = keyIterator.next();
-					Struttura s = set.get(k);
-						sincronizzaLaStruttura(s);
+					if(set.get(k).getClass().equals(Gioco.class)){
+						Gioco g = (Gioco) set.get(k);
+						sincronizzaLaStruttura(g);						
+					}else if(set.get(k).getClass().equals(Area.class)){
+						Area a = (Area) set.get(k);
+						sincronizzaLaStruttura(a);												
+					} else if( set.get(k).getClass().equals(Controllo.class)){
+						Controllo c = (Controllo) set.get(k);
+						sincronizzaIlControllo(c);
+					}
 				}
 			} else {
 				setResult(RESULT_OK,getIntent());
@@ -158,9 +176,48 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		}
 	}
 
-	/**
-	 * @param g
-	 */
+	private void sincronizzaIlControllo(Controllo c) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+
+			
+			if (c.idRiferimento != null && c.noteControllo.length() > 0) {
+				
+				SOAPControlloUpdate cu = new SOAPControlloUpdate();
+				cu.controllo = c.controllo;
+				String DATE_FORMAT = "yyyy-MM-dd";
+				String TIME_FORMAT = "hh:mm:ss";
+			    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT,Locale.US);
+			    SimpleDateFormat hdf = new SimpleDateFormat(TIME_FORMAT,Locale.US);
+			    Calendar c1 = Calendar.getInstance(); 
+				cu.dtControllo = sdf.format(c1.getTime());
+				cu.noteEsito = c.noteControllo;
+				cu.oraControllo = hdf.format(c1.getTime());
+				cu.rfid = c.rfid;
+				cu.tipoControllo = c.tipoControllo;
+				cu.tipoEsito = c.tipoEsito;
+				cu.tipoSegnalazione = c.tipoSegnalazione;				
+				
+				map.put("Controlloupdate", cu);
+				getRemoteResponse(Constants.SET_CONTROLLO_METHOD_NAME, map, false,Constants.SET_CONTROLLO_METHOD_NAME);
+				
+				/**
+				 * TODO: fotoupdate del controllo
+				 */
+				//sincronizzaTutteLeFoto(g);
+			}else {
+				Log.d(TAG,"Controllo senza dati necessari, non sincronizzato "+c.idRiferimento);
+				if (queueLength <= 0) {
+					setResult(RESULT_OK, getIntent());
+					finish();
+				}
+			}
+
+	}
+
+	private void sincronizzaTutteLeFoto(Controllo c) {
+		
+	}
+	
 	private void sincronizzaTutteLeFoto(Struttura g) {
 		HashMap<String, Object> map;
 		// cicliamo le foto eventuali
@@ -255,6 +312,10 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 			counterView.setText(" Elementi in coda : " + (queueLength+1));
 		}
 	}
+	
+	public final void toastException(String message){
+		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+	}
 
 	@Override
 	public void getRemoteResponse(String m, HashMap<String, Object> d,
@@ -312,6 +373,29 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 							}
 						
 						if (!finish) {
+							
+							if(res.get("exception") != null){
+								String outText = "";
+								KvmSerializable exception = (KvmSerializable) res.get("exception");
+								if(exception.getClass().equals(SOAPSrvGiocoArkAutException.class)){
+									String codice = ((SOAPSrvGiocoArkAutException) exception).codice;
+									outText += "\nCodice: "+codice;
+									outText += "\nMessaggio: "+((SOAPSrvGiocoArkAutException) exception).message;
+								}else if(exception.getClass().equals(SOAPSrvGiocoArkGiochiException.class)){
+									outText += "\nCodice: "+((SOAPSrvGiocoArkGiochiException) exception).codice;
+									outText += "\nMessaggio: "+((SOAPSrvGiocoArkGiochiException) exception).message;
+								} else {
+									outText += "\nMessaggio: "+((SOAPSrvGiocoArkSrvException) exception).message;
+								}
+								final String t = outText;
+								h.post(new Runnable() {
+									
+									@Override
+									public void run() {
+										toastException(method+"\n"+t);										
+									}
+								});
+							} 
 							queueLength--;
 						}
 						h.post(new Runnable() {

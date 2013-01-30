@@ -16,6 +16,8 @@ public class Constants {
 	public final static String EXTRAKEY_DATAMAP_RESULT = "dataMapResult";
 	public final static String EXTRAKEY_METHOD_NAME = "methodName";
 	public final static String EXTRAKEY_STRUCTURE_TYPE = "tipoStruttura";
+	public final static String EXTRAKEY_RECOVER_CONTROLS = "getControllo";
+	
 	public final static String GET_GIOCO_METHOD_NAME = "getGioco";
 	public final static String SET_GIOCO_METHOD_NAME = "setGioco";
 	public final static String SET_AREA_METHOD_NAME = "setArea";
@@ -29,6 +31,8 @@ public class Constants {
 	public final static String GET_TOKEN_STATUS_METHOD_NAME = "statusToken";
 	public final static String GET_INVALIDATE_TOKEN_METHOD_NAME = "invalidateToken";
 	public final static String GET_TABELLA_METHOD_NAME = "getTabella";
+	public final static String GET_CONTROLLO_METHOD_NAME = "getControllo";
+	public final static String SET_CONTROLLO_METHOD_NAME = "setControllo";
 	
 	public final static String EXTRAKEY_FOTO_NUMBER = "fotoNumber";
 	public final static String EXTRAKEY_RFID = "rfid";
@@ -105,6 +109,7 @@ public class Constants {
     public static final int CODICE_STRUTTURA_INTERVENTO = 6; 
     
 	public static final int FOTO_REQUEST_CODE = 1;
+	public static final int FOTO_CONTROLLO_REQUEST_CODE = 5;
 	public static final int SOAP_GET_GIOCO_REQUEST_CODE = 2;
 	public static final int SOAP_GET_GIOCO_FOTO_REQUEST_CODE = 3;
 	public static final int CREDENTIALS_UPDATED_REQUEST_CODE = 4;
@@ -112,6 +117,7 @@ public class Constants {
 
 	public static final int SOAP_SINCRONIZZA_TUTTO_REQUEST_CODE = 90;
 	public static final int SOAP_GET_TABELLA_REQUEST_CODE = 91;
+	public static final int SOAP_GET_CONTROLLO_REQUEST_CODE_BY_RFID = 92;
 
 	public static final int SOAP_SERVICE_INFO_REQUEST_CODE = 100;	
 	public static final int SOAP_GET_GIOCO_REQUEST_CODE_BY_ID = 101;
@@ -125,6 +131,7 @@ public class Constants {
 	public static final int SOAP_GET_INVALIDATE_TOKEN_REQUEST_CODE = 202;
 
 	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO = 999;
+	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO_PER_CONTROLLI = 996;
 	public static final int LEGGI_RFID_AREA_DA_LETTORE_ESTERNO_E_LEGALO_A_GIOCO = 998;
 	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO_E_LEGALO_A_STRUTTURA = 997;
 	

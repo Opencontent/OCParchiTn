@@ -3,361 +3,419 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
-    android:weightSum="3" >
-<LinearLayout 
-    android:layout_width="wrap_content"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:layout_weight="2"
-    android:weightSum="7" >
+    android:weightSum="9" >
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="horizontal"
-        android:weightSum="2" >
-
-        <RadioGroup
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical" >
-
-            <RadioButton
-                android:id="@+id/radio_gioco"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:onClick="clickedMe"
-                android:text="@string/struttura_gioco_testo" />
-
-            <RadioButton
-                android:id="@+id/radio_area"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="clickedMe"
-                android:text="@string/struttura_area_testo" />
-        </RadioGroup>
-
-        <RadioGroup
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical" >
-
-            <RadioButton
-                android:id="@+id/radio_controllo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:onClick="clickedMe"
-                android:text="@string/controllo_testo" />
-
-            <RadioButton
-                android:id="@+id/radio_verifica"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="clickedMe"
-                android:text="@string/verifica_testo" />
-
-            <RadioButton
-                android:id="@+id/radio_manutenzione"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="clickedMe"
-                android:text="@string/manutenzione_testo" />
-
-            <RadioButton
-                android:id="@+id/radio_intervento"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="clickedMe"
-                android:text="@string/intervento_testo" />
-        </RadioGroup>
-    </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:weightSum="5"
-        android:orientation="vertical" >
-
-        <Spinner
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:prompt="@string/app_name"
-            android:spinnerMode="dropdown" />
-
-</LinearLayout>
-    
-</LinearLayout>
-	
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:weightSum="5"
-        android:orientation="vertical" >
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/pulsante_start_by_rfid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="startRilevazioneDaRFID"
-            android:text="@string/pulsante_start_by_rfid_testo" />
-
-        <Button
-            android:id="@+id/pulsante_salva_modifiche_gioco"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="salvaModifiche"
-            android:text="@string/pulsante_salva_modifiche_gioco_testo" />
-
-        <Button
-            android:id="@+id/pulsante_sincronizza_modifiche_gioco"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="sincronizzaModifiche"
-            android:text="@string/pulsante_sincronizza_modifiche_gioco_testo" />
-    </LinearLayout>
-<ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4" >
+        android:layout_height="fill_parent"
+        android:layout_weight="7"
+        android:orientation="vertical"
+        android:weightSum="7" >
 
         <LinearLayout
-            android:id="@+id/wrapper_dati_e_istruzioni"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:orientation="horizontal" >
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:weightSum="2" >
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radio_gioco"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:onClick="clickedMe"
+                    android:text="@string/struttura_gioco_testo" />
+
+                <RadioButton
+                    android:id="@+id/radio_area"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="clickedMe"
+                    android:text="@string/struttura_area_testo" />
+            </RadioGroup>
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <RadioButton
+                    android:id="@+id/radio_controllo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:onClick="clickedMe"
+                    android:text="@string/controllo_testo" />
+
+                <RadioButton
+                    android:id="@+id/radio_verifica"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="clickedMe"
+                    android:text="@string/verifica_testo" />
+
+                <RadioButton
+                    android:id="@+id/radio_manutenzione"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="clickedMe"
+                    android:text="@string/manutenzione_testo" />
+
+                <RadioButton
+                    android:id="@+id/radio_intervento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="clickedMe"
+                    android:text="@string/intervento_testo" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:weightSum="5" >
+
+            <Spinner
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:prompt="@string/app_name"
+                android:spinnerMode="dropdown" />
 
             <LinearLayout
-                android:id="@+id/wrapper_dati_gioco"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:orientation="vertical" >
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_gioco_marca"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_gioco_marca"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:onClick="editMe"
-                        android:tag="gioco_marca"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_gioco_descrizione"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_gioco_descrizione"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_area_descrizione"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_area_descrizione"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_gioco_rfid"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_gioco_rfid"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_gioco_id"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_gioco_id"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_area_rfid"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_area_rfid"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_gioco_seriale"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_gioco_seriale"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:tag="gioco_seriale"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_gioco_gpsx"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_gioco_gpsx"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:onClick="editMe"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_gioco_gpsy"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_gioco_gpsy"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:onClick="editMe"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                >
 
                 <TextView
-                    android:id="@+id/display_gioco_gps_confidence"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:clickable="false"
-                    android:text="Cofidence: nd"
+                    android:text="@string/display_controllo_nota"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/display_controllo_nota"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_gioco_nota"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/display_gioco_nota"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:minHeight="150dp"
-                        android:minWidth="150dp"
-                        android:onClick="editMe"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:minHeight="150dp"
+                    android:minWidth="150dp"
+                    android:onClick="editMe"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
             </LinearLayout>
 
-            <!--
-            LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
+            <ImageView
+                android:id="@+id/snapshot_controllo_0"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_margin="2dp"
+                android:contentDescription="@string/snapshot_description"
                 android:gravity="center"
-                android:orientation="vertical" >
-
-                <TextView
-                    android:id="@+id/display_gioco_istruzioni"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/istruzioni_main_fragment" />
-
-                <TextView
-                    android:id="@+id/display_gioco_warning"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/warning" />
-            </LinearLayout
-            -->
+                android:onClick="takeSnapshotControllo"
+                android:padding="2dp"
+                android:src="@drawable/snapshot_teaser"
+                android:tag="0" />
         </LinearLayout>
-    </ScrollView>    
-	</LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:orientation="vertical"
+        android:weightSum="5" >
+
+
+
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4" >
+
+            <LinearLayout
+                android:id="@+id/wrapper_dati_e_istruzioni"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal" >
+
+                <LinearLayout
+                    android:id="@+id/wrapper_dati_gioco"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:orientation="vertical" >
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_gioco_marca"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:id="@+id/display_gioco_marca"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            
+                            android:tag="gioco_marca"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_gioco_descrizione"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:id="@+id/display_gioco_descrizione"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_area_descrizione"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:id="@+id/display_area_descrizione"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_gioco_rfid"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:id="@+id/display_gioco_rfid"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_gioco_id"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:id="@+id/display_gioco_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_area_id"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:id="@+id/display_area_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_area_rfid"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:id="@+id/display_area_rfid"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_gioco_posizione_rfid"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:id="@+id/display_gioco_posizione_rfid"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_gioco_seriale"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:id="@+id/display_gioco_seriale"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:tag="gioco_seriale"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_gioco_gpsx"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:id="@+id/display_gioco_gpsx"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="true"
+                            
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_gioco_gpsy"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:id="@+id/display_gioco_gpsy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="true"
+                            
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:id="@+id/display_gioco_gps_confidence"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="false"
+                            android:text="Cofidence: nd"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_area_tipoPavimentazione_fissa"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:id="@+id/display_area_tipoPavimentazione_fissa"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="true"
+                            
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/display_gioco_nota"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:id="@+id/display_gioco_nota"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="true"
+                            android:minHeight="150dp"
+                            android:minWidth="150dp"
+                            
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/pulsante_start_by_rfid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="startRilevazioneDaRFID"
+                android:text="@string/pulsante_start_by_rfid_testo" />
+
+            <Button
+                android:id="@+id/pulsante_salva_modifiche_gioco"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="salvaModifiche"
+                android:text="@string/pulsante_salva_modifiche_gioco_testo" />
+
+            <Button
+                android:id="@+id/pulsante_sincronizza_modifiche_gioco"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="sincronizzaModifiche"
+                android:text="@string/pulsante_sincronizza_modifiche_gioco_testo" />
+        </LinearLayout>        
+        
+    </LinearLayout>
+
+    <include
+        android:layout_weight="1"
+        layout="@layout/snapshot_holder_small" />
+
 </LinearLayout>

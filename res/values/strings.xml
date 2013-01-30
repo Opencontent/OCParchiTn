@@ -16,13 +16,15 @@
 	<string name="settings_field_password2">(ripeti)</string>
 	
 	<!--  schermata main della struttura -->
-	<string name="display_area_tipoPavimentazione">PAvimentazione: </string>
+	<string name="display_area_tipoPavimentazione">Pavimentazione: </string>
+	<string name="display_area_tipoPavimentazione_fissa">Pavimentazione: </string>
 	<string name="display_area_id">ID Area: </string>
 	<string name="display_gioco_id">ID Gioco: </string>
 	<string name="display_gioco_seriale">Seriale: </string>
 	<string name="display_gioco_gps">Coordinate GPS: </string>
 	<string name="display_gioco_marca">Marca: </string>
 	<string name="display_gioco_nota">Nota: </string>
+	<string name="display_controllo_nota">Nota: </string>
 	<string name="display_gioco_descrizione">Descrizione gioco: </string>
 	<string name="display_area_descrizione">Descrizione area:</string>
 	<string name="display_gioco_data_prossimo_intervento">Data Prossimo intervento: </string>

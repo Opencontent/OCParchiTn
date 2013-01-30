@@ -4,6 +4,7 @@ import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAutGiochi;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPCodTabella;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPControllo;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkAutException;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkGiochiException;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkSrvException;
@@ -511,13 +512,14 @@ public class MainActivity extends BaseActivity {
 		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO);
 	}
 	
-	public void startControlloDaRFID(View v){
+	public void recuperaControlliPerRFID(View v){
 		Log.d(TAG,"Partiamo col controllo da rfid, lancio l'activity");
 		Intent leggiRFID = new Intent();
 		leggiRFID.setClass(this, NDEFReadActivity.class);
+		leggiRFID.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_AREA_ID_METHOD_NAME);			
 		partitiDaID = false;
 		partitiDaRFID = true;
-		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO);
+		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO_PER_CONTROLLI);
 	}
 	
 	public void associaRFIDStruttura(View v){
@@ -599,7 +601,20 @@ public class MainActivity extends BaseActivity {
 		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_TABELLA_METHOD_NAME);
 		startActivityForResult(serviceIntent, Constants.SOAP_GET_TABELLA_REQUEST_CODE);
 	}
-
+	
+	private void getControlliPerStruttura(int tipoStruttura){
+		Intent serviceIntent = new Intent();
+		serviceIntent.setClass(getApplicationContext(),
+				SynchroSoapActivity.class);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("args0", tipoStruttura);
+		map.put("args1", currentRFID);
+		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_CONTROLLO_METHOD_NAME);
+		startActivityForResult(serviceIntent, Constants.SOAP_GET_CONTROLLO_REQUEST_CODE_BY_RFID);		
+	}
+	
+	
 	private void getStructureDataByRFID() {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
@@ -619,7 +634,8 @@ public class MainActivity extends BaseActivity {
 			startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_RFID);
 		} else if(currentTag.equals(AvailableFragment.CONTROLLO.label)){
 			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, ControlloFragment.methodName );			
-			serviceIntent.putExtra(Constants.EXTRAKEY_STRUCTURE_TYPE, ControlloFragment.tipoStruttura);			
+			serviceIntent.putExtra(Constants.EXTRAKEY_STRUCTURE_TYPE, ControlloFragment.tipoStruttura);
+			serviceIntent.putExtra(Constants.EXTRAKEY_RECOVER_CONTROLS, true);
 			startActivityForResult(serviceIntent, ControlloFragment.soapMethodName);
 		}		
 	}
@@ -682,6 +698,7 @@ public class MainActivity extends BaseActivity {
 				.findFragmentByTag(currentTag);
 		mf.showStrutturaData(currentStruttura);		
 	}
+	
 
 	@Override
 	public void onActivityResult(int requestCode, int returnCode, Intent intent) {
@@ -703,6 +720,7 @@ public class MainActivity extends BaseActivity {
 				Toast.makeText(this, "Tag non riconosciuto", Toast.LENGTH_LONG).show();
 			}
 			break;
+
 		case Constants.LEGGI_RFID_AREA_DA_LETTORE_ESTERNO_E_LEGALO_A_GIOCO:
 			if(intent == null){
 				Toast.makeText(this, "Lettura annullata", Toast.LENGTH_LONG).show();
@@ -775,13 +793,36 @@ public class MainActivity extends BaseActivity {
 		case Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_RFID:
 			res = SynchroSoapActivity.getRes(Constants.GET_GIOCO_METHOD_NAME);
 			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
-			manageSOAPGenericStrutturaResponse(res, tipoStruttura);	
+			manageSOAPGenericStrutturaResponse(res, tipoStruttura);
+			if (intent.getExtras().containsKey(Constants.EXTRAKEY_RECOVER_CONTROLS)){
+				getControlliPerStruttura(tipoStruttura);
+			}
 			break;
 		case Constants.SOAP_GET_AREA_REQUEST_CODE_BY_RFID:
 			res = SynchroSoapActivity.getRes(Constants.GET_AREA_METHOD_NAME);
 			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
-			manageSOAPGenericStrutturaResponse(res, tipoStruttura);			
+			manageSOAPGenericStrutturaResponse(res, tipoStruttura);
+			if (intent.getExtras().containsKey(Constants.EXTRAKEY_RECOVER_CONTROLS)){
+				getControlliPerStruttura(tipoStruttura);
+			}
 			break;
+		case Constants.SOAP_GET_CONTROLLO_REQUEST_CODE_BY_RFID:
+			res = SynchroSoapActivity.getRes(Constants.GET_CONTROLLO_METHOD_NAME);
+			if(res == null){
+				
+			}else if(res.containsKey("success")){
+				manageRemoteException(res);
+			} else {
+				if(res.containsKey("mapped")){
+					Controllo controllo = new Controllo((SOAPControllo) res.get("mapped"));
+					ControlloFragment.appendControllo(controllo);
+					displayStruttura();
+				}
+				//metodo per passare il controllo al controlloFragment
+			}
+			
+			
+			break;			
 		case Constants.SOAP_GET_TABELLA_REQUEST_CODE:
 			if (returnCode == RESULT_OK) {
 				for(int id : Constants.ID_TABELLE_SUPPORTO){
@@ -811,76 +852,10 @@ public class MainActivity extends BaseActivity {
 			displayStruttura();
 			break;
 		case Constants.FOTO_REQUEST_CODE:
-			try {
-				//Codice per l'activity custom
-				//snapshot = CameraActivity.getImage();
-				
-				//codice per l'activity rgistrata a sistema
-				snapshot = (Bitmap) intent.getExtras().get("data");
-				
-				if (currentStruttura == null) {
-					currentStruttura = new Struttura();
-					currentStruttura.sincronizzato = false;
-					currentStruttura.hasDirtyData = true;
-					currentRFID = 0;
-				}
-				int whichOne;
-				if(intent.getExtras().containsKey(Constants.EXTRAKEY_FOTO_NUMBER)){
-				 whichOne = intent.getExtras().getInt(
-						Constants.EXTRAKEY_FOTO_NUMBER);
-				} else {
-					whichOne = currentSnapshotID;
-					currentSnapshotID = -1;
-				}
-//				String filename = FileNameCreator.getSnapshotFullPath(
-//						currentRFID, whichOne);
-//				FileOutputStream fos = openFileOutput(filename,
-//						Context.MODE_PRIVATE);
-				ByteArrayOutputStream stream = new ByteArrayOutputStream();  
-//				snapshot.compress(Bitmap.CompressFormat.PNG, 80, fos);
-//				fos.close();
-				snapshot.compress(Bitmap.CompressFormat.PNG, 80, stream);
-				byte[] image = stream.toByteArray();
-
-				ImageView mImageView = null;
-				switch (whichOne) {
-				case 0:
-					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_0);
-					currentStruttura.foto0 = Base64.encodeToString(image, Base64.DEFAULT);
-					break;
-				case 1:
-					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_1);
-					currentStruttura.foto1 = Base64.encodeToString(image, Base64.DEFAULT);
-					break;
-				case 2:
-					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_2);
-					currentStruttura.foto2 = Base64.encodeToString(image, Base64.DEFAULT);
-					break;
-				case 3:
-					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_3);
-					currentStruttura.foto3 = Base64.encodeToString(image, Base64.DEFAULT);
-					break;
-				case 4:
-					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_4);
-					currentStruttura.foto4 = Base64.encodeToString(image, Base64.DEFAULT);
-					break;
-				}
-				currentStruttura.sincronizzato = false;
-				currentStruttura.hasDirtyData = true;
-
-				if (snapshot != null && mImageView != null) {
-					snapshots[whichOne] = snapshot;
-					mImageView.setImageBitmap(snapshot);
-				}
-			} catch (NullPointerException e) {
-				Log.d(TAG, "Immagine nulla");
-			}/* catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
+			legaSnapshotAStruttura(intent);
+			break;
+		case Constants.FOTO_CONTROLLO_REQUEST_CODE:
+			legaSnapshotAControllo(intent);
 			break;
 		case Constants.SOAP_SERVICE_INFO_REQUEST_CODE:
 			//TODO: rimappare l'oggetto info
@@ -888,7 +863,6 @@ public class MainActivity extends BaseActivity {
 			serviceInfoTaken = true;
 			errorMessages.put(Constants.STATUS_MESSAGE_SERVER_STATUS,
 					"Connessione al server: OK");
-//			showError(errorMessages);
 			break;
 			default:
 				super.onActivityResult(requestCode, returnCode, intent);
@@ -898,10 +872,93 @@ public class MainActivity extends BaseActivity {
 
 	}
 
-	/**
-	 * @param res
-	 * @param tipoStruttura
-	 */
+	private void legaSnapshotAStruttura(Intent intent) {
+		try {
+			snapshot = (Bitmap) intent.getExtras().get("data");
+			
+			
+			if (currentStruttura == null) {
+				currentStruttura = new Struttura();
+				currentStruttura.sincronizzato = false;
+				currentStruttura.hasDirtyData = true;
+				currentRFID = 0;
+			}
+			int whichOne;
+			if(intent.getExtras().containsKey(Constants.EXTRAKEY_FOTO_NUMBER)){
+			 whichOne = intent.getExtras().getInt(
+					Constants.EXTRAKEY_FOTO_NUMBER);
+			} else {
+				whichOne = currentSnapshotID;
+				currentSnapshotID = -1;
+			}
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();  
+			snapshot.compress(Bitmap.CompressFormat.PNG, 80, stream);
+			byte[] image = stream.toByteArray();
+
+			ImageView mImageView = null;
+			switch (whichOne) {
+			case 0:
+				mImageView = (ImageView) findViewById(R.id.snapshot_gioco_0);
+				currentStruttura.foto0 = Base64.encodeToString(image, Base64.DEFAULT);
+				break;
+			case 1:
+				mImageView = (ImageView) findViewById(R.id.snapshot_gioco_1);
+				currentStruttura.foto1 = Base64.encodeToString(image, Base64.DEFAULT);
+				break;
+			case 2:
+				mImageView = (ImageView) findViewById(R.id.snapshot_gioco_2);
+				currentStruttura.foto2 = Base64.encodeToString(image, Base64.DEFAULT);
+				break;
+			case 3:
+				mImageView = (ImageView) findViewById(R.id.snapshot_gioco_3);
+				currentStruttura.foto3 = Base64.encodeToString(image, Base64.DEFAULT);
+				break;
+			case 4:
+				mImageView = (ImageView) findViewById(R.id.snapshot_gioco_4);
+				currentStruttura.foto4 = Base64.encodeToString(image, Base64.DEFAULT);
+				break;
+			}
+			currentStruttura.sincronizzato = false;
+			currentStruttura.hasDirtyData = true;
+
+			if (snapshot != null && mImageView != null) {
+				snapshots[whichOne] = snapshot;
+				mImageView.setImageBitmap(snapshot);
+			}
+		} catch (NullPointerException e) {
+			Log.d(TAG, "Immagine nulla");
+		}
+	}
+
+	private void legaSnapshotAControllo(Intent intent) {
+		try {
+			snapshot = (Bitmap) intent.getExtras().get("data");
+			
+			
+			int whichOne;
+			if(intent.getExtras().containsKey(Constants.EXTRAKEY_FOTO_NUMBER)){
+			 whichOne = intent.getExtras().getInt(
+					Constants.EXTRAKEY_FOTO_NUMBER);
+			} else {
+				whichOne = 1;
+			}
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();  
+			snapshot.compress(Bitmap.CompressFormat.PNG, 80, stream);
+			byte[] image = stream.toByteArray();
+
+			ImageView mImageView = null;
+			mImageView = (ImageView) findViewById(R.id.snapshot_controllo_0);
+			ControlloFragment.aggiungiSnapshotAControlloCorrente(Base64.encodeToString(image, Base64.DEFAULT));
+			
+			if (snapshot != null && mImageView != null) {
+				snapshots[whichOne] = snapshot;
+				mImageView.setImageBitmap(snapshot);
+			}
+		} catch (NullPointerException e) {
+			Log.d(TAG, "Immagine nulla");
+		}
+	}	
+	
 	private void manageSOAPGenericStrutturaResponse(
 			HashMap<String, Object> res, int tipoStruttura) {
 		Struttura remoteStruttura = null;
@@ -1141,21 +1198,21 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	public void takeSnapshot(View button) {
-		//codice per l'activity custom
-//		Intent customCamera = new Intent(Constants.TAKE_SNAPSHOT);
-//		int whichOne = Integer.parseInt((String) button.getTag());
-//		customCamera.putExtra(Constants.EXTRAKEY_FOTO_NUMBER, whichOne);
-//		customCamera.setClass(getApplicationContext(), CameraActivity.class);
-//		Log.d(TAG, customCamera.getAction());
-//		startActivityForResult(customCamera, Constants.FOTO_REQUEST_CODE);
-
-		//codice per l'activity registrata a sistema
 		Intent customCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		int whichOne = Integer.parseInt((String) button.getTag());
 		customCamera.putExtra(Constants.EXTRAKEY_FOTO_NUMBER, whichOne);
 		currentSnapshotID = whichOne;
 		startActivityForResult(customCamera, Constants.FOTO_REQUEST_CODE);
 	}
+	
+	public void takeSnapshotControllo(View button) {
+		Intent customCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		int whichOne = Integer.parseInt((String) button.getTag());
+		customCamera.putExtra(Constants.EXTRAKEY_FOTO_NUMBER, whichOne);
+		currentSnapshotID = whichOne;
+		startActivityForResult(customCamera, Constants.FOTO_CONTROLLO_REQUEST_CODE);		
+	}
+	
 
 	public static float getCurrentLon() {
 		return currentLon;

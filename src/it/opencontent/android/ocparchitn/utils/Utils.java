@@ -82,7 +82,7 @@ public class Utils {
 	
 	public static void digIntoNode(Element element){
 		if(element.getName().equals("ArkAutException")
-				||element.getName().equals("ArkGiocoException")
+				||element.getName().equals("ArkGiochiException")
 				||element.getName().equals("ArkSrvException")){		
 			
 			
@@ -103,7 +103,7 @@ public class Utils {
 					Log.d(TAG," "+e.getText(0));
 				}
 				setExc(exceptionClass);
-			} else if(element.getName().equals("ArkGiocoException")){
+			} else if(element.getName().equals("ArkGiochiException")){
 				SOAPSrvGiocoArkGiochiException exceptionClass = new SOAPSrvGiocoArkGiochiException();
 				for (int i = 0; i < element.getChildCount(); i++){
 					Element e = element.getElement(i);
