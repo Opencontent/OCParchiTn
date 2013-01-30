@@ -85,6 +85,14 @@
             android:weightSum="5" >
 
             <Spinner
+                android:id="@+id/display_controllo_spinner_segnalazione"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:prompt="@string/app_name"
+                android:spinnerMode="dropdown" />
+            <Spinner
+                android:id="@+id/display_controllo_spinner_esito"
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

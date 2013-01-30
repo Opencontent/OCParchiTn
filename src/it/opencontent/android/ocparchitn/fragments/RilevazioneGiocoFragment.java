@@ -15,6 +15,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -89,7 +90,14 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 		input.setText(t.getText());
 		input.setTag(R.integer.tag_view_id, v.getId());
 		
-		
+		final int viewId =Integer.parseInt(input.getTag(R.integer.tag_view_id).toString());
+		switch(viewId){
+		case R.id.display_gioco_gpsx:
+		case R.id.display_gioco_gpsy:
+			input.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_CLASS_NUMBER);
+			break;
+			
+		}
 		alert.setView(input);
 
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {

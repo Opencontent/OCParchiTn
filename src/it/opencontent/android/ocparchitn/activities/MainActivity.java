@@ -14,7 +14,6 @@ import it.opencontent.android.ocparchitn.db.entities.Controllo;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
-import it.opencontent.android.ocparchitn.db.entities.StruttureEnum;
 import it.opencontent.android.ocparchitn.fragments.AvailableFragment;
 import it.opencontent.android.ocparchitn.fragments.ControlloFragment;
 import it.opencontent.android.ocparchitn.fragments.ICustomFragment;
@@ -43,6 +42,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Bitmap;
 import android.location.GpsStatus;
 import android.location.GpsStatus.Listener;
@@ -95,6 +95,18 @@ public class MainActivity extends BaseActivity {
 	private static float currentLon = 0;
 
 	private static HashMap<String, String> errorMessages = new HashMap<String, String>();
+	
+    public OnSharedPreferenceChangeListener mListener = new OnSharedPreferenceChangeListener() {        
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if(key.equals(getString(R.string.settings_key_username))
+            		|| key.equals(getString(R.string.settings_key_password))){
+            	tokenIsValid = false;
+            }
+        }
+    };	
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -102,14 +114,15 @@ public class MainActivity extends BaseActivity {
 		// setContentView(R.layout.activity_main_fragments);
 		
 		//Prima cosa controlliamo che il token sia attivo
-		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);    
+        prefs.registerOnSharedPreferenceChangeListener(mListener);		
 
 		db = new OCParchiDB(getApplicationContext());
 		if (!serviceInfoTaken) {
 			getServiceInfo();
 			serviceInfoTaken = true;
 		}
-		if(!AuthCheck.getTokenValid()){
+		if(!AuthCheck.getTokenValid() && PlatformChecks.siamoOnline(this)){
 			renewAuthenticationToken();
 		} else {
 			setupActionBar();
@@ -214,6 +227,7 @@ public class MainActivity extends BaseActivity {
 		if(nfca != null){
 		nfca.enableForegroundDispatch(this, pi, ifa, techListsArray);
 		}
+
 //		showError(errorMessages);
 		// nfca.enableForegroundDispatch(this, pi, null, null);
 	}
@@ -233,7 +247,12 @@ public class MainActivity extends BaseActivity {
 
 	@Override
 	public void onStart() {
+		
 		super.onStart();
+		if(!tokenIsValid){
+			renewAuthenticationToken();
+		}		
+		
 		// nfca.disableForegroundDispatch(this);
 		LocationManager locationManager = (LocationManager) getSystemService(BaseActivity.LOCATION_SERVICE);
 
@@ -257,6 +276,8 @@ public class MainActivity extends BaseActivity {
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.unregisterOnSharedPreferenceChangeListener(mListener);
 	}
 	
 	@Override
@@ -1073,11 +1094,22 @@ public class MainActivity extends BaseActivity {
 			}	
 			displayStruttura();
 		} else {
-			currentStruttura = db.readGiocoLocallyByID(remoteStruttura.idGioco);
-			if(currentStruttura == null){
-			currentStruttura = new Gioco();
-			currentStruttura.idGioco = currentQueriedId;
-			} 
+				switch(tipoStruttura){
+				case Constants.CODICE_STRUTTURA_GIOCO:
+					currentStruttura = db.readGiocoLocallyByID(currentQueriedId);
+					if(currentStruttura == null){
+					currentStruttura = new Gioco();
+					((Gioco) currentStruttura).idGioco = currentQueriedId;
+					}
+					break;
+				case Constants.CODICE_STRUTTURA_AREA:
+					currentStruttura = db.readAreaLocallyByID(currentQueriedId);
+					if(currentStruttura == null){
+					currentStruttura = new Area();
+					((Area) currentStruttura).idArea = currentQueriedId;
+					}
+					break;
+				}	
 			displayStruttura();
 		}
 	}

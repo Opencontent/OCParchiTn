@@ -25,6 +25,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,6 +34,7 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 public class ControlloFragment extends Fragment implements ICustomFragment {
 
@@ -41,6 +44,8 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 	public static String methodName = Constants.GET_GIOCO_METHOD_NAME;
 	public static int soapMethodName = Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_RFID;
 	public static int tipoControllo = Constants.CODICE_STRUTTURA_CONTROLLO_VISIVO;
+	private ArrayAdapter<RecordTabellaSupporto> adapterEsitiControllo;
+	private ArrayAdapter<RecordTabellaSupporto> adapterTipiSegnalazione;
 	private Controllo controllo;
 
 	/**
@@ -57,16 +62,86 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 	public static void aggiungiSnapshotAControlloCorrente(String base64){
 		if(elencoControlli.size()>0){
 			elencoControlli.get(0).foto = base64;
+			elencoControlli.get(0).tipoControllo = 1;
+			elencoControlli.get(0).tipoEsito = 1;
+			elencoControlli.get(0).tipoSegnalazione = 1;
 		}
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
 		View view = inflater.inflate(R.layout.controllo_fragment, container, false);
 		controllo = new Controllo();
+		List<RecordTabellaSupporto> records = db.tabelleSupportoGetAllRecords(Constants.TABELLA_ESITI_INTERVENTO);
+		if(records != null){
+		 setupSpinnerEsitiControllo(view, records);
+		}		
+		records = db.tabelleSupportoGetAllRecords(Constants.TABELLA_SEGNALAZIONI);
+		if(records != null){
+			setupSpinnerTipiSegnalazione(view, records);
+		}		
 		return view;
 	}
+	
+	private void setupSpinnerEsitiControllo(View view, List<RecordTabellaSupporto> records) {
+		adapterEsitiControllo = new ArrayAdapter<RecordTabellaSupporto>(getActivity(), R.layout.default_spinner_layout,records);
+		adapterEsitiControllo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		final Spinner spinnerEsitiControllo = (Spinner) view.findViewById(R.id.display_controllo_spinner_esito);
+		spinnerEsitiControllo.setAdapter(adapterEsitiControllo);
+		
+		
+		spinnerEsitiControllo.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				RecordTabellaSupporto r = (RecordTabellaSupporto) spinnerEsitiControllo.getAdapter().getItem(arg2);
+				if(elencoControlli.size()>0){
+					elencoControlli.get(0).tipoEsito = r.codice;
+					saveLocal(elencoControlli.get(0));
+				}
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				
+				
+			}
+		});
+	}
+	
+	private void setupSpinnerTipiSegnalazione(View view, List<RecordTabellaSupporto> records) {
+		adapterTipiSegnalazione = new ArrayAdapter<RecordTabellaSupporto>(getActivity(), R.layout.default_spinner_layout,records);
+		adapterTipiSegnalazione.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		final Spinner spinnerEsitiControllo = (Spinner) view.findViewById(R.id.display_controllo_spinner_segnalazione);
+		spinnerEsitiControllo.setAdapter(adapterTipiSegnalazione);
+		
+		
+		spinnerEsitiControllo.setOnItemSelectedListener(new OnItemSelectedListener() {
+			
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				RecordTabellaSupporto r = (RecordTabellaSupporto) spinnerEsitiControllo.getAdapter().getItem(arg2);
+				if(elencoControlli.size()>0){
+					elencoControlli.get(0).tipoSegnalazione = r.codice;
+					saveLocal(elencoControlli.get(0));
+				}
+			}
+			
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				
+				
+			}
+		});
+	}
+	
+	
 	
 	@Override
 	public void onResume(){

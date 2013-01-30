@@ -1,5 +1,6 @@
 package it.opencontent.android.ocparchitn.utils;
 
+import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAutGiochi;
 
 import org.kxml2.kdom.Element;
@@ -47,15 +48,23 @@ public class AuthCheck {
 		if(auth != null){
 			return auth.userCooperativa;
 		} else {
-			return false;
+			return true;
 		}
 	}
 	
 	public static int getAutComune(){
-		return auth.autComune;
+		if(auth!=null){
+			return auth.autComune;
+		} else {
+			return Constants.PERMESSO_VISUALIZZA;
+		}
 	}
 	public static int getAutCooperativa(){
-		return auth.autCooperativa;
+		if(auth!=null){
+			return auth.autCooperativa;
+		} else {
+			return Constants.PERMESSO_VISUALIZZA;
+		}
 	}
 	
 }

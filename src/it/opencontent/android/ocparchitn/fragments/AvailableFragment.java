@@ -6,9 +6,9 @@ public enum AvailableFragment {
 
 	//Livelli di autenticazione: 0 none - 15 visualizzazione, 32 modifica
 	
-	RILEVAZIONE_AREA	("rilevazione_area","Rilevazione Area",RilevazioneAreaFragment.class,Constants.PERMESSO_VISUALIZZA,Constants.PERMESSO_MODIFICA),
+	RILEVAZIONE_AREA	("rilevazione_area","Rilevazione Area",RilevazioneAreaFragment.class,Constants.PERMESSO_VISUALIZZA,Constants.PERMESSO_VISUALIZZA),
 	RILEVAZIONE_GIOCO	("rilevazione","Rilevazione Gioco",RilevazioneGiocoFragment.class,Constants.PERMESSO_VISUALIZZA,Constants.PERMESSO_VISUALIZZA),
-	CONTROLLO   		("controllo","Controllo",ControlloFragment.class,Constants.PERMESSO_MODIFICA,Constants.PERMESSO_MODIFICA),
+	CONTROLLO   		("controllo","Controllo",ControlloFragment.class,Constants.PERMESSO_VISUALIZZA,Constants.PERMESSO_MODIFICA),
 	SPOSTAMENTO 		("spostamento","Spostamento",SpostamentoFragment.class,Constants.PERMESSO_MODIFICA,Constants.PERMESSO_MODIFICA);
 	
 	public final String label;

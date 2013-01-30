@@ -413,6 +413,8 @@ public class OCParchiDB {
 		cv.put("idRiferimento",c.idRiferimento);
 		cv.put("rfid",c.rfid);
 		cv.put("tipoControllo",c.tipoControllo);
+		cv.put("tipoEsito",c.tipoEsito);
+		cv.put("tipoSegnalazione",c.tipoSegnalazione);
 		cv.put("foto",c.foto);
 		long id = -1;
 		try {
@@ -451,6 +453,31 @@ public class OCParchiDB {
 		
 		try{
 //			int res = mDatabaseOpenHelper.getWritableDatabase().update(tipo, cv, campo, new String[]{id});
+			int res = mDatabaseOpenHelper.getWritableDatabase().delete(tipo, campo, new String[]{ id }); 
+			Log.d(TAG,"Aggiornate "+res+" righe");
+		}catch(SQLiteConstraintException e){
+			Log.e(TAG, e.getMessage());
+		}
+	}	
+	public void eliminaCopiaLocaleDiControllo(HashMap<String,Object> map){
+		ContentValues cv = new ContentValues();
+		cv.put(" sincronizzato ", true);
+		
+		String campo = "";
+		String id = "";
+		String tipo = "";
+		Entry<String,Object> entry = null;
+		if(!map.isEmpty()){
+			entry = map.entrySet().iterator().next();
+		}
+		if( entry != null && entry.getValue().getClass().equals(SOAPControlloUpdate.class)){
+			SOAPControlloUpdate sau = (SOAPControlloUpdate) map.entrySet().iterator().next().getValue();
+			campo = " rfid = ? ";
+			id = sau.rfid +"";
+			tipo = Controllo.class.getSimpleName();
+		} 
+		
+		try{
 			int res = mDatabaseOpenHelper.getWritableDatabase().delete(tipo, campo, new String[]{ id }); 
 			Log.d(TAG,"Aggiornate "+res+" righe");
 		}catch(SQLiteConstraintException e){
