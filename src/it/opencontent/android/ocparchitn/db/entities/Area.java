@@ -12,8 +12,8 @@ public class Area extends Struttura {
 	
 	public int idArea;
 	public int idParco;
-	public float spessore;
-	public float superficie;
+	public String spessore;
+	public String superficie;
 	public int tipoPavimentazione;	
 	public String posizioneRfid;	
 
@@ -30,8 +30,8 @@ public class Area extends Struttura {
 		numeroFotografie = remote.numeroFotografie;
 		
 		rfidArea = Integer.parseInt(remote.rfid); 
-		spessore = Float.parseFloat(remote.spessore);
-		superficie = Float.parseFloat(remote.superficie);
+		spessore = remote.spessore;
+		superficie = remote.superficie;
 		tipoPavimentazione = Integer.parseInt(remote.tipoPavimentazione);
 		posizioneRfid = remote.posizioneRfid;
 	}
@@ -59,11 +59,11 @@ public class Area extends Struttura {
 						e.getKey());
 			}
 			if (e.getKey().equals("superficie")) {
-				superficie = bindFloatToProperty(e.getValue(),
+				superficie = bindStringToProperty(e.getValue(),
 						e.getKey());
 			}
 			if (e.getKey().equals("spessore")) {
-				spessore = bindFloatToProperty(e.getValue(),
+				spessore = bindStringToProperty(e.getValue(),
 						e.getKey());
 			}
 			if (e.getKey().equals("idParco") && e.getValue() != null) {

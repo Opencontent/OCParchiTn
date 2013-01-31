@@ -272,10 +272,10 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 		v = (TextView) getActivity().findViewById(R.id.display_area_rfid);
 		v.setText(area.rfidArea+"");
 		
-		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsx);
-		v.setText(area.gpsx + "");
-		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsy);
-		v.setText(area.gpsy + "");
+		v = (TextView) getActivity().findViewById(R.id.display_area_spessore);
+		v.setText(area.spessore + "");
+		v = (TextView) getActivity().findViewById(R.id.display_area_superficie);
+		v.setText(area.superficie + "");
 		v = (TextView) getActivity().findViewById(R.id.display_area_descrizione);
 		v.setText(area.descrizioneArea + "");
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_posizione_rfid);

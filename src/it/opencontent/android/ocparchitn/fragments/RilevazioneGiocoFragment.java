@@ -116,10 +116,10 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 						g.posizioneRfid = value;
 						break;
 					case R.id.display_gioco_gpsx:
-						g.gpsx = Float.parseFloat(value);
+						g.gpsx = value;
 						break;
 					case R.id.display_gioco_gpsy:
-						g.gpsy = Float.parseFloat(value);
+						g.gpsy = value;
 						break;
 					}
 					saveLocal(g);
@@ -140,8 +140,8 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 	}
 	public void placeMe(View v){
 		Gioco g = MainActivity.getCurrentGioco();
-		g.gpsx = MainActivity.getCurrentLon();
-		g.gpsy = MainActivity.getCurrentLat();
+		g.gpsx = MainActivity.getCurrentLon()+"";
+		g.gpsy = MainActivity.getCurrentLat()+"";
 		g.hasDirtyData=true;
 		g.sincronizzato = false;
 		saveLocal(g);

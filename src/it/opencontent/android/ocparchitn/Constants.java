@@ -33,6 +33,7 @@ public class Constants {
 	public final static String GET_TABELLA_METHOD_NAME = "getTabella";
 	public final static String GET_CONTROLLO_METHOD_NAME = "getControllo";
 	public final static String SET_CONTROLLO_METHOD_NAME = "setControllo";
+	public final static String GET_INTERVENTO_METHOD_NAME = "getIntervento";
 	
 	public final static String EXTRAKEY_FOTO_NUMBER = "fotoNumber";
 	public final static String EXTRAKEY_RFID = "rfid";

@@ -1349,8 +1349,8 @@ public class MainActivity extends BaseActivity {
 			currentLat = (float) location.getLatitude();
 			currentLon = (float) location.getLongitude();
 			if(currentStruttura != null){
-				currentStruttura.gpsx = currentLon;
-				currentStruttura.gpsy = currentLat;
+				currentStruttura.gpsx = currentLon+"";
+				currentStruttura.gpsy = currentLat+"";
 			}
 
 			TextView tgpsx = (TextView) findViewById(R.id.display_gioco_gpsx);

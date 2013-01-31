@@ -553,8 +553,8 @@ public class OCParchiDB {
 						
 					} else if(tableName.equals(StruttureEnum.AREE.tipo)) {
 						s = new Area();
-						((Area) s).spessore = c.getFloat(c.getColumnIndex("spessore"));
-						((Area) s).superficie = c.getFloat(c.getColumnIndex("superficie"));
+						((Area) s).spessore = c.getString(c.getColumnIndex("spessore"));
+						((Area) s).superficie = c.getString(c.getColumnIndex("superficie"));
 						((Area) s).tipoPavimentazione = c.getInt(c.getColumnIndex("tipoPavimentazione"));
 						((Area) s).idArea = c.getInt(c.getColumnIndex("idArea"));	
 						((Area) s).rfidArea = c.getInt(c.getColumnIndex("rfidArea"));	
@@ -564,10 +564,10 @@ public class OCParchiDB {
 					}
 					
 					s.descrizioneArea = c.getString(c.getColumnIndex("descrizioneArea"));
-					s.gpsx = Float.parseFloat(c.getString(c
-							.getColumnIndex("gpsx")));
-					s.gpsy = Float.parseFloat(c.getString(c
-							.getColumnIndex("gpsy")));
+					s.gpsx = c.getString(c
+							.getColumnIndex("gpsx"));
+					s.gpsy = c.getString(c
+							.getColumnIndex("gpsy"));
 					s.note = c.getString(c.getColumnIndex("note"));
 					s.idGioco = c.getInt(c.getColumnIndex("idGioco"));
 					

@@ -111,10 +111,10 @@ public class Struttura {
 						e.getKey());
 			}
 			if (e.getKey().equals("gpsx") && e.getValue() != null) {
-				gpsx = bindFloatToProperty(e.getValue(), e.getKey());
+				gpsx = bindStringToProperty(e.getValue(), e.getKey());
 			}
 			if (e.getKey().equals("gpsy") && e.getValue() != null) {
-				gpsy = bindFloatToProperty(e.getValue(), e.getKey());
+				gpsy = bindStringToProperty(e.getValue(), e.getKey());
 			}
 
 			if (e.getKey().equals("note")) {
@@ -242,8 +242,8 @@ public class Struttura {
 	public int idGioco = 0;
 	public int numeroFotografie = 0;
 
-	public float gpsx = 0.0f;
-	public float gpsy = 0.0f;
+	public String gpsx = "0.0";
+	public String gpsy = "0.0";
 
 	public String numeroSerie = "0";
 	public String descrizioneMarca = "";

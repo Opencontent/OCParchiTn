@@ -174,17 +174,11 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 					case R.id.display_gioco_nota:
 						a.note = value;
 						break;
-					case R.id.display_gioco_gpsx:
-						a.gpsx = Float.parseFloat(value);
-						break;
-					case R.id.display_gioco_gpsy:
-						a.gpsy = Float.parseFloat(value);
-						break;
 					case R.id.display_area_spessore:
-						a.spessore = Float.parseFloat(value);
+						a.spessore = value;
 						break;
 					case R.id.display_area_superficie:
-						a.superficie = Float.parseFloat(value);
+						a.superficie = value;
 						break;
 					}
 					saveLocal(a);
@@ -204,12 +198,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 		alert.show();
 	}
 	public void placeMe(View v){
-		Area a = MainActivity.getCurrentArea();
-		a.gpsx = MainActivity.getCurrentLon();
-		a.gpsy = MainActivity.getCurrentLat();
-		a.hasDirtyData=true;
-		a.sincronizzato = false;
-		saveLocal(a);
+		Log.d(TAG,"Nessun piazzamento necessario per l'area");
 	}
 	public void showError(HashMap<String,String> map){
 //		TextView errorView = (TextView) getActivity().findViewById(R.id.display_gioco_warning);
@@ -276,6 +265,10 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 		v.setText(area.gpsx + "");
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsy);
 		v.setText(area.gpsy + "");
+		v = (TextView) getActivity().findViewById(R.id.display_area_spessore);
+		v.setText(area.spessore + "");
+		v = (TextView) getActivity().findViewById(R.id.display_area_superficie);
+		v.setText(area.superficie + "");
 		v = (TextView) getActivity().findViewById(R.id.display_area_descrizione);
 		v.setText(area.descrizioneArea + "");
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_posizione_rfid);

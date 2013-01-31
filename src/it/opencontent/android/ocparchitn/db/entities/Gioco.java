@@ -20,8 +20,8 @@ public class Gioco extends Struttura {
 	public Gioco(SOAPGioco remote,Context context){
 		super();
 		tipo="gioco";
-		gpsx = Float.parseFloat(remote.gpsx);
-		gpsy = Float.parseFloat(remote.gpsy);
+		gpsx = remote.gpsx;
+		gpsy = remote.gpsy;
 		descrizioneMarca = remote.descrizioneMarca;
 		descrizioneArea = remote.descrizioneArea;
 		descrizioneGioco = remote.descrizioneGioco;
