@@ -173,15 +173,12 @@ public class MainActivity extends BaseActivity {
 
 		for(AvailableFragment f : AvailableFragment.values()){
 			boolean displayMe = false;
-			if(AuthCheck.siamoComune()){
-				if( AuthCheck.getAutComune() >= f.minimumComuneAutLevel){
+
+			if( (AuthCheck.siamoComune() && f.accessoPermessoAlComune)
+				|| (AuthCheck.siamoCooperativa() && f.accessoPermessoAllaCooperativa)){
 				displayMe = true;
-				}
-			} else if(AuthCheck.siamoCooperativa()){
-				if( AuthCheck.getAutCooperativa() >= f.minimumCooperativaAutLevel){
-					displayMe = true;
-				}
 			}
+ 
 			if(displayMe){
 			Class<ICustomFragment> specific = f.specificClass;
 			

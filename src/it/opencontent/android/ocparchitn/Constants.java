@@ -9,6 +9,11 @@ public class Constants {
 	public final static int PERMESSO_VISUALIZZA = 15;
 	public final static int PERMESSO_MODIFICA = 32;
 	public final static int PERMESSO_ADMIN = 1000;
+	public final static int UTENTE_ADMIN = 0;
+	public final static int UTENTE_COOPERATIVA = 1;
+	public final static int UTENTE_COMUNE = 2;
+	
+	
 	
 	public final static String PREFISSO_NDEF = "parchi://struttura";
 	
