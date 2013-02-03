@@ -65,7 +65,7 @@
             <LinearLayout
                 android:id="@+id/wrapper_dati_gioco"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
                 android:layout_weight="6"
                 android:orientation="vertical"
                 android:weightSum="12" >
@@ -73,7 +73,7 @@
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="2"
+                    android:layout_weight="1"
                     android:weightSum="6" >
 
                     <TextView
@@ -82,7 +82,7 @@
                         android:layout_weight="1"
                         android:text="@string/display_gioco_rfid"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="28sp" />
+                        android:textSize="24sp" />
 
                     <TextView
                         android:id="@+id/display_gioco_rfid"
@@ -90,7 +90,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="28sp" />
+                        android:textSize="24sp" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -98,7 +98,7 @@
                         android:layout_weight="1"
                         android:text="@string/display_gioco_id"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="28sp" />
+                        android:textSize="24sp" />
 
                     <TextView
                         android:id="@+id/display_gioco_id"
@@ -106,7 +106,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="28sp" />
+                        android:textSize="24sp" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -114,7 +114,7 @@
                         android:layout_weight="1"
                         android:text="@string/display_area_rfid"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="28sp" />
+                        android:textSize="24sp" />
 
                     <TextView
                         android:id="@+id/display_area_rfid"
@@ -122,7 +122,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="28sp" />
+                        android:textSize="24sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -203,12 +203,12 @@
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="2"
-                    android:weightSum="5" >
+                    android:layout_weight="1"
+                    android:weightSum="8" >
 
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="fill_parent"
                         android:layout_weight="1"
                         android:text="@string/display_gioco_gpsx"
                         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -217,15 +217,15 @@
                     <TextView
                         android:id="@+id/display_gioco_gpsx"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="2"
                         android:clickable="true"
                         android:onClick="editMe"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
 
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="fill_parent"
                         android:layout_weight="1"
                         android:text="@string/display_gioco_gpsy"
                         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -234,8 +234,8 @@
                     <TextView
                         android:id="@+id/display_gioco_gpsy"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="2"
                         android:clickable="true"
                         android:onClick="editMe"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -243,8 +243,8 @@
                     <TextView
                         android:id="@+id/display_gioco_gps_confidence"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="2"
                         android:clickable="false"
                         android:text="Cofidence: nd"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -253,11 +253,13 @@
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="2" >
+                    android:layout_weight="3"
+                    android:weightSum="4" >
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
                         android:text="@string/display_gioco_posizione_rfid"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/editable" />
@@ -265,22 +267,26 @@
                     <TextView
                         android:id="@+id/display_gioco_posizione_rfid"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="3"
                         android:clickable="true"
                         android:minHeight="150dp"
                         android:minWidth="150dp"
                         android:onClick="editMe"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
+
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="2" >
+                    android:layout_weight="3"
+                    android:weightSum="4" >
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
                         android:text="@string/display_gioco_nota"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/editable" />
@@ -288,12 +294,14 @@
                     <TextView
                         android:id="@+id/display_gioco_nota"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="3"
                         android:clickable="true"
                         android:minHeight="150dp"
                         android:minWidth="150dp"
                         android:onClick="editMe"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
+
                 </LinearLayout>
             </LinearLayout>
 

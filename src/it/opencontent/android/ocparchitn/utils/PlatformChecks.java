@@ -27,8 +27,7 @@ public class PlatformChecks {
 		siamoOnline = cm.getActiveNetworkInfo() != null
 				&& cm.getActiveNetworkInfo().isConnectedOrConnecting();
 
-//		return siamoOnline;
-		return false;
+		return siamoOnline;
 	}
 
 }
