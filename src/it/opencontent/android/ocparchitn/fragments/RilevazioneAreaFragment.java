@@ -261,10 +261,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 			}			
 		}		
 		
-		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsx);
-		v.setText(area.gpsx + "");
-		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsy);
-		v.setText(area.gpsy + "");
+
 		v = (TextView) getActivity().findViewById(R.id.display_area_spessore);
 		v.setText(area.spessore + "");
 		v = (TextView) getActivity().findViewById(R.id.display_area_superficie);

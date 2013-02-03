@@ -10,14 +10,10 @@ public class AuthCheck {
 	private static SOAPAutGiochi auth;
 	private static boolean tokenValid = false;
 	private static Element[] headerOut = null;
-	private static int lastKnownAutComuneLevel = 0;
-	private static int lastKnownAutCooperativaLevel = 0;
 	
 	
 	public static void setAutGiochi(SOAPAutGiochi a){
 		auth = a;
-		lastKnownAutComuneLevel = auth.autComune;
-		lastKnownAutCooperativaLevel = auth.autCooperativa;
 		tokenValid = true;
 	}
 	
@@ -35,6 +31,30 @@ public class AuthCheck {
 	
 	public static boolean getTokenValid(){
 		return tokenValid;
+	}
+	
+	public static int getTipoUtente(){
+		if(siamoComune()){
+			return Constants.UTENTE_COMUNE;
+		} else if(siamoCooperativa()){
+			return Constants.UTENTE_COOPERATIVA;
+		} else {
+			return 0;
+		}
+	}
+	
+	public static void setTipoUtente(int tipoUtente){
+		if(auth==null){
+			auth = new SOAPAutGiochi();
+		}
+		switch(tipoUtente){
+		case Constants.UTENTE_COOPERATIVA:
+			auth.userCooperativa = true;
+			break;
+		case Constants.UTENTE_COMUNE:
+			auth.userComune = true;
+			break;
+		}
 	}
 	
 	public static boolean siamoComune(){

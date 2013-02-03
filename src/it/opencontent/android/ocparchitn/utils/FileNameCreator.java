@@ -2,14 +2,22 @@ package it.opencontent.android.ocparchitn.utils;
 
 import it.opencontent.android.ocparchitn.Constants;
 
+import java.io.File;
+
+import android.os.Environment;
+
 public class FileNameCreator {
-	public static String getSnapshotFileName(int rfid, int whichOne) {
-		return rfid + "_" + whichOne + ".jpg";
-	}
 
-	public static String getSnapshotFullPath(int rfid, int whichOne) {
-		return Constants.IMAGE_SUBDIRECTORY + "_" + rfid + "_" + whichOne
-				+ ".jpg";
-	}
 
+	public static File getSnapshotTempPath(){
+		try{
+		File publicDir = Environment.getExternalStoragePublicDirectory(
+		        Environment.DIRECTORY_PICTURES
+		    ); 
+		return publicDir;
+		} catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

@@ -59,9 +59,16 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 		elencoControlli.add(controllo);
 	}
 	
-	public static void aggiungiSnapshotAControlloCorrente(String base64){
+	public static void aggiungiSnapshotAControlloCorrente(String base64, int indice){
 		if(elencoControlli.size()>0){
-			elencoControlli.get(0).foto = base64;
+			switch(indice){
+			case 0:
+				elencoControlli.get(0).foto0 = base64;
+				break;
+			case 1:
+				elencoControlli.get(0).foto0 = base64;
+				break;
+			}
 			elencoControlli.get(0).tipoControllo = 1;
 			elencoControlli.get(0).tipoEsito = 1;
 			elencoControlli.get(0).tipoSegnalazione = 1;
@@ -146,7 +153,6 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 	@Override
 	public void onResume(){
 		super.onResume();
-		disableRadioButtons();
 	}
 
 	@Override
@@ -335,24 +341,7 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 		}
 	}	
 
-	/**
-	 * 
-	 */
-	private void disableRadioButtons() {
-		RadioButton rb;
-		rb = (RadioButton) getActivity().findViewById(R.id.radio_intervento);
-		if(rb!=null){
-			rb.setEnabled(false);
-		}
-		rb = (RadioButton) getActivity().findViewById(R.id.radio_manutenzione);
-		if(rb!=null){
-			rb.setEnabled(false);
-		}
-		rb = (RadioButton) getActivity().findViewById(R.id.radio_verifica);
-		if(rb!=null){
-			rb.setEnabled(false);
-		}
-	}	
+
 	@Override
 	public void clickedMe(View v) {
 		switch(v.getId()){
@@ -366,6 +355,8 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 			methodName = Constants.GET_AREA_METHOD_NAME;
 			soapMethodName = Constants.SOAP_GET_AREA_REQUEST_CODE_BY_RFID;
 			break;
+			/*
+			 * TODO: convertire questi radio usando la scrollview con i figli ottenuti dal getControllo
 		case R.id.radio_controllo:
 			tipoControllo = Constants.CODICE_STRUTTURA_CONTROLLO_VISIVO;
 			break;
@@ -378,6 +369,7 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 		case R.id.radio_manutenzione:
 			tipoControllo = Constants.CODICE_STRUTTURA_MANUTENZIONE;
 			break;
+			*/
 			
 		}
 	}	

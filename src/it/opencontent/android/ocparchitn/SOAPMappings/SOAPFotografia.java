@@ -1,9 +1,14 @@
 package it.opencontent.android.ocparchitn.SOAPMappings;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Hashtable;
 
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
+
+import android.text.format.DateFormat;
 
 public class SOAPFotografia implements KvmSerializable {
 
@@ -12,6 +17,8 @@ public class SOAPFotografia implements KvmSerializable {
 	public String immagine;
 	public String nomeImmagine;
 	public String descrizioneImmagine;
+	public String	  dtFoto;
+	public String oraFoto;
 	
 	
 	public SOAPFotografia(){
@@ -19,6 +26,8 @@ public class SOAPFotografia implements KvmSerializable {
 		immagine = "";
 		nomeImmagine = "foto_1";
 		descrizioneImmagine = "";
+		dtFoto = "";
+		oraFoto = "";
 	}
 
 	@Override
@@ -33,15 +42,17 @@ public class SOAPFotografia implements KvmSerializable {
 			return nomeImmagine;
 		case 3:
 			return descrizioneImmagine;
-		
+		case 4:
+			return dtFoto;
+		case 5: 
+			return oraFoto;
 		}
 		return null;
 	}
 
 	@Override
 	public int getPropertyCount() {
-		// TODO Auto-generated method stub
-		return 4;
+		return 6;
 	}
 
 	@Override
@@ -61,7 +72,12 @@ public class SOAPFotografia implements KvmSerializable {
 		case 3:
 			info.name ="descrizioneImmagine";
 			break;
-
+		case 4:
+			info.name = "dtFoto";
+			break;
+		case 5:
+			info.name = "oraFoto";
+			break;
 		}
 	}
 
@@ -73,14 +89,24 @@ public class SOAPFotografia implements KvmSerializable {
 		switch(arg0){
 		case 0:
 			estensioneImmagine = arg1.toString();
+			break;
 		case 1:
 			immagine = arg1.toString();
+			break;
 		case 2:
 			nomeImmagine = arg1.toString();
+			break;
 		case 3:
 			if(arg1!=null){
 			descrizioneImmagine = arg1.toString();
 			}
+			break;
+		case 4:
+			dtFoto = arg1.toString();
+			break;
+		case 5:
+			oraFoto = arg1.toString();
+			break;
 		}		
 	}
 

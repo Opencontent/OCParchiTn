@@ -19,20 +19,40 @@ public class Area extends Struttura {
 
 	public Area() {
 		this.tipo = "area";
+		spessore= "0";
+		superficie = "0";
+		tipoPavimentazione = 1;
+		posizioneRfid = "";
 	}
 	public Area(SOAPArea remote,Context context){
 		super();
 		tipo="area";
 		descrizioneArea = remote.descrizione;
-		idArea = Integer.parseInt(remote.idArea);
-		idParco = Integer.parseInt(remote.idParco);
+		try{
+			idArea = Integer.parseInt(remote.idArea);
+		} catch(NumberFormatException e){
+			idArea = 0;
+		}
+		try{
+			idParco = Integer.parseInt(remote.idParco);
+		} catch(NumberFormatException e){
+			idParco = 0;
+		}
 		note = remote.note;
 		numeroFotografie = remote.numeroFotografie;
-		
-		rfidArea = Integer.parseInt(remote.rfid); 
+		try{
+			rfidArea = Integer.parseInt(remote.rfid);
+		} catch(NumberFormatException e){
+			rfidArea = 0;
+		}
+
 		spessore = remote.spessore;
 		superficie = remote.superficie;
-		tipoPavimentazione = Integer.parseInt(remote.tipoPavimentazione);
+		try{
+			tipoPavimentazione = Integer.parseInt(remote.tipoPavimentazione);
+		} catch(NumberFormatException e){
+			tipoPavimentazione = 0;
+		}
 		posizioneRfid = remote.posizioneRfid;
 	}
 	public Area(Set<Entry<String, Object>> entrySet,int rfid,Context context) {

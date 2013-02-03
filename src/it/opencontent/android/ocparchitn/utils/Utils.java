@@ -1,9 +1,16 @@
 package it.opencontent.android.ocparchitn.utils;
 
+import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkAutException;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkGiochiException;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkSrvException;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import org.ksoap2.serialization.KvmSerializable;
 import org.kxml2.kdom.Element;
@@ -18,6 +25,19 @@ public class Utils {
 	
 	private static final String TAG = Utils.class.getSimpleName();
 	private static KvmSerializable exc;
+	
+	public static File createImageFile(String tipo, int id, int numeroFoto) {
+		try{
+
+	    String imageFileName = tipo+ "_"+ id +"_"+ numeroFoto;
+	    File tmpPath = FileNameCreator.getSnapshotTempPath();
+	    File image = new File(tmpPath, imageFileName+ "."+Constants.ESTENSIONE_FOTO);
+	    return image;
+		}catch (Exception e){
+			e.printStackTrace();
+			return null;			
+		}
+	}	
 	
 	public static int calculateInSampleSize(BitmapFactory.Options options,
 			int reqWidth, int reqHeight) {

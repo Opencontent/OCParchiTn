@@ -341,7 +341,7 @@ public class OCParchiDB {
 		return mDatabaseOpenHelper.getWritableDatabase().insert(
 				StruttureEnum.GIOCHI.tipo, null, cv);
 	}
-
+	/*
 	public void addFotoToGioco(int rfid, int whichOne) {
 		ContentValues cv = new ContentValues();
 		cv.put("foto" + whichOne,
@@ -353,7 +353,7 @@ public class OCParchiDB {
 		String[] whereArgs = new String[] { rfid + "" };
 		mDatabaseOpenHelper.getWritableDatabase().update(
 				StruttureEnum.GIOCHI.tipo, cv, whereClause, whereArgs);
-	}
+	}*/
 
 	public long salvaStrutturaLocally(Struttura struttura) {
 		ContentValues cv = new ContentValues();
@@ -415,7 +415,8 @@ public class OCParchiDB {
 		cv.put("tipoControllo",c.tipoControllo);
 		cv.put("tipoEsito",c.tipoEsito);
 		cv.put("tipoSegnalazione",c.tipoSegnalazione);
-		cv.put("foto",c.foto);
+		cv.put("foto0",c.foto0);
+		cv.put("foto1",c.foto1);
 		long id = -1;
 		try {
 			id = mDatabaseOpenHelper.getWritableDatabase().insertWithOnConflict(
@@ -598,7 +599,8 @@ public class OCParchiDB {
 				Controllo cont = new Controllo();
 				cont.controllo = c.getInt(c.getColumnIndex("controllo"));
 				cont.dtScadenzaControllo = c.getString(c.getColumnIndex("dtScadenzaControllo")); 
-				cont.foto = c.getString(c.getColumnIndex("foto"));
+				cont.foto0 = c.getString(c.getColumnIndex("foto0"));
+				cont.foto1 = c.getString(c.getColumnIndex("foto1"));
 				cont.idRiferimento = c.getString(c.getColumnIndex("idRiferimento"));
 				cont.noteControllo = c.getString(c.getColumnIndex("noteControllo"));
 				cont.rfid = c.getInt(c.getColumnIndex("rfid"));
@@ -700,7 +702,7 @@ public class OCParchiDB {
 			sqlCreateCode += ",UNIQUE (numeroTabella,codice) ) ";
 			Log.d(TAG, sqlCreateCode);
 			mDatabase.execSQL(sqlCreateCode);
-
+			/*
 			//Creazione tabella dei controlli
 			sqlCreateCode = "CREATE TABLE "+Controllo.class.getSimpleName()+ " ( ";
 			fields = Controllo.class.getFields();
@@ -727,6 +729,7 @@ public class OCParchiDB {
 			sqlCreateCode += ",UNIQUE (idRiferimento) ) ";
 			Log.d(TAG, sqlCreateCode);
 			mDatabase.execSQL(sqlCreateCode);
+			*/
 		}
 
 		@Override

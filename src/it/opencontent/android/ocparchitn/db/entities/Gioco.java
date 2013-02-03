@@ -25,9 +25,23 @@ public class Gioco extends Struttura {
 		descrizioneMarca = remote.descrizioneMarca;
 		descrizioneArea = remote.descrizioneArea;
 		descrizioneGioco = remote.descrizioneGioco;
-		rfid = Integer.parseInt(remote.rfid);
-		rfidArea = Integer.parseInt(remote.rfidArea);
-		idGioco = Integer.parseInt(remote.idGioco);
+		try{
+			rfid = Integer.parseInt(remote.rfid);
+		} catch(NumberFormatException e){
+			rfid=0;
+		}
+		try{
+			rfidArea = Integer.parseInt(remote.rfidArea);
+		} catch(NumberFormatException e){
+			rfidArea=0;
+		}
+		try{
+			idGioco = Integer.parseInt(remote.idGioco);
+		} catch(NumberFormatException e){
+			idGioco=0;
+		}
+		
+		
 		note = remote.note;
 		numeroFotografie = remote.numeroFotografie;
 		numeroSerie = remote.numeroSerie;

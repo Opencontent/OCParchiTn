@@ -239,7 +239,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		fu.tipoFoto = tipoFoto;
 		fu.idRiferimento = idRiferimento;
 		fu.sovrascrittura = true;
-		fu.estensioneImmagine = "jpg";
+		fu.estensioneImmagine = Constants.ESTENSIONE_FOTO;
 		
 		if (g.foto0 != null && !g.foto0.equals("")) {
 			fu.immagine = g.foto0;

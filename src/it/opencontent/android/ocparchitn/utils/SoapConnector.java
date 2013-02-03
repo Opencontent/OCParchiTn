@@ -121,6 +121,9 @@ public class SoapConnector {
 			map.put("headerIn", envelope.headerIn);
 			
 		} catch(Exception e){
+			map.put("string", "Errore remoto generico");
+			map.put("dump", httpTransport.responseDump);
+			map.put("success", false);
 			
 			 if(e.getClass().equals(SoapFault.class)){
 			  Node detail = (Node) ((SoapFault) e).detail;
@@ -136,8 +139,6 @@ public class SoapConnector {
 			//result=(SoapObject) envelope.bodyIn;
 			Log.e(TAG, "SOAP ERROR:");
 			e.printStackTrace();
-			map.put("dump", httpTransport.responseDump);
-			map.put("success", false);
 		} finally {
 			Log.d(TAG,httpTransport.requestDump);
 			Log.d(TAG,httpTransport.responseDump);			

@@ -15,7 +15,33 @@ import android.util.Log;
 public class Struttura {
 
 	private static final String TAG = Struttura.class.getSimpleName();
+	public static String tipo;
 
+	public boolean sincronizzato = false;
+	public boolean hasDirtyData = false;
+	public int ultimaSincronizzazione = 0;
+
+	public String dirtyElements = "0";
+	public int rfid = 0;
+	public int rfidArea = 0;
+	public int idGioco = 0;
+	public int numeroFotografie = 0;
+
+	public String gpsx = "0.0";
+	public String gpsy = "0.0";
+
+	public String numeroSerie = "0";
+	public String descrizioneMarca = "";
+	public String descrizioneArea = "";
+	public String descrizioneGioco = "";
+
+	public String note = "";
+	public String foto0 = "";
+	public String foto1 = "";
+	public String foto2 = "";
+	public String foto3 = "";
+	public String foto4 = "";
+	
 	public Struttura() {
 
 	}
@@ -28,7 +54,6 @@ public class Struttura {
 			Entry<String, Object> e = i.next();
 			Log.d(TAG, "Chiave "+e.getKey());
 			String rawFotoName = "";
-			//if (e.getValue() != null && e.getValue().getClass().equals(SOAPFotografia.class)) {
 			if(e.getValue() instanceof SOAPFotografia){
 				SOAPFotografia f = (SOAPFotografia) e.getValue();
 				raw = f.immagine;
@@ -44,12 +69,6 @@ public class Struttura {
 				} catch (Exception ex){
 					ex.printStackTrace();
 				}
-				// Log.d(TAG, raw);
-
-				// ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				// bmp.compress(CompressFormat.PNG, 0, baos);
-				// String out = Base64.encodeToString(baos.toByteArray(),
-				// Base64.DEFAULT);
 			} else {
 				Log.d(TAG,
 						e.getKey()
@@ -230,32 +249,7 @@ public class Struttura {
 		return res;
 	}
 
-	public static String tipo;
 
-	public boolean sincronizzato = false;
-	public boolean hasDirtyData = false;
-	public int ultimaSincronizzazione = 0;
-
-	public String dirtyElements = "0";
-	public int rfid = 0;
-	public int rfidArea = 0;
-	public int idGioco = 0;
-	public int numeroFotografie = 0;
-
-	public String gpsx = "0.0";
-	public String gpsy = "0.0";
-
-	public String numeroSerie = "0";
-	public String descrizioneMarca = "";
-	public String descrizioneArea = "";
-	public String descrizioneGioco = "";
-
-	public String note = "";
-	public String foto0 = "";
-	public String foto1 = "";
-	public String foto2 = "";
-	public String foto3 = "";
-	public String foto4 = "";
 
 
 

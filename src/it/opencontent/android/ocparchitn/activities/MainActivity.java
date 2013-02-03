@@ -14,13 +14,16 @@ import it.opencontent.android.ocparchitn.db.entities.Controllo;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
+import it.opencontent.android.ocparchitn.db.entities.StruttureEnum;
 import it.opencontent.android.ocparchitn.fragments.AvailableFragment;
 import it.opencontent.android.ocparchitn.fragments.ControlloFragment;
 import it.opencontent.android.ocparchitn.fragments.ICustomFragment;
 import it.opencontent.android.ocparchitn.utils.AuthCheck;
 import it.opencontent.android.ocparchitn.utils.PlatformChecks;
+import it.opencontent.android.ocparchitn.utils.Utils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,11 +47,13 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.GpsStatus;
 import android.location.GpsStatus.Listener;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
@@ -79,6 +84,7 @@ public class MainActivity extends BaseActivity {
 
 	private static Struttura currentStruttura;
 	private static int currentSnapshotID;
+	private static Uri currentSnapshotUri;
 	private static Bitmap[] snapshots = new Bitmap[Constants.MAX_SNAPSHOTS_AMOUNT];
 
 	private static boolean partitiDaID = false;
@@ -123,8 +129,14 @@ public class MainActivity extends BaseActivity {
 			serviceInfoTaken = true;
 		}
 		if(!AuthCheck.getTokenValid() && PlatformChecks.siamoOnline(this)){
+			tokenIsValid = true; //altrimenti  lo chiediamo ancora nell'onStart
 			renewAuthenticationToken();
 		} else {
+			int tipoUtente = AuthCheck.getTipoUtente();
+			if(tipoUtente==0){
+				tipoUtente = prefs.getInt(Constants.PREFERENZE_LIVELLO_LASTLOGIN, Constants.UTENTE_COOPERATIVA);
+				AuthCheck.setTipoUtente(tipoUtente);
+			}
 			setupActionBar();
 			setupTabelleAppoggio();
 		}
@@ -148,19 +160,18 @@ public class MainActivity extends BaseActivity {
 		}
 		ifa = new IntentFilter[] { ndef, };
 
-		// La techListArray per il momento la tengo vuota, così filtro per
-		// qualsiasi
-		// TODO: definire un set di techList specifiche e corrette per il
-		// progetto
-
 	}
 
 	private void setupTabelleAppoggio(){
 		//setup della tabella recordTabellaSupporto importandoli da remoto se vuota
+		if(PlatformChecks.siamoOnline(this)){
 		if(!db.tabelleSupportoPopolate() || db.tabelleSupportoScadute()){
 			getTabellaSupporto();
 		} else {
 			Log.d(TAG,"Tabelle di supporto già popolate e aggiornate");
+		}
+		} else {
+			Toast.makeText(this, "Rescupero delle tabelle di appoggio impossibile senza connessione", Toast.LENGTH_LONG).show();
 		}
 	}
 	
@@ -672,7 +683,6 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	private void renewAuthenticationToken(){
-//		Toast.makeText(this, "Rinnovo l'autenticazione",Toast.LENGTH_SHORT).show();
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
 				SynchroSoapActivity.class);
@@ -760,13 +770,15 @@ public class MainActivity extends BaseActivity {
 			}			
 			break;			
 		case Constants.CREDENTIALS_UPDATED_REQUEST_CODE:
-			renewAuthenticationToken();
+			tokenIsValid = false;
+//			renewAuthenticationToken();
 			break;
 		case Constants.SOAP_GET_TOKEN_REQUEST_CODE:
 			res = SynchroSoapActivity.getRes(Constants.GET_LOGINUSER_METHOD_NAME);
 			if(res != null && res.containsKey("success") ){
 				String faultString = res.get("string").toString();
-				Toast.makeText(getApplicationContext(), faultString, Toast.LENGTH_SHORT).show();
+				if(res.containsKey("exception")){				
+				
 				AlertDialog.Builder changeCredentials = new AlertDialog.Builder(this);
 				changeCredentials.setTitle("Credenziali errate");
 				changeCredentials.setMessage(faultString+"\nClicca su OK per modificare le credenziali");
@@ -783,9 +795,17 @@ public class MainActivity extends BaseActivity {
 				});
 				changeCredentials.show();
 				
+				}else {
+					Toast.makeText(getApplicationContext(), faultString, Toast.LENGTH_SHORT).show();
+				}
 			} else if(res != null && res.containsKey("mapped")){
+				tokenIsValid = true;
 				SOAPAutGiochi auth = (SOAPAutGiochi) res.get("mapped");
 				AuthCheck.setAutGiochi(auth);
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+				SharedPreferences.Editor editor = prefs.edit();
+				editor.putInt(Constants.PREFERENZE_LIVELLO_LASTLOGIN, AuthCheck.getTipoUtente());
+				editor.commit();
 				setupActionBar();
 				setupTabelleAppoggio();
 			}
@@ -835,6 +855,7 @@ public class MainActivity extends BaseActivity {
 					Controllo controllo = new Controllo((SOAPControllo) res.get("mapped"));
 					ControlloFragment.appendControllo(controllo);
 					displayStruttura();
+					currentStruttura = controllo;
 				}
 				//metodo per passare il controllo al controlloFragment
 			}
@@ -872,9 +893,7 @@ public class MainActivity extends BaseActivity {
 		case Constants.FOTO_REQUEST_CODE:
 			legaSnapshotAStruttura(intent);
 			break;
-		case Constants.FOTO_CONTROLLO_REQUEST_CODE:
-			legaSnapshotAControllo(intent);
-			break;
+
 		case Constants.SOAP_SERVICE_INFO_REQUEST_CODE:
 			//TODO: rimappare l'oggetto info
 			serviceInfo = SynchroSoapActivity.getRes(Constants.GET_INFO_METHOD_NAME);
@@ -892,7 +911,13 @@ public class MainActivity extends BaseActivity {
 
 	private void legaSnapshotAStruttura(Intent intent) {
 		try {
-			snapshot = (Bitmap) intent.getExtras().get("data");
+			if(intent!=null){
+				snapshot = (Bitmap) intent.getExtras().get("data");
+			} else{
+				snapshot = BitmapFactory.decodeFile(currentSnapshotUri.getPath());
+			}
+				
+			
 			
 			
 			if (currentStruttura == null) {
@@ -901,20 +926,13 @@ public class MainActivity extends BaseActivity {
 				currentStruttura.hasDirtyData = true;
 				currentRFID = 0;
 			}
-			int whichOne;
-			if(intent.getExtras().containsKey(Constants.EXTRAKEY_FOTO_NUMBER)){
-			 whichOne = intent.getExtras().getInt(
-					Constants.EXTRAKEY_FOTO_NUMBER);
-			} else {
-				whichOne = currentSnapshotID;
-				currentSnapshotID = -1;
-			}
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();  
+
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			snapshot.compress(Bitmap.CompressFormat.PNG, 80, stream);
 			byte[] image = stream.toByteArray();
 
 			ImageView mImageView = null;
-			switch (whichOne) {
+			switch (currentSnapshotID) {
 			case 0:
 				mImageView = (ImageView) findViewById(R.id.snapshot_gioco_0);
 				currentStruttura.foto0 = Base64.encodeToString(image, Base64.DEFAULT);
@@ -940,42 +958,15 @@ public class MainActivity extends BaseActivity {
 			currentStruttura.hasDirtyData = true;
 
 			if (snapshot != null && mImageView != null) {
-				snapshots[whichOne] = snapshot;
+				snapshots[currentSnapshotID] = snapshot;
 				mImageView.setImageBitmap(snapshot);
 			}
 		} catch (NullPointerException e) {
+			e.printStackTrace();
 			Log.d(TAG, "Immagine nulla");
 		}
 	}
 
-	private void legaSnapshotAControllo(Intent intent) {
-		try {
-			snapshot = (Bitmap) intent.getExtras().get("data");
-			
-			
-			int whichOne;
-			if(intent.getExtras().containsKey(Constants.EXTRAKEY_FOTO_NUMBER)){
-			 whichOne = intent.getExtras().getInt(
-					Constants.EXTRAKEY_FOTO_NUMBER);
-			} else {
-				whichOne = 1;
-			}
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();  
-			snapshot.compress(Bitmap.CompressFormat.PNG, 80, stream);
-			byte[] image = stream.toByteArray();
-
-			ImageView mImageView = null;
-			mImageView = (ImageView) findViewById(R.id.snapshot_controllo_0);
-			ControlloFragment.aggiungiSnapshotAControlloCorrente(Base64.encodeToString(image, Base64.DEFAULT));
-			
-			if (snapshot != null && mImageView != null) {
-				snapshots[whichOne] = snapshot;
-				mImageView.setImageBitmap(snapshot);
-			}
-		} catch (NullPointerException e) {
-			Log.d(TAG, "Immagine nulla");
-		}
-	}	
 	
 	private void manageSOAPGenericStrutturaResponse(
 			HashMap<String, Object> res, int tipoStruttura) {
@@ -1029,7 +1020,9 @@ public class MainActivity extends BaseActivity {
 		}
 		
 		
-		
+		/**
+		 * TODO: Togliere la scelta e scegliere in automatico 
+		 */
 		if (localStruttura != null) {
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 			alert.setTitle("Decidi quali dati tenere");
@@ -1111,11 +1104,6 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 
-	/**
-	 * Gestiamo le eccezioni remote, fra cui anche quelle di autenticazione
-	 * 
-	 * @param res
-	 */
 	private void manageRemoteException(HashMap<String, Object> res) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("Errore remoto nel recupero dei dati ");
@@ -1231,17 +1219,29 @@ public class MainActivity extends BaseActivity {
 		int whichOne = Integer.parseInt((String) button.getTag());
 		customCamera.putExtra(Constants.EXTRAKEY_FOTO_NUMBER, whichOne);
 		currentSnapshotID = whichOne;
+		String tipo = "";
+		if(currentStruttura == null){
+			//Ci serve una struttura cui attaccare l'immagine
+			return;
+		} else if(currentStruttura.getClass().equals(Controllo.class)){
+			tipo= StruttureEnum.CONTROLLO.tipo;			
+		}else if(currentStruttura.getClass().equals(Gioco.class)){
+			tipo=StruttureEnum.GIOCHI.tipo;
+		}else if(currentStruttura.getClass().equals(Area.class)){
+			tipo=StruttureEnum.AREE.tipo;
+		}
+		File f = Utils.createImageFile(tipo, currentQueriedId, whichOne);
+		if(f!=null){
+		customCamera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+		currentSnapshotUri = Uri.fromFile(f);
+		}
 		startActivityForResult(customCamera, Constants.FOTO_REQUEST_CODE);
 	}
 	
-	public void takeSnapshotControllo(View button) {
-		Intent customCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		int whichOne = Integer.parseInt((String) button.getTag());
-		customCamera.putExtra(Constants.EXTRAKEY_FOTO_NUMBER, whichOne);
-		currentSnapshotID = whichOne;
-		startActivityForResult(customCamera, Constants.FOTO_CONTROLLO_REQUEST_CODE);		
-	}
 	
+	public static void setCurrentStrutturaToNull(){
+		currentStruttura = null;
+	}
 
 	public static float getCurrentLon() {
 		return currentLon;

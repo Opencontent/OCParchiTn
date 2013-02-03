@@ -3,18 +3,16 @@ package it.opencontent.android.ocparchitn.db.entities;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPControllo;
 
 
-public class Controllo {
+public class Controllo extends Struttura {
 
 	public int controllo;
 	public String dtScadenzaControllo;
 	public String noteControllo;
 	public String idRiferimento;
-	public int rfid;
 	public int tipoControllo;
 	public int tipoEsito;
 	public int tipoSegnalazione;
 	
-	public String foto;
 	
 	public Controllo() {
 		
@@ -27,7 +25,6 @@ public class Controllo {
 		idRiferimento = sc.idRiferimento;
 		rfid = sc.rfid;
 		tipoControllo = sc.tipoControllo;
-		foto = null;
 	}
 
 	
