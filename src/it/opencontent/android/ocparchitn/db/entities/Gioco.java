@@ -11,6 +11,7 @@ import android.content.Context;
 public class Gioco extends Struttura {
 
 	public String posizioneRfid;
+	public int spostamento;
 	  
 	
 	public Gioco() {
@@ -46,15 +47,18 @@ public class Gioco extends Struttura {
 		numeroFotografie = remote.numeroFotografie;
 		numeroSerie = remote.numeroSerie;
 		posizioneRfid = remote.posizioneRfid;
+		spostamento = 0;
 	}
 	
 	public Gioco(Set<Entry<String, Object>> entrySet,int rfid,Context context) {
 		super(entrySet,rfid,context);
 		tipo = "gioco";	
+		spostamento = 0;
 	}
 	public Gioco(Set<Entry<String, Object>> entrySet,Context context) {
 		super(entrySet,context);
 		tipo = "gioco";
+		spostamento = 0;
 		
 		Iterator<Entry<String, Object>> iterator = entrySet.iterator();
 
@@ -64,6 +68,9 @@ public class Gioco extends Struttura {
 			if (e.getKey().equals("posizioneRfid")) {
 				posizioneRfid = bindStringToProperty(e.getValue(),
 						e.getKey());
+			}
+			if (e.getKey().equals("spostamento")) {
+				spostamento = bindIntToProperty(e.getValue(), e.getKey());
 			}
 			
 			

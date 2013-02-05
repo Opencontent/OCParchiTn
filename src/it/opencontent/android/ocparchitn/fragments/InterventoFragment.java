@@ -7,12 +7,12 @@ import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Area;
 import it.opencontent.android.ocparchitn.db.entities.Controllo;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
+import it.opencontent.android.ocparchitn.db.entities.Intervento;
 import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -47,30 +47,30 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 	public static int tipoControllo = Constants.CODICE_STRUTTURA_CONTROLLO_VISIVO;
 	private ArrayAdapter<RecordTabellaSupporto> adapterEsitiControllo;
 	private ArrayAdapter<RecordTabellaSupporto> adapterTipiSegnalazione;
-	private static Controllo currentControllo;
+	private static Intervento currentIntervento;
 
 	/**
 	 * Il primo controlo sullo stack sarà sempre quello attivo
 	 * cui faranno riferimento i metodi delle altre classi
 	 * Se la lista è vuota ne sarà creato uno
 	 */
-	private static List<Controllo> elencoControlli = new ArrayList<Controllo>();
+	private static List<Intervento> elencoInterventi = new ArrayList<Intervento>();
 	
-	public static void appendControllo(Controllo controllo){
-		elencoControlli.add(controllo);		
+	public static void appendControllo(Intervento intervento){
+		elencoInterventi.add(intervento);		
 	}
 	
-	public final void abilitaControllo(Controllo c){
+	public final void abilitaControllo(Intervento c){
 		TextView controlloTeaser = (TextView) getActivity().findViewById(R.id.display_controllo_selezionato_text);
-		controlloTeaser.setText(getString(R.string.controllo_mostra_controllo_attuale_prefisso)+" "+c.descrizioneControllo);
-		if(elencoControlli.contains(c)){
+		controlloTeaser.setText(getString(R.string.controllo_mostra_controllo_attuale_prefisso)+" "+c.descTipologia);
+		if(elencoInterventi.contains(c)){
 			Log.d(TAG,c.toString());
-			currentControllo = c;
+			currentIntervento = c;
 		} 
 			OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
-			Controllo cc = db.readControlloLocallyByID(c.idRiferimento);
+			Intervento cc = db.readInterventoLocallyByID(c.idIntervento+"");
 			if(cc!=null){
-				currentControllo = cc;
+				currentIntervento = cc;
 				Log.d(TAG,cc.toString());
 			}
 		
@@ -78,13 +78,13 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 	}
 	
 	public static void aggiungiSnapshotAControlloCorrente(String base64, int indice){
-		if(elencoControlli.size()>0){
+		if(elencoInterventi.size()>0){
 			switch(indice){
 			case 0:
-				elencoControlli.get(0).foto0 = base64;
+				elencoInterventi.get(0).foto0 = base64;
 				break;
 			case 1:
-				elencoControlli.get(0).foto1 = base64;
+				elencoInterventi.get(0).foto1 = base64;
 				break;
 			}
 		}
@@ -99,26 +99,23 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 		if(records != null){
 		 setupSpinnerEsitiControllo(view, records);
 		}		
-		records = db.tabelleSupportoGetAllRecords(Constants.TABELLA_SEGNALAZIONI);
-		if(records != null){
-			setupSpinnerTipiSegnalazione(view, records);
-		}		
+		db.close();
 		return view;
 	}
 	
-	public void setupScrollViewControlli(){
+	public void setupScrollViewInterventi(){
 		LinearLayout controlli = (LinearLayout) getActivity().findViewById(R.id.scroll_view_controlli);
-		Iterator<Controllo> iterator = elencoControlli.iterator();
+		Iterator<Intervento> iterator = elencoInterventi.iterator();
 		while(iterator.hasNext()){
 			Button controlloButton = new Button(getActivity());
-			Controllo c = iterator.next();
+			Intervento c = iterator.next();
 			
 
 			OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
-			RecordTabellaSupporto rts = db.tabelleSupportoGetRecord(Constants.TABELLA_RIFERIMENTO_INTERVENTO, c.tipoControllo);
-			c.descrizioneControllo = rts.descrizione;
+			RecordTabellaSupporto rts = db.tabelleSupportoGetRecord(Constants.TABELLA_RIFERIMENTO_INTERVENTO, c.tipoIntervento);
+			db.close();
 			
-			controlloButton.setText(rts.descrizione+"\nEntro il "+c.dtScadenzaControllo);
+			controlloButton.setText(rts.descrizione);
 			controlloButton.setTag(R.integer.controllo_button_tag, c);
 			controlloButton.setOnClickListener(new View.OnClickListener() {
 				
@@ -126,7 +123,7 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 				public void onClick(View v) {
 					Button b = (Button) v;
 					Object o = b.getTag(R.integer.controllo_button_tag);
-					abilitaControllo((Controllo) o);
+					abilitaControllo((Intervento) o);
 				}
 			});
 			controlli.addView(controlloButton);		
@@ -148,9 +145,9 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
 				RecordTabellaSupporto r = (RecordTabellaSupporto) spinnerEsitiControllo.getAdapter().getItem(arg2);
-				if(elencoControlli.size()>0){
-					elencoControlli.get(0).tipoEsito = r.codice;
-					saveLocal(elencoControlli.get(0));
+				if(elencoInterventi.size()>0){
+					elencoInterventi.get(0).codEsito = r.codice;
+					saveLocal(elencoInterventi.get(0));
 				}
 			}
 
@@ -161,60 +158,30 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 		});
 	}
 	
-	private void setupSpinnerTipiSegnalazione(View view, List<RecordTabellaSupporto> records) {
-		adapterTipiSegnalazione = new ArrayAdapter<RecordTabellaSupporto>(getActivity(), R.layout.default_spinner_layout,records);
-		adapterTipiSegnalazione.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		final Spinner spinnerTipiSegnalazione = (Spinner) view.findViewById(R.id.display_controllo_spinner_segnalazione);
-		spinnerTipiSegnalazione.setAdapter(adapterTipiSegnalazione);
-		
-		
-		spinnerTipiSegnalazione.setOnItemSelectedListener(new OnItemSelectedListener() {
-			
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				RecordTabellaSupporto r = (RecordTabellaSupporto) spinnerTipiSegnalazione.getAdapter().getItem(arg2);
-				if(elencoControlli.size()>0){
-					elencoControlli.get(0).tipoSegnalazione = r.codice;
-					saveLocal(elencoControlli.get(0));
-				}
-			}
-			
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				
-				
-			}
-		});
-	}
+	
 	
 	private void resetInterfaccia(){
-		if(currentControllo != null){
+		if(currentIntervento != null){
 			TextView note = (TextView) getActivity().findViewById(R.id.display_controllo_nota);
-			note.setText(currentControllo.noteControllo);
+			note.setText(currentIntervento.noteEsecuzione);
 			Spinner spinnerEsitiControllo = (Spinner) getActivity().findViewById(R.id.display_controllo_spinner_esito);
 			for(int i = 0; i < adapterEsitiControllo.getCount(); i++ ){
-				if(adapterEsitiControllo.getItem(i).codice == currentControllo.tipoEsito){
+				if(adapterEsitiControllo.getItem(i).codice == currentIntervento.codEsito){
 					spinnerEsitiControllo.setSelection(i);					
 				}
 			}
-			Spinner spinnerTipiSegnalazione = (Spinner) getActivity().findViewById(R.id.display_controllo_spinner_segnalazione);
-			for(int i = 0; i < adapterTipiSegnalazione.getCount(); i++ ){
-				if(adapterTipiSegnalazione.getItem(i).codice == currentControllo.tipoSegnalazione){
-					spinnerTipiSegnalazione.setSelection(i);					
-				}
-			}
+			
 			
 			ImageView v;
 			int width=100;
 			int height = 100;
-			if(currentControllo.foto0!=null){
+			if(currentIntervento.foto0!=null){
 				v = (ImageView) getActivity().findViewById(R.id.snapshot_controllo_0);
-				v.setImageBitmap(Utils.decodeSampledBitmapFromResource(Base64.decode(currentControllo.foto0, Base64.DEFAULT),getResources(),1,width,height));
+				v.setImageBitmap(Utils.decodeSampledBitmapFromResource(Base64.decode(currentIntervento.foto0, Base64.DEFAULT),getResources(),1,width,height));
 			}
-			if(currentControllo.foto1!=null){
+			if(currentIntervento.foto1!=null){
 				v = (ImageView) getActivity().findViewById(R.id.snapshot_controllo_1);
-				v.setImageBitmap(Utils.decodeSampledBitmapFromResource(Base64.decode(currentControllo.foto1, Base64.DEFAULT),getResources(),2,width,height));
+				v.setImageBitmap(Utils.decodeSampledBitmapFromResource(Base64.decode(currentIntervento.foto1, Base64.DEFAULT),getResources(),2,width,height));
 			}
 			
 		}
@@ -228,17 +195,17 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 	@Override
 	public void salvaModifiche(View v) {
 		Log.d(TAG,"salva modifiche alla periodica");
-		if(elencoControlli.size()>0){
-			long id = saveLocal(elencoControlli.get(0));
+		if(elencoInterventi.size()>0){
+			long id = saveLocal(elencoInterventi.get(0));
 //			if(id>0){
 //				elencoControlli.remove(0);
 //			}
 		}
 	}
 	
-	private long saveLocal(Controllo c){
+	private long saveLocal(Intervento c){
 		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
-		long id = db.salvaControlloLocally(c);
+		long id = db.salvaInterventoLocally(c);
 		if(id > 0){
 			Toast.makeText(getActivity().getApplicationContext(),"Operazione salvata localmente", Toast.LENGTH_SHORT).show();
 			MainActivity ma = (MainActivity) getActivity();
@@ -282,9 +249,9 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 				try {
 					switch(viewId){
 					case R.id.display_controllo_nota:
-						if(elencoControlli.size()>0){
-							elencoControlli.get(0).noteControllo =value;
-							saveLocal(elencoControlli.get(0));
+						if(elencoInterventi.size()>0){
+							elencoInterventi.get(0).noteEsecuzione =value;
+							saveLocal(elencoInterventi.get(0));
 							updateText(viewId,value);
 						}
 						break;
@@ -348,11 +315,12 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 		v.setText(area.note);
 		v = (TextView) getActivity().findViewById(R.id.display_area_rfid);
 		v.setText(area.rfidArea+"");
-		
+		/*
 		v = (TextView) getActivity().findViewById(R.id.display_area_spessore);
 		v.setText(area.spessore + "");
 		v = (TextView) getActivity().findViewById(R.id.display_area_superficie);
 		v.setText(area.superficie + "");
+		 */
 		v = (TextView) getActivity().findViewById(R.id.display_area_descrizione);
 		v.setText(area.descrizioneArea + "");
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_posizione_rfid);

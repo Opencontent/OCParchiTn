@@ -126,7 +126,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		if(s.getClass().equals(Gioco.class)){
 			Gioco g = (Gioco) s;
-	
+
 			SOAPGiocoUpdate gu = new SOAPGiocoUpdate();
 			gu.idGioco = "" + g.idGioco;
 			if (g.rfid > 0) {
@@ -139,7 +139,11 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				}
 				gu.posizioneRfid =  g.posizioneRfid;
 				map.put("Giocoupdate", gu);
-				getRemoteResponse(Constants.SET_GIOCO_METHOD_NAME, map, false,Constants.SET_GIOCO_METHOD_NAME);
+				if(g.spostamento>0){
+					getRemoteResponse(Constants.SET_SPOSTAMENTO_METHOD_NAME, map, false,Constants.SET_SPOSTAMENTO_METHOD_NAME);
+				} else {
+					getRemoteResponse(Constants.SET_GIOCO_METHOD_NAME, map, false,Constants.SET_GIOCO_METHOD_NAME);
+				}
 				sincronizzaTutteLeFoto(g);
 			}else {
 				Log.d(TAG,"Gioco senza rfid, non sincronizzato "+g.idGioco);
@@ -211,45 +215,58 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		HashMap<String, Object> map;
 		// cicliamo le foto eventuali
 		String tipoFoto = "";
-		String idRiferimento = "";
+		int idRiferimento = 0;
 		String suffissoImmagine = "";
 		if(g.getClass().equals(Gioco.class)){
 			tipoFoto = Constants.CODICE_STRUTTURA_GIOCO+"";
-			idRiferimento = g.idGioco +"";
+			idRiferimento = g.idGioco ;
 			suffissoImmagine = "gioco_";
+			g = db.readGiocoLocallyByID(idRiferimento);
 		}else if(g.getClass().equals(Area.class)){
 			tipoFoto = Constants.CODICE_STRUTTURA_AREA+"";			
-			idRiferimento = ((Area) g).idArea+"";
+			idRiferimento = ((Area) g).idArea;
 			suffissoImmagine = "area_";
+			g = db.readAreaLocallyByID(idRiferimento);
 		}else if(g.getClass().equals(Controllo.class)){
 			tipoFoto = ((Controllo) g).tipoControllo+"";			
-			idRiferimento = ((Controllo) g).idRiferimento+"";
+			idRiferimento = Integer.parseInt(((Controllo) g).idRiferimento);
 			suffissoImmagine = "controllo_";
+			g = db.readControlloLocallyByID(idRiferimento+"");
 		}
 		
 
 		SOAPFotoupdate fu = new SOAPFotoupdate();
 		fu.tipoFoto = tipoFoto;
-		fu.idRiferimento = idRiferimento;
+		fu.idRiferimento = idRiferimento+"";
 		fu.sovrascrittura = true;
 		fu.estensioneImmagine = Constants.ESTENSIONE_FOTO;
 		
-		
-		for(int i = 0; i < Constants.MAX_SNAPSHOTS_AMOUNT;i++){
-			fu.immagine = db.recuperaFoto(g, i);
-			if(fu.immagine!=null && fu.immagine != ""){
-				fu.nomeImmagine = suffissoImmagine + idRiferimento + "_foto_"+i;
-				map = new HashMap<String, Object>();
-				map.put("Fotoupdate", fu);
-				getRemoteResponse("setFoto", map, false,"setFoto");
+		if(g!=null){
+			for(int i = 0; i < Constants.MAX_SNAPSHOTS_AMOUNT;i++){
+				switch(i){
+				case 0:
+					fu.immagine = g.foto0;
+					break;
+				case 1:
+					fu.immagine = g.foto1;
+					break;
+				}
+				if(fu.immagine!=null && fu.immagine != ""){
+					fu.nomeImmagine = suffissoImmagine + idRiferimento + "_foto_"+i;
+					map = new HashMap<String, Object>();
+					map.put("Fotoupdate", fu);
+					getRemoteResponse("setFoto", map, false,"setFoto");
+				}
 			}
+			db.eliminaCopiaLocaleDiStrutturaSincronizzata(g);
 		}
+		
+				
 
 	}
 
 	@Override
 	public void sendRequest(Object data) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -334,11 +351,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 								properties);
 
 							allmaps.put(mapid, res);
-							if(method.equals(Constants.SET_AREA_METHOD_NAME)
-							|| method.equals(Constants.SET_GIOCO_METHOD_NAME)
-							|| method.equals(Constants.SET_CONTROLLO_METHOD_NAME)){
-								db.eliminaCopiaLocaleDiStrutturaSincronizzata(data);
-							}
+							
 						
 						if (!finish) {
 							

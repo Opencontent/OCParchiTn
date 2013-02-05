@@ -22,6 +22,7 @@ public class Constants {
 	public final static String EXTRAKEY_METHOD_NAME = "methodName";
 	public final static String EXTRAKEY_STRUCTURE_TYPE = "tipoStruttura";
 	public final static String EXTRAKEY_RECOVER_CONTROLS = "getControllo";
+	public final static String EXTRAKEY_RECOVER_INTERVENTI = "getIntervento";
 	
 	public final static String GET_GIOCO_METHOD_NAME = "getGioco";
 	public final static String SET_GIOCO_METHOD_NAME = "setGioco";
@@ -39,6 +40,7 @@ public class Constants {
 	public final static String GET_CONTROLLO_METHOD_NAME = "getControllo";
 	public final static String SET_CONTROLLO_METHOD_NAME = "setControllo";
 	public final static String GET_INTERVENTO_METHOD_NAME = "getIntervento";
+	public final static String SET_SPOSTAMENTO_METHOD_NAME = "setSpostamento";
 	
 	public final static String EXTRAKEY_FOTO_NUMBER = "fotoNumber";
 	public final static String EXTRAKEY_RFID = "rfid";
@@ -124,6 +126,7 @@ public class Constants {
 	public static final int SOAP_SINCRONIZZA_TUTTO_REQUEST_CODE = 90;
 	public static final int SOAP_GET_TABELLA_REQUEST_CODE = 91;
 	public static final int SOAP_GET_CONTROLLO_REQUEST_CODE_BY_RFID = 92;
+	public static final int SOAP_GET_INTERVENTO_REQUEST_CODE_BY_RFID = 93;
 
 	public static final int SOAP_SERVICE_INFO_REQUEST_CODE = 100;	
 	public static final int SOAP_GET_GIOCO_REQUEST_CODE_BY_ID = 101;
@@ -138,6 +141,7 @@ public class Constants {
 
 	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO = 999;
 	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO_PER_CONTROLLI = 996;
+	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO_PER_INTERVENTI = 995;
 	public static final int LEGGI_RFID_AREA_DA_LETTORE_ESTERNO_E_LEGALO_A_GIOCO = 998;
 	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO_E_LEGALO_A_STRUTTURA = 997;
 	

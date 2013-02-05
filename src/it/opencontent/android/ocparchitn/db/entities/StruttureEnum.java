@@ -3,7 +3,8 @@ package it.opencontent.android.ocparchitn.db.entities;
 public enum StruttureEnum {
 	GIOCHI("gioco", new Gioco()), 
 	AREE("area", new Area()),
-	CONTROLLO("controllo",new Controllo());
+	CONTROLLO("controllo",new Controllo()),
+	INTERVENTO("intervento",new Intervento());
 
 	public String tipo;
 	public Struttura istanza;

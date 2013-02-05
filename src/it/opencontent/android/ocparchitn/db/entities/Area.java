@@ -90,6 +90,7 @@ public class Area extends Struttura {
 				idParco = bindIntToProperty(e.getValue(), e.getKey());
 			}
 			
+			
 		}		
 	}
 }

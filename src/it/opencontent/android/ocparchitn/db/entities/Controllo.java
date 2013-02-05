@@ -19,11 +19,11 @@ public class Controllo extends Struttura {
 	public int tipoSegnalazione;
 	public String descrizioneControllo;
 	
-	
 	public Controllo() {
 		tipoControllo = 1;
 		tipoEsito = 1;
 		tipoSegnalazione = 1;
+		tipo="controllo";
 	}
 	
 	public Controllo(SOAPControllo sc){
@@ -37,11 +37,12 @@ public class Controllo extends Struttura {
 		tipoSegnalazione = 1;
 		foto0=null;
 		foto1=null;
+		tipo="controllo";
 	}
 	
 	public Controllo(Set<Entry<String, Object>> entrySet,Context context) {
 		super(entrySet,context);
-		tipo = "area";
+		tipo = "controllo";
 		Iterator<Entry<String, Object>> iterator = entrySet.iterator();
 
 		while (iterator.hasNext()) {

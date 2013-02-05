@@ -11,6 +11,8 @@ import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotoupdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGioco;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGiocoUpdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPInfo;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPIntervento;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPInterventoUpdate;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -80,11 +82,13 @@ public class SoapConnector {
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Area", SOAPArea.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotografia", SOAPFotografia.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Controllo", SOAPControllo.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "Intervento", SOAPIntervento.class);
 
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Giocoupdate", SOAPGiocoUpdate.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "AreaUpdate", SOAPAreaUpdate.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Fotoupdate", SOAPFotoupdate.class);
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "Controlloupdate", SOAPControlloUpdate.class);
+		envelope.addMapping("http://gioco.parcogiochi/xsd", "Interventoupdate", SOAPInterventoUpdate.class);
 
 		envelope.addMapping("http://gioco.parcogiochi/xsd", "AutGiochi", SOAPAutGiochi.class);
 

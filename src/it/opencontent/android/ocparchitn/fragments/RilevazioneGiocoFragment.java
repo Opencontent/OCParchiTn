@@ -147,23 +147,12 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 		saveLocal(g);
 	}
 	public void showError(HashMap<String,String> map){
-//		TextView errorView = (TextView) getActivity().findViewById(R.id.display_gioco_warning);
-//		errorView.setText("");
-//		Iterator<Entry<String,String>> i = map.entrySet().iterator();
-//		while(i.hasNext()){
-//			Entry<String,String> n = (Entry<String, String>) i.next();
-//			errorView.append("\n"+n.getValue());
-//		}
+
 	}
 
 	@Override
 	public void onActivityResult(int requestCode, int returnCode, Intent intent) {
-		switch (requestCode) {
 
-		
-		default:
-			break;
-		}
 	}
 	
 	private long saveLocal(Gioco gioco){

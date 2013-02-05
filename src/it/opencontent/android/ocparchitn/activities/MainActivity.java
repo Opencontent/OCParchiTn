@@ -6,6 +6,7 @@ import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAutGiochi;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPCodTabella;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPControllo;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPInfo;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPIntervento;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkAutException;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkGiochiException;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkSrvException;
@@ -13,14 +14,17 @@ import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Area;
 import it.opencontent.android.ocparchitn.db.entities.Controllo;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
+import it.opencontent.android.ocparchitn.db.entities.Intervento;
 import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.db.entities.StruttureEnum;
 import it.opencontent.android.ocparchitn.fragments.AvailableFragment;
 import it.opencontent.android.ocparchitn.fragments.ControlloFragment;
 import it.opencontent.android.ocparchitn.fragments.ICustomFragment;
+import it.opencontent.android.ocparchitn.fragments.InterventoFragment;
 import it.opencontent.android.ocparchitn.fragments.RilevazioneAreaFragment;
 import it.opencontent.android.ocparchitn.fragments.RilevazioneGiocoFragment;
+import it.opencontent.android.ocparchitn.fragments.SpostamentoFragment;
 import it.opencontent.android.ocparchitn.utils.AuthCheck;
 import it.opencontent.android.ocparchitn.utils.PlatformChecks;
 import it.opencontent.android.ocparchitn.utils.Utils;
@@ -114,6 +118,12 @@ public class MainActivity extends BaseActivity {
         }
     };	
 	
+    private static void resetDatiStatici(){
+    	currentStruttura = null;
+    	currentSnapshotUri = null;
+    	currentSnapshotID = currentQueriedId = 0;    	
+    	partitiDaID = partitiDaRFID = false;
+    }
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -473,13 +483,16 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 
-	/**
-	 * @param out
-	 */
+
 	public int parseNDEFForRFID(String out) {
+		String trimmedAndStripped = "";
 		String[] pieces = out.split("://");
-		String[] actualValues = pieces[1].split("/");
-		String trimmedAndStripped = actualValues[1].replaceAll("]", "").trim();
+		if(pieces.length > 1){
+			String[] actualValues = pieces[1].split("/");
+			if(actualValues.length>1){
+				trimmedAndStripped = actualValues[1].replaceAll("]", "").trim();
+			}
+		}
 		int rfid;
 		try{
 			
@@ -512,8 +525,7 @@ public class MainActivity extends BaseActivity {
 				int idRequested = 0;
 				try {
 					idRequested = Integer.parseInt(value);
-					getStructureDataByID(idRequested);// Do something
-					// with value!
+					getStructureDataByID(idRequested);
 				} catch (NumberFormatException nfe) {
 					Toast.makeText(getApplicationContext(),
 							"Numero non riconosciuto", Toast.LENGTH_SHORT)
@@ -542,15 +554,24 @@ public class MainActivity extends BaseActivity {
 		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO);
 	}
 	
-	public void recuperaControlliPerRFID(View v){
-		Log.d(TAG,"Partiamo col controllo da rfid, lancio l'activity");
-		Intent leggiRFID = new Intent();
-		leggiRFID.setClass(this, NDEFReadActivity.class);
-		leggiRFID.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_AREA_ID_METHOD_NAME);			
-		partitiDaID = false;
-		partitiDaRFID = true;
-		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO_PER_CONTROLLI);
-	}
+//	public void recuperaControlliPerRFID(View v){
+//		Log.d(TAG,"Partiamo col controllo da rfid, lancio l'activity");
+//		Intent leggiRFID = new Intent();
+//		leggiRFID.setClass(this, NDEFReadActivity.class);
+//		leggiRFID.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_AREA_ID_METHOD_NAME);			
+//		partitiDaID = false;
+//		partitiDaRFID = true;
+//		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO_PER_CONTROLLI);
+//	}
+//	public void recuperaInterventiPerRFID(View v){
+//		Log.d(TAG,"Partiamo col controllo da rfid, lancio l'activity");
+//		Intent leggiRFID = new Intent();
+//		leggiRFID.setClass(this, NDEFReadActivity.class);
+//		leggiRFID.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_AREA_ID_METHOD_NAME);			
+//		partitiDaID = false;
+//		partitiDaRFID = true;
+//		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO_PER_INTERVENTI);
+//	}
 	
 	public void associaRFIDStruttura(View v){
 		Log.d(TAG,"Leghiamo l'rfid dell'area, lancio l'activity");
@@ -602,13 +623,14 @@ public class MainActivity extends BaseActivity {
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
 		
 		//Controlliamo di che tipo di struttura stiamo parlando:
-		//Gioco o Area
+		//Gioco(Spostamento) o Area
 		String currentTag = (String) actionBar.getSelectedTab().getTag();
 		if(currentTag.equals(AvailableFragment.RILEVAZIONE_AREA.label)){
 			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_AREA_ID_METHOD_NAME);			
 			serviceIntent.putExtra(Constants.EXTRAKEY_STRUCTURE_TYPE, Constants.CODICE_STRUTTURA_AREA);			
 			startActivityForResult(serviceIntent, Constants.SOAP_GET_AREA_REQUEST_CODE_BY_ID);
-		} else if(currentTag.equals(AvailableFragment.RILEVAZIONE_GIOCO.label)){
+		} else if(currentTag.equals(AvailableFragment.RILEVAZIONE_GIOCO.label)
+				||currentTag.equals(AvailableFragment.SPOSTAMENTO.label)){
 			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_GIOCO_ID_METHOD_NAME);			
 			serviceIntent.putExtra(Constants.EXTRAKEY_STRUCTURE_TYPE, Constants.CODICE_STRUTTURA_GIOCO);			
 			startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_ID);
@@ -634,6 +656,17 @@ public class MainActivity extends BaseActivity {
 		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_CONTROLLO_METHOD_NAME);
 		startActivityForResult(serviceIntent, Constants.SOAP_GET_CONTROLLO_REQUEST_CODE_BY_RFID);		
 	}
+	private void getInterventiPerStruttura(int tipoStruttura){
+		Intent serviceIntent = new Intent();
+		serviceIntent.setClass(getApplicationContext(),
+				SynchroSoapActivity.class);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("args0", tipoStruttura);
+		map.put("args1", currentRFID);
+		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
+		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_INTERVENTO_METHOD_NAME);
+		startActivityForResult(serviceIntent, Constants.SOAP_GET_INTERVENTO_REQUEST_CODE_BY_RFID);		
+	}
 	
 	
 	private void getStructureDataByRFID() {
@@ -649,15 +682,24 @@ public class MainActivity extends BaseActivity {
 			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_AREA_METHOD_NAME);			
 			serviceIntent.putExtra(Constants.EXTRAKEY_STRUCTURE_TYPE, Constants.CODICE_STRUTTURA_AREA);			
 			startActivityForResult(serviceIntent, Constants.SOAP_GET_AREA_REQUEST_CODE_BY_RFID);
-		} else if(currentTag.equals(AvailableFragment.RILEVAZIONE_GIOCO.label)){
+		} 
+		else if(currentTag.equals(AvailableFragment.RILEVAZIONE_GIOCO.label)
+				||currentTag.equals(AvailableFragment.SPOSTAMENTO.label)){
 			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_GIOCO_METHOD_NAME);			
 			serviceIntent.putExtra(Constants.EXTRAKEY_STRUCTURE_TYPE, Constants.CODICE_STRUTTURA_GIOCO);			
 			startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_RFID);
-		} else if(currentTag.equals(AvailableFragment.CONTROLLO.label)){
+		} 
+		else if(currentTag.equals(AvailableFragment.CONTROLLO.label)){
 			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, ControlloFragment.methodName );			
 			serviceIntent.putExtra(Constants.EXTRAKEY_STRUCTURE_TYPE, ControlloFragment.tipoStruttura);
 			serviceIntent.putExtra(Constants.EXTRAKEY_RECOVER_CONTROLS, true);
 			startActivityForResult(serviceIntent, ControlloFragment.soapMethodName);
+		} 
+		else if(currentTag.equals(AvailableFragment.INTERVENTO.label)){
+			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, InterventoFragment.methodName );			
+			serviceIntent.putExtra(Constants.EXTRAKEY_STRUCTURE_TYPE, InterventoFragment.tipoStruttura);
+			serviceIntent.putExtra(Constants.EXTRAKEY_RECOVER_INTERVENTI, true);
+			startActivityForResult(serviceIntent, InterventoFragment.soapMethodName);
 		}		
 	}
 
@@ -730,11 +772,23 @@ public class MainActivity extends BaseActivity {
 			((ControlloFragment) mf).setupScrollViewControlli();				
 		}
 	}
+	private void setupScrollViewInterventi(){
+		String currentTag = "";
+		if(actionBar != null && actionBar.getSelectedTab() != null){
+			currentTag = (String) actionBar.getSelectedTab().getTag();
+		}
+		ICustomFragment mf = (ICustomFragment) getFragmentManager()
+				.findFragmentByTag(currentTag);
+		if(mf.getClass().equals(InterventoFragment.class)){
+			((InterventoFragment) mf).setupScrollViewInterventi();				
+		}
+	}
 	
 
 	@Override
 	public void onActivityResult(int requestCode, int returnCode, Intent intent) {
 		HashMap<String, Object> res;
+		String currentTag;
 		int tipoStruttura = -1;
 		switch (requestCode) {
 		case Constants.LEGGI_RFID_DA_LETTORE_ESTERNO:
@@ -827,6 +881,12 @@ public class MainActivity extends BaseActivity {
 			res = SynchroSoapActivity.getRes(Constants.GET_GIOCO_ID_METHOD_NAME);
 			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
 			manageSOAPGenericStrutturaResponse(res, tipoStruttura);
+			currentTag = (String) actionBar.getSelectedTab().getTag();
+			if(currentTag.equals(AvailableFragment.SPOSTAMENTO.label)){
+				if(currentStruttura!= null){
+					((Gioco) currentStruttura).spostamento = 1;
+				}
+			}
 			break;
 		case Constants.SOAP_GET_AREA_REQUEST_CODE_BY_ID:
 			res = SynchroSoapActivity.getRes(Constants.GET_AREA_ID_METHOD_NAME);
@@ -837,8 +897,16 @@ public class MainActivity extends BaseActivity {
 			res = SynchroSoapActivity.getRes(Constants.GET_GIOCO_METHOD_NAME);
 			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
 			manageSOAPGenericStrutturaResponse(res, tipoStruttura);
+			currentTag = (String) actionBar.getSelectedTab().getTag();
+			if(currentTag.equals(AvailableFragment.SPOSTAMENTO.label)){
+				if(currentStruttura!= null){
+					((Gioco) currentStruttura).spostamento = 1;
+				}
+			}
 			if (intent.getExtras().containsKey(Constants.EXTRAKEY_RECOVER_CONTROLS)){
 				getControlliPerStruttura(tipoStruttura);
+			} else if(intent.getExtras().containsKey(Constants.EXTRAKEY_RECOVER_INTERVENTI)){
+				getInterventiPerStruttura(tipoStruttura);
 			}
 			break;
 		case Constants.SOAP_GET_AREA_REQUEST_CODE_BY_RFID:
@@ -847,6 +915,8 @@ public class MainActivity extends BaseActivity {
 			manageSOAPGenericStrutturaResponse(res, tipoStruttura);
 			if (intent.getExtras().containsKey(Constants.EXTRAKEY_RECOVER_CONTROLS)){
 				getControlliPerStruttura(tipoStruttura);
+			} else if(intent.getExtras().containsKey(Constants.EXTRAKEY_RECOVER_INTERVENTI)){
+				getInterventiPerStruttura(tipoStruttura);
 			}
 			break;
 		case Constants.SOAP_GET_CONTROLLO_REQUEST_CODE_BY_RFID:
@@ -859,8 +929,23 @@ public class MainActivity extends BaseActivity {
 				if(res.containsKey("mapped")){
 					Controllo controllo = new Controllo((SOAPControllo) res.get("mapped"));
 					ControlloFragment.appendControllo(controllo);
-					displayStruttura();
 					setupScrollViewControlli();
+				}
+			}
+			
+			
+			break;			
+		case Constants.SOAP_GET_INTERVENTO_REQUEST_CODE_BY_RFID:
+			res = SynchroSoapActivity.getRes(Constants.GET_INTERVENTO_METHOD_NAME);
+			if(res == null){
+				gestisciRispostaServerNulla();
+			}else if(res.containsKey("success")){
+				manageRemoteException(res);
+			} else {
+				if(res.containsKey("mapped")){
+					Intervento intervento = new Intervento((SOAPIntervento) res.get("mapped"));
+					InterventoFragment.appendControllo(intervento);
+					setupScrollViewInterventi();
 				}
 			}
 			
@@ -1235,7 +1320,6 @@ public class MainActivity extends BaseActivity {
 		currentSnapshotID = whichOne;
 		String tipo = "";
 		if(currentStruttura == null){
-			//Ci serve una struttura cui attaccare l'immagine
 			return;
 		}else if(currentStruttura.getClass().equals(Gioco.class)){
 			tipo=StruttureEnum.GIOCHI.tipo;
@@ -1301,12 +1385,13 @@ public class MainActivity extends BaseActivity {
 			}
 			
 			if(mFragment.getClass().equals(RilevazioneGiocoFragment.class) || 
-					mFragment.getClass().equals(RilevazioneAreaFragment.class)){
+				mFragment.getClass().equals(RilevazioneAreaFragment.class) ||
+				mFragment.getClass().equals(SpostamentoFragment.class)){
 				((MainActivity) mActivity).startGps();
-				//TODO se il gps è staccato attaccarlo
 			} else {
 				((MainActivity) mActivity).stopGps();
 			}
+			resetDatiStatici();
 			
 		}
 

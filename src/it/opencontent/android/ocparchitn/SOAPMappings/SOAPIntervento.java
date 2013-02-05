@@ -94,11 +94,11 @@ public class SOAPIntervento implements KvmSerializable {
 			arg2.type = PropertyInfo.INTEGER_CLASS ;
 			break ;
 		case 3:
-			arg2.name = "dtFineIntervento";
+			arg2.name = "dtFineItervento";
 			arg2.type = PropertyInfo.OBJECT_CLASS ;
 			break ;
 		case 4:
-			arg2.name = "dtInizioIntervento";
+			arg2.name = "dtInizioItervento";
 			arg2.type = PropertyInfo.OBJECT_CLASS ;
 			break ;
 		case 5:
@@ -126,11 +126,11 @@ public class SOAPIntervento implements KvmSerializable {
 			arg2.type = PropertyInfo.STRING_CLASS ;
 			break ;
 		case 11:
-			arg2.name = "oraFineIntervento";
+			arg2.name = "oraFineItervento";
 			arg2.type = PropertyInfo.STRING_CLASS ;
 			break ;
 		case 12:
-			arg2.name = "oraInizioIntervento";
+			arg2.name = "oraInizioItervento";
 			arg2.type = PropertyInfo.STRING_CLASS ;
 			break ;
 		case 13:
@@ -156,6 +156,7 @@ public class SOAPIntervento implements KvmSerializable {
 	public void setProperty(int arg0, Object arg1) {
 		String pattern = "yyyy-MM-dd";
 		SimpleDateFormat sdf = new SimpleDateFormat(pattern,Locale.US);
+		if(arg1!=null){
 		switch(arg0){
 		case 0:
 			codEsito = Integer.parseInt(arg1.toString());
@@ -187,6 +188,7 @@ public class SOAPIntervento implements KvmSerializable {
 			idIntervento = Integer.parseInt(arg1.toString());
 			break ;
 		case 7:
+			
 			idRiferimento =arg1.toString();
 			break ;
 		case 8:
@@ -216,6 +218,7 @@ public class SOAPIntervento implements KvmSerializable {
 		case 16:
 			descTipologia = arg1.toString();
 			break ;			
+		}
 		}
 	}
 
