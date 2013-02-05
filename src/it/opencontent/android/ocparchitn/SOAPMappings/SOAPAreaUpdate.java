@@ -7,7 +7,7 @@ import org.ksoap2.serialization.PropertyInfo;
 
 public class SOAPAreaUpdate implements KvmSerializable {
 	
-	public String idParco;
+	public String descrizione;
 	public String note;
 	public String rfid;
 	public String spessore;
@@ -21,7 +21,7 @@ public class SOAPAreaUpdate implements KvmSerializable {
 	public Object getProperty(int arg0) {
 		switch(arg0){
 		case 0:
-			return idParco;
+			return descrizione;
 		case 1:
 			return note;
 		case 2:
@@ -51,7 +51,7 @@ public class SOAPAreaUpdate implements KvmSerializable {
 		arg2.type = PropertyInfo.STRING_CLASS;
 		switch(arg0){
 		case 0:
-			arg2.name = "idParco";
+			arg2.name = "descrizione";
 			break;
 		case 1:
 			arg2.name = "note";
@@ -85,7 +85,7 @@ public class SOAPAreaUpdate implements KvmSerializable {
 		}
 		switch(arg0){
 		case 0:
-			idParco= arg1.toString();
+			descrizione= arg1.toString();
 			break;
 		case 1:
 			note= arg1.toString();

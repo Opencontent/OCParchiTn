@@ -13,8 +13,11 @@ public class SOAPIntervento implements KvmSerializable {
 
 	
 	public int codEsito;
-	public int codSegnalazione;
 	public int codTipologia;
+	
+	public String descEsito;
+	public String descTipologia;
+	
 	public Date dtFineItervento;
 	public Date dtInizioItervento;
 	public int idGioco;
@@ -35,7 +38,7 @@ public class SOAPIntervento implements KvmSerializable {
 		case 0:
 			return codEsito;
 		case 1:
-			return codSegnalazione;
+			return descEsito;
 		case 2:
 			return codTipologia;
 		case 3:
@@ -64,13 +67,15 @@ public class SOAPIntervento implements KvmSerializable {
 			return stato;
 		case 15:
 			return tipoIntervento;
+		case 16:
+			return descTipologia;
 		}
 		return null;
 	}
 
 	@Override
 	public int getPropertyCount() {
-		return 16;
+		return 17;
 	}
 
 	@Override
@@ -79,67 +84,71 @@ public class SOAPIntervento implements KvmSerializable {
 		case 0:
 			arg2.name = "codEsito";
 			arg2.type = PropertyInfo.INTEGER_CLASS ;
-			return ;
+			break ;
 		case 1:
-			arg2.name = "codSegnalazione";
-			arg2.type = PropertyInfo.INTEGER_CLASS ;
-			return ;
+			arg2.name = "descEsito";
+			arg2.type = PropertyInfo.STRING_CLASS ;
+			break ;
 		case 2:
 			arg2.name = "codTipologia";
 			arg2.type = PropertyInfo.INTEGER_CLASS ;
-			return ;
+			break ;
 		case 3:
 			arg2.name = "dtFineIntervento";
 			arg2.type = PropertyInfo.OBJECT_CLASS ;
-			return ;
+			break ;
 		case 4:
 			arg2.name = "dtInizioIntervento";
 			arg2.type = PropertyInfo.OBJECT_CLASS ;
-			return ;
+			break ;
 		case 5:
 			arg2.name = "idGioco";
 			arg2.type = PropertyInfo.INTEGER_CLASS ;
-			return ;
+			break ;
 		case 6:
 			arg2.name = "idIntervento";
 			arg2.type = PropertyInfo.INTEGER_CLASS ;
-			return ;
+			break ;
 		case 7:
 			arg2.name = "idRiferimento";
 			arg2.type = PropertyInfo.STRING_CLASS ;
-			return ;
+			break ;
 		case 8:
 			arg2.name = "intervento";
 			arg2.type = PropertyInfo.INTEGER_CLASS ;
-			return ;		
+			break ;		
 		case 9:
 			arg2.name = "noteEsecuzione";
 			arg2.type = PropertyInfo.STRING_CLASS ;
-			return ;
+			break ;
 		case 10:
 			arg2.name = "noteRichiesta";
 			arg2.type = PropertyInfo.STRING_CLASS ;
-			return ;
+			break ;
 		case 11:
 			arg2.name = "oraFineIntervento";
 			arg2.type = PropertyInfo.STRING_CLASS ;
-			return ;
+			break ;
 		case 12:
 			arg2.name = "oraInizioIntervento";
 			arg2.type = PropertyInfo.STRING_CLASS ;
-			return ;
+			break ;
 		case 13:
 			arg2.name = "rfid";
 			arg2.type = PropertyInfo.STRING_CLASS ;
-			return ;
+			break ;
 		case 14:
 			arg2.name = "stato";
 			arg2.type = PropertyInfo.INTEGER_CLASS ;
-			return ;
+			break ;
 		case 15:
 			arg2.name = "tipoIntervento";
 			arg2.type = PropertyInfo.INTEGER_CLASS ;
-			return ;
+			break ;
+		case 16:
+			arg2.name = "descTipologia";
+			arg2.type = PropertyInfo.STRING_CLASS;
+			break ;
 		}
 	}
 
@@ -150,60 +159,63 @@ public class SOAPIntervento implements KvmSerializable {
 		switch(arg0){
 		case 0:
 			codEsito = Integer.parseInt(arg1.toString());
-			return ;
+			break ;
 		case 1:
-			codSegnalazione = Integer.parseInt(arg1.toString());
-			return ;
+			descEsito = arg1.toString();
+			break ;
 		case 2:
 			codTipologia = Integer.parseInt(arg1.toString());
-			return ;
+			break ;
 		case 3:
 			try {
 				dtFineItervento = sdf.parse(arg1+"");
 			} catch (ParseException e) {
 				e.printStackTrace();
 			} 
-			return ;
+			break ;
 		case 4:
 			try {
 				dtInizioItervento = sdf.parse(arg1+"");
 			} catch (ParseException e) {
 				e.printStackTrace();
 			} 
-			return ;
+			break ;
 		case 5:
 			idGioco = Integer.parseInt(arg1.toString());
-			return ;
+			break ;
 		case 6:
 			idIntervento = Integer.parseInt(arg1.toString());
-			return ;
+			break ;
 		case 7:
 			idRiferimento =arg1.toString();
-			return ;
+			break ;
 		case 8:
 			intervento = Integer.parseInt(arg1.toString());
-			return ;
+			break ;
 		case 9:
 			noteEsecuzione =arg1.toString();
-			return ;
+			break ;
 		case 10:
 			noteRichiesta =arg1.toString();
-			return ;
+			break ;
 		case 11:
 			oraFineItervento =arg1.toString();
-			return ;
+			break ;
 		case 12:
 			oraInizioItervento =arg1.toString();
-			return ;
+			break ;
 		case 13:
 			rfid =arg1.toString();
-			return ;
+			break ;
 		case 14:
 			stato = Integer.parseInt(arg1.toString());
-			return ;
+			break ;
 		case 15:
 			tipoIntervento = Integer.parseInt(arg1.toString());
-			return ;			
+			break ;			
+		case 16:
+			descTipologia = arg1.toString();
+			break ;			
 		}
 	}
 

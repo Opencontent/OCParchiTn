@@ -246,7 +246,7 @@
                         android:layout_height="fill_parent"
                         android:layout_weight="2"
                         android:clickable="false"
-                        android:text="Cofidence: nd"
+                        android:text="@string/display_gioco_confidence"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
                 </LinearLayout>
 

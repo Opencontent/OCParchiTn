@@ -5,6 +5,7 @@ import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAutGiochi;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPCodTabella;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPControllo;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPInfo;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkAutException;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkGiochiException;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkSrvException;
@@ -18,6 +19,8 @@ import it.opencontent.android.ocparchitn.db.entities.StruttureEnum;
 import it.opencontent.android.ocparchitn.fragments.AvailableFragment;
 import it.opencontent.android.ocparchitn.fragments.ControlloFragment;
 import it.opencontent.android.ocparchitn.fragments.ICustomFragment;
+import it.opencontent.android.ocparchitn.fragments.RilevazioneAreaFragment;
+import it.opencontent.android.ocparchitn.fragments.RilevazioneGiocoFragment;
 import it.opencontent.android.ocparchitn.utils.AuthCheck;
 import it.opencontent.android.ocparchitn.utils.PlatformChecks;
 import it.opencontent.android.ocparchitn.utils.Utils;
@@ -73,19 +76,17 @@ public class MainActivity extends BaseActivity {
 	private static final String TAG = MainActivity.class.getSimpleName();
 
 	private static boolean serviceInfoTaken = false;
-	
-	
+	private static SOAPInfo serviceInfo;
+
 	public static boolean tokenIsValid = false;
 
-	private Bitmap snapshot;
 	private OCParchiDB db;
 
-	private static HashMap<String, Object> serviceInfo;
 
 	private static Struttura currentStruttura;
 	private static int currentSnapshotID;
 	private static Uri currentSnapshotUri;
-	private static Bitmap[] snapshots = new Bitmap[Constants.MAX_SNAPSHOTS_AMOUNT];
+	private Bitmap snapshot;
 
 	private static boolean partitiDaID = false;
 	private static int currentQueriedId =0;
@@ -117,9 +118,7 @@ public class MainActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// setContentView(R.layout.activity_main_fragments);
 		
-		//Prima cosa controlliamo che il token sia attivo
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);    
         prefs.registerOnSharedPreferenceChangeListener(mListener);		
 
@@ -129,7 +128,7 @@ public class MainActivity extends BaseActivity {
 			serviceInfoTaken = true;
 		}
 		if(!AuthCheck.getTokenValid() && PlatformChecks.siamoOnline(this)){
-			tokenIsValid = true; //altrimenti  lo chiediamo ancora nell'onStart
+			tokenIsValid = true; //mettiamo a true sulla fiducia altrimenti  lo chiediamo ancora nell'onStart
 			renewAuthenticationToken();
 		} else {
 			int tipoUtente = AuthCheck.getTipoUtente();
@@ -163,7 +162,6 @@ public class MainActivity extends BaseActivity {
 	}
 
 	private void setupTabelleAppoggio(){
-		//setup della tabella recordTabellaSupporto importandoli da remoto se vuota
 		if(PlatformChecks.siamoOnline(this)){
 		if(!db.tabelleSupportoPopolate() || db.tabelleSupportoScadute()){
 			getTabellaSupporto();
@@ -260,8 +258,25 @@ public class MainActivity extends BaseActivity {
 		if(!tokenIsValid){
 			renewAuthenticationToken();
 		}		
-		
-		// nfca.disableForegroundDispatch(this);
+		//Il gps viene fatto partire dall'attivazione di un framgment che lo richiede
+	}
+
+
+	
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.unregisterOnSharedPreferenceChangeListener(mListener);
+	}
+	
+	@Override
+	public void onStop(){
+		super.onStop();
+		stopGps();
+	}
+
+	private void startGps() {
 		LocationManager locationManager = (LocationManager) getSystemService(BaseActivity.LOCATION_SERVICE);
 
 		if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -278,20 +293,10 @@ public class MainActivity extends BaseActivity {
 			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
 					Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_INACTIVE);
 
-		}		
+		}
 	}
-	
-	@Override
-	public void onDestroy(){
-		super.onDestroy();
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		prefs.unregisterOnSharedPreferenceChangeListener(mListener);
-	}
-	
-	@Override
-	public void onStop(){
-		super.onStop();
-		//non vogliamo che la batteria si scarichi senza motivo
+
+	private final void stopGps() {
 		LocationManager locationManager = (LocationManager) getSystemService(BaseActivity.LOCATION_SERVICE);
 		locationManager.removeUpdates(locationListener);
 	}
@@ -370,8 +375,6 @@ public class MainActivity extends BaseActivity {
 					ICustomFragment mf = (ICustomFragment) getFragmentManager()
 							.findFragmentByTag(currentTag);
 					mf.showStrutturaData(currentStruttura);
-					// TODO: triggerare il salvataggio dei dati locali che poi
-					// scatena a sua volta il salvataggio remoto
 				} else {
 					feedback("Qualcosa non ha funzionato, ritentare l'operazione");
 				}
@@ -433,8 +436,6 @@ public class MainActivity extends BaseActivity {
 					ICustomFragment mf = (ICustomFragment) getFragmentManager()
 							.findFragmentByTag(currentTag);
 					mf.showStrutturaData(currentStruttura);
-					// TODO: triggerare il salvataggio dei dati locali che poi
-					// scatena a sua volta il salvataggio remoto
 				} else {
 					feedback("Qualcosa non ha funzionato, ritentare l'operazione");
 				}
@@ -613,16 +614,7 @@ public class MainActivity extends BaseActivity {
 			startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_ID);
 		}
 	}
-	private void getStructureFotoByID(int id) {
-		Intent serviceIntent = new Intent();
-		serviceIntent.setClass(getApplicationContext(),
-				SynchroSoapActivity.class);
-		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_FOTO_METHOD_NAME);
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("idGioco", "" + id);
-		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
-		startActivityForResult(serviceIntent, Constants.SOAP_GET_GIOCO_FOTO_REQUEST_CODE);
-	}
+
 	private void getTabellaSupporto() {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
@@ -696,7 +688,7 @@ public class MainActivity extends BaseActivity {
 		map.put("args1", password);
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
 		if(username.equals("UNSET")){
-			//Prima inizializzazione
+			//Prima inizializzazione dell'applicazione
 			AlertDialog.Builder changeCredentials = new AlertDialog.Builder(this);
 			changeCredentials.setTitle("Imposta le credenziali");
 			changeCredentials.setMessage("Per inizializzare il sistema è necessario avere una connessione dati attiva\n\nPer usare questo sistema occorre impostare username e password\nClicca su OK per inserire le credenziali\nUna volta inserite clicca su indietro e l'applicazione si inizializzerà");
@@ -725,6 +717,18 @@ public class MainActivity extends BaseActivity {
 		ICustomFragment mf = (ICustomFragment) getFragmentManager()
 				.findFragmentByTag(currentTag);
 		mf.showStrutturaData(currentStruttura);		
+	}
+	
+	private void setupScrollViewControlli(){
+		String currentTag = "";
+		if(actionBar != null && actionBar.getSelectedTab() != null){
+			currentTag = (String) actionBar.getSelectedTab().getTag();
+		}
+		ICustomFragment mf = (ICustomFragment) getFragmentManager()
+				.findFragmentByTag(currentTag);
+		if(mf.getClass().equals(ControlloFragment.class)){
+			((ControlloFragment) mf).setupScrollViewControlli();				
+		}
 	}
 	
 
@@ -771,7 +775,6 @@ public class MainActivity extends BaseActivity {
 			break;			
 		case Constants.CREDENTIALS_UPDATED_REQUEST_CODE:
 			tokenIsValid = false;
-//			renewAuthenticationToken();
 			break;
 		case Constants.SOAP_GET_TOKEN_REQUEST_CODE:
 			res = SynchroSoapActivity.getRes(Constants.GET_LOGINUSER_METHOD_NAME);
@@ -808,6 +811,8 @@ public class MainActivity extends BaseActivity {
 				editor.commit();
 				setupActionBar();
 				setupTabelleAppoggio();
+			} else {
+				gestisciRispostaServerNulla();
 			}
 			
 			if(res!=null && res.containsKey("headerIn")){
@@ -847,7 +852,7 @@ public class MainActivity extends BaseActivity {
 		case Constants.SOAP_GET_CONTROLLO_REQUEST_CODE_BY_RFID:
 			res = SynchroSoapActivity.getRes(Constants.GET_CONTROLLO_METHOD_NAME);
 			if(res == null){
-				
+				gestisciRispostaServerNulla();
 			}else if(res.containsKey("success")){
 				manageRemoteException(res);
 			} else {
@@ -855,9 +860,8 @@ public class MainActivity extends BaseActivity {
 					Controllo controllo = new Controllo((SOAPControllo) res.get("mapped"));
 					ControlloFragment.appendControllo(controllo);
 					displayStruttura();
-					currentStruttura = controllo;
+					setupScrollViewControlli();
 				}
-				//metodo per passare il controllo al controlloFragment
 			}
 			
 			
@@ -895,9 +899,10 @@ public class MainActivity extends BaseActivity {
 			break;
 
 		case Constants.SOAP_SERVICE_INFO_REQUEST_CODE:
-			//TODO: rimappare l'oggetto info
-			serviceInfo = SynchroSoapActivity.getRes(Constants.GET_INFO_METHOD_NAME);
+			res = SynchroSoapActivity.getRes(Constants.GET_INFO_METHOD_NAME);
+			serviceInfo = (SOAPInfo) res.get("mapped");
 			serviceInfoTaken = true;
+			Toast.makeText(this, "Server Online\nVer: "+serviceInfo.versione, Toast.LENGTH_SHORT).show();
 			errorMessages.put(Constants.STATUS_MESSAGE_SERVER_STATUS,
 					"Connessione al server: OK");
 			break;
@@ -909,58 +914,66 @@ public class MainActivity extends BaseActivity {
 
 	}
 
+	private void gestisciRispostaServerNulla() {
+		Toast.makeText(this, "Errore generico nella comunicazione col server", Toast.LENGTH_SHORT).show();
+	}
+
 	private void legaSnapshotAStruttura(Intent intent) {
 		try {
 			if(intent!=null){
 				snapshot = (Bitmap) intent.getExtras().get("data");
 			} else{
+				try{
 				snapshot = BitmapFactory.decodeFile(currentSnapshotUri.getPath());
+				}catch(OutOfMemoryError e){
+					Toast.makeText(this, "Troppe Immagini", Toast.LENGTH_SHORT).show();
+				}
 			}
-				
-			
-			
-			
-			if (currentStruttura == null) {
-				currentStruttura = new Struttura();
-				currentStruttura.sincronizzato = false;
-				currentStruttura.hasDirtyData = true;
-				currentRFID = 0;
-			}
-
+			ImageView mImageView;
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			snapshot.compress(Bitmap.CompressFormat.PNG, 80, stream);
+			snapshot.compress(Bitmap.CompressFormat.JPEG, 80, stream);
 			byte[] image = stream.toByteArray();
 
-			ImageView mImageView = null;
-			switch (currentSnapshotID) {
-			case 0:
-				mImageView = (ImageView) findViewById(R.id.snapshot_gioco_0);
-				currentStruttura.foto0 = Base64.encodeToString(image, Base64.DEFAULT);
-				break;
-			case 1:
-				mImageView = (ImageView) findViewById(R.id.snapshot_gioco_1);
-				currentStruttura.foto1 = Base64.encodeToString(image, Base64.DEFAULT);
-				break;
-			case 2:
-				mImageView = (ImageView) findViewById(R.id.snapshot_gioco_2);
-				currentStruttura.foto2 = Base64.encodeToString(image, Base64.DEFAULT);
-				break;
-			case 3:
-				mImageView = (ImageView) findViewById(R.id.snapshot_gioco_3);
-				currentStruttura.foto3 = Base64.encodeToString(image, Base64.DEFAULT);
-				break;
-			case 4:
-				mImageView = (ImageView) findViewById(R.id.snapshot_gioco_4);
-				currentStruttura.foto4 = Base64.encodeToString(image, Base64.DEFAULT);
-				break;
-			}
-			currentStruttura.sincronizzato = false;
-			currentStruttura.hasDirtyData = true;
+			if(currentSnapshotUri.getPath().contains(StruttureEnum.CONTROLLO.tipo)){
+				String base64 = Base64.encodeToString(image, Base64.DEFAULT);
+				ControlloFragment.aggiungiSnapshotAControlloCorrente(base64, currentSnapshotID);
+				mImageView = null;
+				switch (currentSnapshotID) {
+				case 0:
+					mImageView = (ImageView) findViewById(R.id.snapshot_controllo_0);
+					break;
+				case 1:
+					mImageView = (ImageView) findViewById(R.id.snapshot_controllo_1);
+					break;
+				}
+			} else {
+			
+				if (currentStruttura == null) {
+					currentStruttura = new Struttura();
+					currentStruttura.sincronizzato = false;
+					currentStruttura.hasDirtyData = true;
+					currentRFID = 0;
+				}
+		
+				mImageView = null;
+				switch (currentSnapshotID) {
+				case 0:
+					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_0);
+					currentStruttura.foto0 = Base64.encodeToString(image, Base64.DEFAULT);
+					break;
+				case 1:
+					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_1);
+					currentStruttura.foto1 = Base64.encodeToString(image, Base64.DEFAULT);
+					break;
+				}
+				currentStruttura.sincronizzato = false;
+				currentStruttura.hasDirtyData = true;
 
+			}
 			if (snapshot != null && mImageView != null) {
-				snapshots[currentSnapshotID] = snapshot;
 				mImageView.setImageBitmap(snapshot);
 			}
+			salvaModifiche(null);
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 			Log.d(TAG, "Immagine nulla");
@@ -1008,6 +1021,7 @@ public class MainActivity extends BaseActivity {
 			localStruttura = db.readGiocoLocallyByID(currentQueriedId);
 		}else {
 			//res == null
+			gestisciRispostaServerNulla();
 			switch(tipoStruttura){
 			case Constants.CODICE_STRUTTURA_GIOCO:
 				remoteStruttura = new Gioco();
@@ -1223,8 +1237,6 @@ public class MainActivity extends BaseActivity {
 		if(currentStruttura == null){
 			//Ci serve una struttura cui attaccare l'immagine
 			return;
-		} else if(currentStruttura.getClass().equals(Controllo.class)){
-			tipo= StruttureEnum.CONTROLLO.tipo;			
 		}else if(currentStruttura.getClass().equals(Gioco.class)){
 			tipo=StruttureEnum.GIOCHI.tipo;
 		}else if(currentStruttura.getClass().equals(Area.class)){
@@ -1234,6 +1246,20 @@ public class MainActivity extends BaseActivity {
 		if(f!=null){
 		customCamera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
 		currentSnapshotUri = Uri.fromFile(f);
+		}
+		startActivityForResult(customCamera, Constants.FOTO_REQUEST_CODE);
+	}
+	
+	public void takeSnapshotControllo(View button) {
+		Intent customCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		int whichOne = Integer.parseInt((String) button.getTag());
+		customCamera.putExtra(Constants.EXTRAKEY_FOTO_NUMBER, whichOne);
+		currentSnapshotID = whichOne;
+		String tipo = StruttureEnum.CONTROLLO.tipo;
+		File f = Utils.createImageFile(tipo, currentQueriedId, whichOne);
+		if(f!=null){
+			customCamera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+			currentSnapshotUri = Uri.fromFile(f);
 		}
 		startActivityForResult(customCamera, Constants.FOTO_REQUEST_CODE);
 	}
@@ -1251,7 +1277,6 @@ public class MainActivity extends BaseActivity {
 		return currentLat;
 	}
 
-//	public static class CustomTabListener<T extends Fragment> implements
 	public static class CustomTabListener<T> implements
 			ActionBar.TabListener {
 		private Fragment mFragment;
@@ -1259,16 +1284,7 @@ public class MainActivity extends BaseActivity {
 		private final String mTag;
 		private final Class<T> mClass;
 
-		/**
-		 * Constructor used each time a new tab is created.
-		 * 
-		 * @param activity
-		 *            The host Activity, used to instantiate the fragment
-		 * @param tag
-		 *            The identifier tag for the fragment
-		 * @param clz
-		 *            The fragment's Class, used to instantiate the fragment
-		 */
+
 		public CustomTabListener(Activity activity, String tag, Class<T> clz) {
 			mActivity = activity;
 			mTag = tag;
@@ -1283,17 +1299,24 @@ public class MainActivity extends BaseActivity {
 			} else {
 				ft.attach(mFragment);
 			}
+			
+			if(mFragment.getClass().equals(RilevazioneGiocoFragment.class) || 
+					mFragment.getClass().equals(RilevazioneAreaFragment.class)){
+				((MainActivity) mActivity).startGps();
+				//TODO se il gps è staccato attaccarlo
+			} else {
+				((MainActivity) mActivity).stopGps();
+			}
+			
 		}
 
 		public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 			if (mFragment != null) {
-				// Detach the fragment, because another one is being attached
 				ft.detach(mFragment);
 			}
 		}
 
 		public void onTabReselected(Tab tab, FragmentTransaction ft) {
-			// User selected the already selected tab. Usually do nothing.
 		}
 	}
 
@@ -1308,12 +1331,10 @@ public class MainActivity extends BaseActivity {
 				Log.d(TAG, "onGpsStatusChanged First Fix");
 				errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
 						Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXED);
-//				showError(errorMessages);
 				break;
 
 			case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
 
-//				Log.d(TAG, "onGpsStatusChanged Satellite");
 				break;
 
 			case GpsStatus.GPS_EVENT_STARTED:
@@ -1321,7 +1342,6 @@ public class MainActivity extends BaseActivity {
 				Log.d(TAG, "onGpsStatusChanged Started");
 				errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
 						Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXING);
-//				showError(errorMessages);
 				break;
 
 			case GpsStatus.GPS_EVENT_STOPPED:
@@ -1339,10 +1359,8 @@ public class MainActivity extends BaseActivity {
 
 		@Override
 		public void onLocationChanged(Location location) {
-			// TODO Auto-generated method stub
 			errorMessages.put(Constants.STATUS_MESSAGE_GPS_STATUS,
 					Constants.STATUS_MESSAGE_GPS_STATUS_MESSAGE_FIXED);
-//			showError(errorMessages);
 			currentLat = (float) location.getLatitude();
 			currentLon = (float) location.getLongitude();
 			if(currentStruttura != null){
@@ -1354,7 +1372,7 @@ public class MainActivity extends BaseActivity {
 			TextView tgpsy = (TextView) findViewById(R.id.display_gioco_gpsy);
 			TextView tgpsc = (TextView) findViewById(R.id.display_gioco_gps_confidence);
 			if(tgpsc!=null){
-				tgpsc.setText("Confidence: "+location.getAccuracy()+"mt");
+				tgpsc.setText(getString(R.string.display_gioco_confidence)+location.getAccuracy()+"mt");
 			}
 			if(tgpsx!=null){
 				tgpsx.setText(""+currentLon);
@@ -1366,20 +1384,14 @@ public class MainActivity extends BaseActivity {
 
 		@Override
 		public void onProviderDisabled(String provider) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void onProviderEnabled(String provider) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
-			// TODO Auto-generated method stub
-			Log.d(TAG, provider + " " + status);
 		}
 	};
 

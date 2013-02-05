@@ -91,7 +91,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 						sincronizzaLaStruttura(a);												
 					} else if( set.get(k).getClass().equals(Controllo.class)){
 						Controllo c = (Controllo) set.get(k);
-						sincronizzaIlControllo(c);
+						sincronizzaLaStruttura(c);
 					}
 				}
 			} else {
@@ -121,10 +121,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		
 	}
 
-	/**
-	 * @param db
-	 * @param s
-	 */
+
 	private void sincronizzaLaStruttura(Struttura s) {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		if(s.getClass().equals(Gioco.class)){
@@ -146,6 +143,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				sincronizzaTutteLeFoto(g);
 			}else {
 				Log.d(TAG,"Gioco senza rfid, non sincronizzato "+g.idGioco);
+				Toast.makeText(this,"Gioco senza rfid, non sincronizzato "+g.idGioco,Toast.LENGTH_SHORT).show();
 				if (queueLength <= 0) {
 					setResult(RESULT_OK, getIntent());
 					finish();
@@ -156,7 +154,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 			SOAPAreaUpdate au = new SOAPAreaUpdate();
 			if(a.rfidArea>0){
 				au.idArea = "" + a.idArea;
-				au.idParco = "" + a.idParco ;
+				au.descrizione = "" + a.idParco ;
 				au.note = a.note;
 				au.rfid = "" + a.rfidArea;
 				au.spessore = "" + a.spessore;
@@ -168,24 +166,20 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				sincronizzaTutteLeFoto(a);				
 			}else {
 				Log.d(TAG,"Area senza rfid, non sincronizzato "+a.idArea);
+				Toast.makeText(this,"Area senza rfid, non sincronizzato "+a.idArea,Toast.LENGTH_SHORT).show();
 				if (queueLength <= 0) {
 					setResult(RESULT_OK, getIntent());
 					finish();
 				}
 			}
-		}
-	}
-
-	private void sincronizzaIlControllo(Controllo c) {
-		HashMap<String, Object> map = new HashMap<String, Object>();
-
-			
+		}else if(s.getClass().equals(Controllo.class)){
+			Controllo c = (Controllo) s;
 			if (c.idRiferimento != null && c.noteControllo.length() > 0) {
 				
 				SOAPControlloUpdate cu = new SOAPControlloUpdate();
 				cu.controllo = c.controllo;
 				String DATE_FORMAT = "yyyy-MM-dd";
-				String TIME_FORMAT = "hh:mm:ss";
+				String TIME_FORMAT = "HH:mm:ss";
 			    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT,Locale.US);
 			    SimpleDateFormat hdf = new SimpleDateFormat(TIME_FORMAT,Locale.US);
 			    Calendar c1 = Calendar.getInstance(); 
@@ -194,30 +188,25 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				cu.oraControllo = hdf.format(c1.getTime());
 				cu.rfid = c.rfid;
 				cu.tipoControllo = c.tipoControllo;
-				cu.tipoEsito = c.tipoEsito;
+				cu.idRiferimento = c.idRiferimento;
 				cu.tipoSegnalazione = c.tipoSegnalazione;				
 				
 				map.put("Controlloupdate", cu);
 				getRemoteResponse(Constants.SET_CONTROLLO_METHOD_NAME, map, false,Constants.SET_CONTROLLO_METHOD_NAME);
-				
-				/**
-				 * TODO: fotoupdate del controllo
-				 */
-				//sincronizzaTutteLeFoto(g);
+				sincronizzaTutteLeFoto(c);
 			}else {
 				Log.d(TAG,"Controllo senza dati necessari, non sincronizzato "+c.idRiferimento);
+				Toast.makeText(this,"Controllo senza note, non sincronizzato "+c.idRiferimento,Toast.LENGTH_SHORT).show();
 				if (queueLength <= 0) {
 					setResult(RESULT_OK, getIntent());
 					finish();
 				}
 			}
-
+		}
 	}
 
-	private void sincronizzaTutteLeFoto(Controllo c) {
-		
-	}
-	
+
+
 	private void sincronizzaTutteLeFoto(Struttura g) {
 		HashMap<String, Object> map;
 		// cicliamo le foto eventuali
@@ -232,6 +221,10 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 			tipoFoto = Constants.CODICE_STRUTTURA_AREA+"";			
 			idRiferimento = ((Area) g).idArea+"";
 			suffissoImmagine = "area_";
+		}else if(g.getClass().equals(Controllo.class)){
+			tipoFoto = ((Controllo) g).tipoControllo+"";			
+			idRiferimento = ((Controllo) g).idRiferimento+"";
+			suffissoImmagine = "controllo_";
 		}
 		
 
@@ -241,40 +234,15 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		fu.sovrascrittura = true;
 		fu.estensioneImmagine = Constants.ESTENSIONE_FOTO;
 		
-		if (g.foto0 != null && !g.foto0.equals("")) {
-			fu.immagine = g.foto0;
-			fu.nomeImmagine = suffissoImmagine + idRiferimento + "_foto_0";
-			map = new HashMap<String, Object>();
-			map.put("Fotoupdate", fu);
-			getRemoteResponse("setFoto", map, false,"setFoto");
-		}
-		if (g.foto1 != null && !g.foto1.equals("")) {
-			fu.immagine = g.foto1;
-			fu.nomeImmagine = suffissoImmagine + idRiferimento + "_foto_1";
-			map = new HashMap<String, Object>();
-			map.put("Fotoupdate", fu);
-			getRemoteResponse("setFoto", map, false,"setFoto");
-		}
-		if (g.foto2 != null && !g.foto2.equals("")) {
-			fu.immagine = g.foto2;
-			fu.nomeImmagine = suffissoImmagine + idRiferimento + "_foto_2";
-			map = new HashMap<String, Object>();
-			map.put("Fotoupdate", fu);
-			getRemoteResponse("setFoto", map, false,"setFoto");
-		}
-		if (g.foto3 != null && !g.foto3.equals("")) {
-			fu.immagine = g.foto3;
-			fu.nomeImmagine = suffissoImmagine + idRiferimento + "_foto_3";
-			map = new HashMap<String, Object>();
-			map.put("Fotoupdate", fu);
-			getRemoteResponse("setFoto", map, false,"setFoto");
-		}
-		if (g.foto4 != null && !g.foto4.equals("")) {
-			fu.immagine = g.foto4;
-			fu.nomeImmagine = suffissoImmagine + idRiferimento + "_foto_4";
-			map = new HashMap<String, Object>();
-			map.put("Fotoupdate", fu);
-			getRemoteResponse("setFoto", map, false,"setFoto");
+		
+		for(int i = 0; i < Constants.MAX_SNAPSHOTS_AMOUNT;i++){
+			fu.immagine = db.recuperaFoto(g, i);
+			if(fu.immagine!=null && fu.immagine != ""){
+				fu.nomeImmagine = suffissoImmagine + idRiferimento + "_foto_"+i;
+				map = new HashMap<String, Object>();
+				map.put("Fotoupdate", fu);
+				getRemoteResponse("setFoto", map, false,"setFoto");
+			}
 		}
 
 	}
@@ -365,14 +333,11 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 								Constants.SOAP_NAMESPACE, Constants.SOAP_URL,
 								properties);
 
-//							allmaps.put(method, res);
 							allmaps.put(mapid, res);
 							if(method.equals(Constants.SET_AREA_METHOD_NAME)
-							|| method.equals(Constants.SET_GIOCO_METHOD_NAME)){
+							|| method.equals(Constants.SET_GIOCO_METHOD_NAME)
+							|| method.equals(Constants.SET_CONTROLLO_METHOD_NAME)){
 								db.eliminaCopiaLocaleDiStrutturaSincronizzata(data);
-							}else if(method.equals(Constants.SET_CONTROLLO_METHOD_NAME)){
-								db.eliminaCopiaLocaleDiControllo(data);
-								
 							}
 						
 						if (!finish) {
@@ -406,7 +371,6 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 								updateCounter(queueLength);
 							}
 						});
-						// updateCounter(queueLength);
 						if (finish || queueLength <= 0) {
 							setResult(RESULT_OK, getIntent());
 							finish();

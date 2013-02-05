@@ -4,9 +4,10 @@ package it.opencontent.android.ocparchitn.fragments;
 public enum AvailableFragment {
 
 	
-	RILEVAZIONE_AREA	("rilevazione_area","Rilevazione Area",RilevazioneAreaFragment.class,true,true),
-	RILEVAZIONE_GIOCO	("rilevazione","Rilevazione Gioco",RilevazioneGiocoFragment.class,true,true),
+	RILEVAZIONE_AREA	("rilevazione_area","Rileva Area",RilevazioneAreaFragment.class,true,true),
+	RILEVAZIONE_GIOCO	("rilevazione","Rileva Gioco",RilevazioneGiocoFragment.class,true,true),
 	CONTROLLO   		("controllo","Controllo",ControlloFragment.class,true,true),
+	INTERVENTO   		("intervento","Intervento",InterventoFragment.class,true,true),
 	SPOSTAMENTO 		("spostamento","Spostamento",SpostamentoFragment.class,true,false);
 	
 	public final String label;

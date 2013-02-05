@@ -1,8 +1,8 @@
 package it.opencontent.android.ocparchitn.db.entities;
 
 public enum StruttureEnum {
-	GIOCHI("giochi", new Gioco()), 
-	AREE("aree", new Area()),
+	GIOCHI("gioco", new Gioco()), 
+	AREE("area", new Area()),
 	CONTROLLO("controllo",new Controllo());
 
 	public String tipo;

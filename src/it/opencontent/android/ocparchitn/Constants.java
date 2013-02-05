@@ -2,7 +2,7 @@ package it.opencontent.android.ocparchitn;
 
 public class Constants {
 	public static final String IMAGE_SUBDIRECTORY = "parchi_img_tmp";
-	public static final String ESTENSIONE_FOTO = "png";
+	public static final String ESTENSIONE_FOTO = "jpg";
 	public final static String TAKE_SNAPSHOT = "it.opencontent.android.ocparchitn.CameraAction";
 	
 	public final static int PERMESSO_NONE = 0;
@@ -79,7 +79,7 @@ public class Constants {
 	public final static int ESITO_INTERVENTO_POSITIVO = 1;
 	public final static int ESITO_INTERVENTO_NEGATIVO = 2;
 	
-	public final static int MAX_SNAPSHOTS_AMOUNT = 5;
+	public final static int MAX_SNAPSHOTS_AMOUNT = 2;
 	
 	public final static int MAX_UNSYNCHRONIZED_LOCAL_ENTITIES = 10;
 	

@@ -246,23 +246,6 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 				v = (ImageView) getActivity().findViewById(R.id.snapshot_gioco_1);
 				v.setImageBitmap(Utils.decodeSampledBitmapFromResource(Base64.decode(gioco.foto1, Base64.DEFAULT),getResources(),2,width,height));
 				break;
-			
-			case 2:
-				v = (ImageView) getActivity().findViewById(R.id.snapshot_gioco_2);
-				v.setImageBitmap(Utils.decodeSampledBitmapFromResource(Base64.decode(gioco.foto2, Base64.DEFAULT),getResources(),3,width,height));
-				break;
-				
-			case 3:
-				v = (ImageView) getActivity().findViewById(R.id.snapshot_gioco_3);
-				v.setImageBitmap(Utils.decodeSampledBitmapFromResource(Base64.decode(gioco.foto3, Base64.DEFAULT),getResources(),4,width,height));
-				break;
-				
-			case 4:
-				v = (ImageView) getActivity().findViewById(R.id.snapshot_gioco_4);
-				v.setImageBitmap(Utils.decodeSampledBitmapFromResource(Base64.decode(gioco.foto4, Base64.DEFAULT),getResources(),5,width,height));
-				break;
-				
-			
 			}
 			
 		}

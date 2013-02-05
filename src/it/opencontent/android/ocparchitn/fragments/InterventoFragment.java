@@ -37,9 +37,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ControlloFragment extends Fragment implements ICustomFragment {
+public class InterventoFragment extends Fragment implements ICustomFragment {
 
-	private static final String TAG = ControlloFragment.class.getSimpleName();
+	private static final String TAG = InterventoFragment.class.getSimpleName();
 	
 	public static int tipoStruttura = Constants.CODICE_STRUTTURA_GIOCO;
 	public static String methodName = Constants.GET_GIOCO_METHOD_NAME;

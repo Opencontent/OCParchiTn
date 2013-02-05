@@ -8,9 +8,15 @@ import org.ksoap2.serialization.PropertyInfo;
 public class SOAPControllo implements KvmSerializable {
 	
 	public int controllo;
+	
+	public boolean attivo;
+	public int codTipologia;
+	public String descTipologia;
+	public String dtInizioControllo;
+	
 	public String dtScadenzaControllo;
-	public String noteControllo;
 	public String idRiferimento;
+	public String noteControllo;
 	public int rfid;
 	public int tipoControllo;
 		
@@ -28,14 +34,22 @@ public class SOAPControllo implements KvmSerializable {
 		case 4:
 			return rfid;
 		case 5:
-			return tipoControllo;			
+			return tipoControllo;
+		case 6: 
+			return attivo;
+		case 7: 
+			return codTipologia;
+		case 8: 
+			return descTipologia;
+		case 9: 
+			return dtInizioControllo;
 		}
 		return null;
 	}
 
 	@Override
 	public int getPropertyCount() {
-		return 6;
+		return 10;
 	}
 
 	@Override
@@ -43,6 +57,7 @@ public class SOAPControllo implements KvmSerializable {
 		arg2.type = PropertyInfo.STRING_CLASS;
 		switch(arg0){
 		case 0:
+			arg2.type = PropertyInfo.INTEGER_CLASS;
 			arg2.name = "controllo";
 			break;
 		case 1:
@@ -55,10 +70,26 @@ public class SOAPControllo implements KvmSerializable {
 			arg2.name = "idRiferimento";
 			break;
 		case 4:
+			arg2.type = PropertyInfo.INTEGER_CLASS;
 			arg2.name = "rfid";
 			break;
 		case 5:
+			arg2.type = PropertyInfo.INTEGER_CLASS;
 			arg2.name = "tipoControllo";
+			break;
+		case 6:
+			arg2.type = PropertyInfo.BOOLEAN_CLASS;
+			arg2.name = "attivo";
+			break;
+		case 7:
+			arg2.type = PropertyInfo.INTEGER_CLASS;
+			arg2.name = "codTipologia";
+			break;
+		case 8:
+			arg2.name = "descTipologia";
+			break;
+		case 9:
+			arg2.name = "dtInizioControllo";
 			break;
 		}
 	}
@@ -86,6 +117,18 @@ public class SOAPControllo implements KvmSerializable {
 			break;
 		case 5:
 			tipoControllo = Integer.parseInt(arg1.toString());
+			break;
+		case 6:
+			attivo = Boolean.parseBoolean(arg1.toString());
+			break;
+		case 7:
+			codTipologia = Integer.parseInt(arg1.toString());
+			break;
+		case 8:
+			descTipologia = arg1.toString();
+			break;
+		case 9:
+			dtInizioControllo = arg1.toString();
 			break;
 		
 		}

@@ -1,23 +1,18 @@
 package it.opencontent.android.ocparchitn.SOAPMappings;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Hashtable;
 
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 
-import android.text.format.DateFormat;
-
 public class SOAPFotografia implements KvmSerializable {
 
     
+	public String descrizioneImmagine;
+	public String dtFoto;
 	public String estensioneImmagine;
 	public String immagine;
 	public String nomeImmagine;
-	public String descrizioneImmagine;
-	public String	  dtFoto;
 	public String oraFoto;
 	
 	

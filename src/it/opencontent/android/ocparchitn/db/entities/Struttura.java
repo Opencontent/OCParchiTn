@@ -38,9 +38,7 @@ public class Struttura {
 	public String note = "";
 	public String foto0 = "";
 	public String foto1 = "";
-	public String foto2 = "";
-	public String foto3 = "";
-	public String foto4 = "";
+	
 	
 	public Struttura() {
 
@@ -83,15 +81,6 @@ public class Struttura {
 					break;
 				case 1:
 					foto1 = raw;
-					break;
-				case 2:
-					foto2 = raw;
-					break;
-				case 3:
-					foto3 = raw;
-					break;
-				case 4:
-					foto4 = raw;
 					break;
 				default:
 					Log.d(TAG, "Foto con nome non valido "+rawFotoName);
@@ -161,15 +150,7 @@ public class Struttura {
 			if (e.getKey().equals("foto1") && e.getValue() != null) {
 				foto1 = bindStringToProperty(e.getValue(), e.getKey());
 			}
-			if (e.getKey().equals("foto2") && e.getValue() != null) {
-				foto2 = bindStringToProperty(e.getValue(), e.getKey());
-			}
-			if (e.getKey().equals("foto3") && e.getValue() != null) {
-				foto3 = bindStringToProperty(e.getValue(), e.getKey());
-			}
-			if (e.getKey().equals("foto4") && e.getValue() != null) {
-				foto4 = bindStringToProperty(e.getValue(), e.getKey());
-			}
+
 
 		}
 

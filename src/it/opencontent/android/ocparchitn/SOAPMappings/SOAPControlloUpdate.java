@@ -9,11 +9,12 @@ public class SOAPControlloUpdate implements KvmSerializable {
 	
 	public int controllo;
 	public String dtControllo;
+	public String idRiferimento;
 	public String noteEsito;
 	public String oraControllo;
 	public int rfid;
 	public int tipoControllo;
-	public int tipoEsito;
+	
 	public int tipoSegnalazione;
 	
 	@Override
@@ -32,7 +33,7 @@ public class SOAPControlloUpdate implements KvmSerializable {
 		case 5:
 			return tipoControllo;
 		case 6:
-			return tipoEsito;
+			return idRiferimento;	
 		case 7:
 			return tipoSegnalazione;	
 		}
@@ -67,7 +68,7 @@ public class SOAPControlloUpdate implements KvmSerializable {
 			arg2.name = "tipoControllo";
 			break;
 		case 6:
-			arg2.name = "tipoEsito";
+			arg2.name = "idRiferimento";
 			break;
 		case 7:
 			arg2.name = "tipoSegnalazione";
@@ -100,7 +101,7 @@ public class SOAPControlloUpdate implements KvmSerializable {
 			tipoControllo = Integer.parseInt(arg1.toString());
 			break;
 		case 6:
-			tipoEsito = Integer.parseInt(arg1.toString());
+			idRiferimento = arg1.toString();
 			break;
 		case 7:
 			tipoSegnalazione = Integer.parseInt(arg1.toString());

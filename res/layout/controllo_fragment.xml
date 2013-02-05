@@ -3,54 +3,39 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
-    android:weightSum="14" >
+    android:weightSum="15" >
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="fill_parent"
-        android:layout_weight="4"
-        android:orientation="vertical" >
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:layout_weight="5"
+        android:layout_weight="3"
         android:orientation="vertical"
         android:weightSum="10" >
 
-        <LinearLayout
+        <RadioGroup
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:weightSum="2" >
+            android:orientation="horizontal" >
 
-            <RadioGroup
-                android:layout_width="fill_parent"
+            <RadioButton
+                android:id="@+id/radio_gioco"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="horizontal" >
+                android:checked="true"
+                android:onClick="clickedMe"
+                android:text="@string/struttura_gioco_testo" />
 
-                <RadioButton
-                    android:id="@+id/radio_gioco"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checked="true"
-                    android:onClick="clickedMe"
-                    android:text="@string/struttura_gioco_testo" />
+            <RadioButton
+                android:id="@+id/radio_area"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="clickedMe"
+                android:text="@string/struttura_area_testo" />
+        </RadioGroup>
 
-                <RadioButton
-                    android:id="@+id/radio_area"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:onClick="clickedMe"
-                    android:text="@string/struttura_area_testo" />
-
-            </RadioGroup>
-        </LinearLayout>
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="0dp"
@@ -78,12 +63,51 @@
                 android:onClick="sincronizzaModifiche"
                 android:text="@string/pulsante_sincronizza_modifiche_gioco_testo" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/display_controllo_seleziona_controllo_disponibile"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="@string/controllo_seleziona_controllo_disponibile" />
+
+            <ScrollView
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="5">
+            <LinearLayout
+                android:orientation="vertical" 
+                android:id="@+id/scroll_view_controlli"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                
+            </LinearLayout>
+
+    	</ScrollView>
+
+    	</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="5"
+        android:orientation="vertical"
+        android:weightSum="10" >
+
+        <TextView
+            android:id="@+id/display_controllo_selezionato_text"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="@string/controllo_mostra_controllo_attuale_prefisso"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="4"
+            android:layout_weight="7"
             android:orientation="vertical"
-            android:weightSum="6" >
+            android:weightSum="8" >
 
             <Spinner
                 android:id="@+id/display_controllo_spinner_segnalazione"
@@ -104,7 +128,7 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2" >
+                android:layout_weight="4" >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -131,6 +155,7 @@
             android:layout_height="0dp"
             android:layout_gravity="center"
             android:layout_weight="2"
+            android:background="@color/dialog_text"
             android:orientation="horizontal" >
 
             <ImageView
@@ -353,7 +378,7 @@
                             android:layout_width="0dp"
                             android:layout_height="0dp"
                             android:clickable="false"
-                            android:text="Cofidence: nd"
+                            android:text="@string/display_gioco_confidence"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
                     </LinearLayout>
 
@@ -398,9 +423,10 @@
                     </LinearLayout>
                 </LinearLayout>
         
-
     <include
-        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="2"
         layout="@layout/snapshot_holder_small" />
 
 </LinearLayout>
