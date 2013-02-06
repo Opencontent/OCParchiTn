@@ -11,7 +11,7 @@
         android:layout_height="fill_parent"
         android:layout_weight="2"
         android:orientation="vertical"
-        android:weightSum="6" >
+        android:weightSum="5" >
 
         <Button
             android:id="@+id/pulsante_start_by_rfid"
@@ -44,14 +44,6 @@
             android:layout_weight="1"
             android:onClick="associaRFIDArea"
             android:text="@string/pulsante_associa_rfid_a_area_testo" />
-
-        <Button
-            android:id="@+id/pulsante_salva_modifiche_gioco"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:onClick="salvaModifiche"
-            android:text="@string/pulsante_salva_modifiche_gioco_testo" />
 
         <Button
             android:id="@+id/pulsante_sincronizza_modifiche_gioco"
@@ -219,6 +211,7 @@
                         android:layout_width="0dp"
                         android:layout_height="fill_parent"
                         android:layout_weight="2"
+                        android:background="@color/dialog_border"
                         android:clickable="true"
                         android:onClick="editMe"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -236,6 +229,7 @@
                         android:layout_width="0dp"
                         android:layout_height="fill_parent"
                         android:layout_weight="2"
+                        android:background="@color/dialog_border"
                         android:clickable="true"
                         android:onClick="editMe"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -254,12 +248,13 @@
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
                     android:layout_weight="3"
-                    android:weightSum="4" >
+                    android:padding="5dp"
+                    android:weightSum="5" >
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="fill_parent"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:text="@string/display_gioco_posizione_rfid"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/editable" />
@@ -269,6 +264,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:layout_weight="3"
+                        android:background="@color/dialog_border"
                         android:clickable="true"
                         android:minHeight="150dp"
                         android:minWidth="150dp"
@@ -281,12 +277,13 @@
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
                     android:layout_weight="3"
-                    android:weightSum="4" >
+                    android:padding="5dp"
+                    android:weightSum="5" >
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="fill_parent"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:text="@string/display_gioco_nota"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/editable" />
@@ -296,6 +293,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:layout_weight="3"
+                        android:background="@color/dialog_border"
                         android:clickable="true"
                         android:minHeight="150dp"
                         android:minWidth="150dp"

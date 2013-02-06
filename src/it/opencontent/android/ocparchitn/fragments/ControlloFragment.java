@@ -217,6 +217,23 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 				v.setImageBitmap(Utils.decodeSampledBitmapFromResource(Base64.decode(currentControllo.foto1, Base64.DEFAULT),getResources(),2,width,height));
 			}
 			
+		} else {
+			TextView note = (TextView) getActivity().findViewById(R.id.display_controllo_nota);
+			note.setText("");
+			Spinner spinnerEsitiControllo = (Spinner) getActivity().findViewById(R.id.display_controllo_spinner_esito);
+			spinnerEsitiControllo.setSelection(0);					
+			Spinner spinnerTipiSegnalazione = (Spinner) getActivity().findViewById(R.id.display_controllo_spinner_segnalazione);
+			spinnerTipiSegnalazione.setSelection(0);					
+			
+			
+			ImageView v;
+			v = (ImageView) getActivity().findViewById(R.id.snapshot_controllo_0);
+			v.setImageBitmap(null);
+			v = (ImageView) getActivity().findViewById(R.id.snapshot_controllo_1);
+			v.setImageBitmap(null);
+			LinearLayout l = (LinearLayout) getActivity().findViewById(R.id.scroll_view_controlli);
+			l.removeAllViews();
+			clearDisplayGioco();
 		}
 	}
 	
@@ -340,6 +357,37 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 		
 		
 	}
+	private void clearDisplayGioco(){
+		TextView v;
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_id);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_marca);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_descrizione);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_area_descrizione);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_seriale);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_posizione_rfid);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_rfid);
+		v.setText("");
+		
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsx);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsy);
+		v.setText("");		
+		v = (TextView) getActivity().findViewById(R.id.display_area_id);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_nota);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_area_rfid);
+		v.setText("");
+		v  = (TextView) getActivity().findViewById(R.id.display_area_tipoPavimentazione_fissa);
+		v.setText("");		
+		
+	}
 	private void displayArea(Area area){
 		TextView v;
 		v = (TextView) getActivity().findViewById(R.id.display_area_id);
@@ -348,12 +396,6 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 		v.setText(area.note);
 		v = (TextView) getActivity().findViewById(R.id.display_area_rfid);
 		v.setText(area.rfidArea+"");
-		/*
-		v = (TextView) getActivity().findViewById(R.id.display_area_spessore);
-		v.setText(area.spessore + "");
-		v = (TextView) getActivity().findViewById(R.id.display_area_superficie);
-		v.setText(area.superficie + "");
-		*/
 		v = (TextView) getActivity().findViewById(R.id.display_area_descrizione);
 		v.setText(area.descrizioneArea + "");
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_posizione_rfid);
@@ -361,10 +403,11 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 		
 		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
 		RecordTabellaSupporto tipoPavimentazione = db.tabelleSupportoGetRecord(Constants.TABELLA_TIPO_PAVIMENTAZIONI, area.tipoPavimentazione);
-		
+		db.close();
 		v  = (TextView) getActivity().findViewById(R.id.display_area_tipoPavimentazione_fissa);
 		v.setText(tipoPavimentazione.descrizione);
 	}
+	
 	
 	public void showError(HashMap<String,String> map){
 		
@@ -408,11 +451,17 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 			tipoStruttura = Constants.CODICE_STRUTTURA_GIOCO;
 			methodName = Constants.GET_GIOCO_METHOD_NAME;
 			soapMethodName = Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_RFID;
+			elencoControlli.clear();
+			currentControllo = null;
+			resetInterfaccia();
 			break;
 		case R.id.radio_area:
 			tipoStruttura = Constants.CODICE_STRUTTURA_AREA;
 			methodName = Constants.GET_AREA_METHOD_NAME;
 			soapMethodName = Constants.SOAP_GET_AREA_REQUEST_CODE_BY_RFID;
+			elencoControlli.clear();
+			currentControllo = null;
+			resetInterfaccia();
 			break;			
 		}
 	}	

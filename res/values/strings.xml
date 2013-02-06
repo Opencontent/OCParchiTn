@@ -32,8 +32,8 @@
 	<string name="display_gioco_data_posizionamento">Data posizionamento: </string>
 	<string name="display_gioco_data_installazione">Data installazione: </string>
 	<string name="display_gioco_data_acquisto">Data acquisto: </string>
-	<string name="display_gioco_rfid">Rfid gioco: </string>
-	<string name="display_area_rfid">Rfid area: </string>
+	<string name="display_gioco_rfid">RFID: </string>
+	<string name="display_area_rfid">RFID A: </string>
 	<string name="display_gioco_tipo">Tipo gioco: </string>
 	<string name="display_gioco_modello">modello gioco: </string>
 	<string name="display_gioco_gpsx">GPSX: </string>

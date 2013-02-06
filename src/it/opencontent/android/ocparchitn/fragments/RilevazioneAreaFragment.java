@@ -55,6 +55,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 		 * Setup spinners
 		 */
 		List<RecordTabellaSupporto> records = db.tabelleSupportoGetAllRecords(Constants.TABELLA_TIPO_PAVIMENTAZIONI);
+		db.close();
 		if(records != null){
 		setupSpinnerTipiPavimentazione(view, records);
 		}
@@ -223,6 +224,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 	private long saveLocal(Area area){
 		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
 		long id = db.salvaStrutturaLocally(area);
+		db.close();
 		if(id > 0){
 			Toast.makeText(getActivity().getApplicationContext(),"Area salvata localmente", Toast.LENGTH_SHORT).show();
 			MainActivity ma = (MainActivity) getActivity();
@@ -278,6 +280,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 		s.setSelection(position);
 		
 		setupSnapshots(area);
+		db.close();
 	}
 
 	

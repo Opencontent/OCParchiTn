@@ -185,9 +185,9 @@ public class MainActivity extends BaseActivity {
 	
 	private void setupActionBar(){
 		actionBar = getActionBar();
+		actionBar.removeAllTabs();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayShowTitleEnabled(true);
-		
 
 
 		for(AvailableFragment f : AvailableFragment.values()){
@@ -244,8 +244,6 @@ public class MainActivity extends BaseActivity {
 		nfca.enableForegroundDispatch(this, pi, ifa, techListsArray);
 		}
 
-//		showError(errorMessages);
-		// nfca.enableForegroundDispatch(this, pi, null, null);
 	}
 
 	public void updateCountDaSincronizzare() {
@@ -553,26 +551,7 @@ public class MainActivity extends BaseActivity {
 		partitiDaRFID = true;
 		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO);
 	}
-	
-//	public void recuperaControlliPerRFID(View v){
-//		Log.d(TAG,"Partiamo col controllo da rfid, lancio l'activity");
-//		Intent leggiRFID = new Intent();
-//		leggiRFID.setClass(this, NDEFReadActivity.class);
-//		leggiRFID.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_AREA_ID_METHOD_NAME);			
-//		partitiDaID = false;
-//		partitiDaRFID = true;
-//		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO_PER_CONTROLLI);
-//	}
-//	public void recuperaInterventiPerRFID(View v){
-//		Log.d(TAG,"Partiamo col controllo da rfid, lancio l'activity");
-//		Intent leggiRFID = new Intent();
-//		leggiRFID.setClass(this, NDEFReadActivity.class);
-//		leggiRFID.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_AREA_ID_METHOD_NAME);			
-//		partitiDaID = false;
-//		partitiDaRFID = true;
-//		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO_PER_INTERVENTI);
-//	}
-	
+
 	public void associaRFIDStruttura(View v){
 		Log.d(TAG,"Leghiamo l'rfid dell'area, lancio l'activity");
 		Intent leggiRFID = new Intent();
@@ -591,8 +570,6 @@ public class MainActivity extends BaseActivity {
 		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_AREA_DA_LETTORE_ESTERNO_E_LEGALO_A_GIOCO);		
 	}
 	
-	
-
 	private void getServiceInfo() {
 		Intent serviceIntent = new Intent();
 		serviceIntent.setClass(getApplicationContext(),
@@ -622,8 +599,6 @@ public class MainActivity extends BaseActivity {
 		currentStruttura = null;
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
 		
-		//Controlliamo di che tipo di struttura stiamo parlando:
-		//Gioco(Spostamento) o Area
 		String currentTag = (String) actionBar.getSelectedTab().getTag();
 		if(currentTag.equals(AvailableFragment.RILEVAZIONE_AREA.label)){
 			serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_AREA_ID_METHOD_NAME);			
@@ -709,7 +684,6 @@ public class MainActivity extends BaseActivity {
 				SynchroSoapActivity.class);
 		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_FOTO_METHOD_NAME);
 		HashMap<String, Object> map = new HashMap<String, Object>();
-//		map.put("idGioco", "" + id);
 		map.put("args0", tipoStruttura);
 		map.put("args1", "" + id);
 		serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
