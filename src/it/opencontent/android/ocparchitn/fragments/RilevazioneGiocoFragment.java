@@ -35,6 +35,7 @@ import android.widget.Toast;
 public class RilevazioneGiocoFragment extends Fragment implements ICustomFragment{
 
 	private static final String TAG = RilevazioneGiocoFragment.class.getSimpleName();
+	private boolean siamoEditabili =false;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -77,6 +78,7 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 	}
 	
 	public void editMe(View v){
+		if(siamoEditabili){
 		Log.d(TAG,"editme nel fragment");	
 		TextView t = (TextView) v;
 		
@@ -137,6 +139,7 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 				});
 
 		alert.show();		
+		}
 	}
 	public void placeMe(View v){
 		Gioco g = MainActivity.getCurrentGioco();
@@ -192,23 +195,20 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 					if(b!= null){
 						b.setEnabled(false);
 					}
-		}
-		if(gioco.rfid<=0){ //&& !possiamoModificareGliRFID
-			Button b = (Button) getActivity().findViewById(R.id.pulsante_salva_modifiche_gioco);
-					if(b!= null){
-						b.setEnabled(false);
-					}
-		} else {
-			Button b = (Button) getActivity().findViewById(R.id.pulsante_salva_modifiche_gioco);
-			if(b!= null){
-				b.setEnabled(true);
-			}			
-		}
+					
+		} 
+		
 		if(gioco.rfidArea>0){ //&& !possiamoModificareGliRFID
 			Button b = (Button) getActivity().findViewById(R.id.pulsante_associa_rfid_a_area);
 					if(b!= null){
 						b.setEnabled(false);
 					}
+		}
+		
+		if(gioco.rfid > 0 && gioco.rfidArea >0){
+			siamoEditabili = false;
+		} else {
+			siamoEditabili = true;
 		}
 		
 		v = (TextView) getActivity().findViewById(R.id.display_area_rfid);

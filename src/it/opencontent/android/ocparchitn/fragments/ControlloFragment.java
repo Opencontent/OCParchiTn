@@ -12,7 +12,6 @@ import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -93,13 +92,14 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		
+		currentControllo = null;
+		elencoControlli.clear();
+		
 		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
 		View view = inflater.inflate(R.layout.controllo_fragment, container, false);
-		List<RecordTabellaSupporto> records = db.tabelleSupportoGetAllRecords(Constants.TABELLA_ESITI_INTERVENTO);
-		if(records != null){
-		 setupSpinnerEsitiControllo(view, records);
-		}		
-		records = db.tabelleSupportoGetAllRecords(Constants.TABELLA_SEGNALAZIONI);
+		List<RecordTabellaSupporto> records = db.tabelleSupportoGetAllRecords(Constants.TABELLA_SEGNALAZIONI);
+		db.close();
 		if(records != null){
 			setupSpinnerTipiSegnalazione(view, records);
 		}		
@@ -116,9 +116,13 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 
 			OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
 			RecordTabellaSupporto rts = db.tabelleSupportoGetRecord(Constants.TABELLA_RIFERIMENTO_INTERVENTO, c.tipoControllo);
+			db.close();
 			c.descrizioneControllo = rts.descrizione;
-			
-			controlloButton.setText(rts.descrizione+"\nEntro il "+c.dtScadenzaControllo);
+			String testoBottone = rts.descrizione;
+			if(c.dtScadenzaControllo != null && c.dtScadenzaControllo.length() > 0){
+				testoBottone+="\nEntro il "+c.dtScadenzaControllo;
+			}
+			controlloButton.setText(testoBottone);
 			controlloButton.setTag(R.integer.controllo_button_tag, c);
 			controlloButton.setOnClickListener(new View.OnClickListener() {
 				
@@ -133,32 +137,6 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 			
 		}
 		
-	}
-	
-	private void setupSpinnerEsitiControllo(View view, List<RecordTabellaSupporto> records) {
-		adapterEsitiControllo = new ArrayAdapter<RecordTabellaSupporto>(getActivity(), R.layout.default_spinner_layout,records);
-		adapterEsitiControllo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		final Spinner spinnerEsitiControllo = (Spinner) view.findViewById(R.id.display_controllo_spinner_esito);
-		spinnerEsitiControllo.setAdapter(adapterEsitiControllo);
-		
-		
-		spinnerEsitiControllo.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				RecordTabellaSupporto r = (RecordTabellaSupporto) spinnerEsitiControllo.getAdapter().getItem(arg2);
-				if(elencoControlli.size()>0){
-					elencoControlli.get(0).tipoEsito = r.codice;
-					saveLocal(elencoControlli.get(0));
-				}
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				
-			}
-		});
 	}
 	
 	private void setupSpinnerTipiSegnalazione(View view, List<RecordTabellaSupporto> records) {
@@ -192,12 +170,7 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 		if(currentControllo != null){
 			TextView note = (TextView) getActivity().findViewById(R.id.display_controllo_nota);
 			note.setText(currentControllo.noteControllo);
-			Spinner spinnerEsitiControllo = (Spinner) getActivity().findViewById(R.id.display_controllo_spinner_esito);
-			for(int i = 0; i < adapterEsitiControllo.getCount(); i++ ){
-				if(adapterEsitiControllo.getItem(i).codice == currentControllo.tipoEsito){
-					spinnerEsitiControllo.setSelection(i);					
-				}
-			}
+
 			Spinner spinnerTipiSegnalazione = (Spinner) getActivity().findViewById(R.id.display_controllo_spinner_segnalazione);
 			for(int i = 0; i < adapterTipiSegnalazione.getCount(); i++ ){
 				if(adapterTipiSegnalazione.getItem(i).codice == currentControllo.tipoSegnalazione){
@@ -218,10 +191,12 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 			}
 			
 		} else {
+			TextView controlloTeaser = (TextView) getActivity().findViewById(R.id.display_controllo_selezionato_text);
+			controlloTeaser.setText(getString(R.string.controllo_mostra_controllo_attuale_prefisso));
+			
 			TextView note = (TextView) getActivity().findViewById(R.id.display_controllo_nota);
 			note.setText("");
-			Spinner spinnerEsitiControllo = (Spinner) getActivity().findViewById(R.id.display_controllo_spinner_esito);
-			spinnerEsitiControllo.setSelection(0);					
+				
 			Spinner spinnerTipiSegnalazione = (Spinner) getActivity().findViewById(R.id.display_controllo_spinner_segnalazione);
 			spinnerTipiSegnalazione.setSelection(0);					
 			
@@ -246,10 +221,7 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 	public void salvaModifiche(View v) {
 		Log.d(TAG,"salva modifiche alla periodica");
 		if(elencoControlli.size()>0){
-			long id = saveLocal(elencoControlli.get(0));
-//			if(id>0){
-//				elencoControlli.remove(0);
-//			}
+			saveLocal(elencoControlli.get(0));
 		}
 	}
 	

@@ -39,7 +39,7 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:orientation="vertical" >
 
             <Button
@@ -74,7 +74,7 @@
             <ScrollView
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
-                android:layout_weight="5">
+                android:layout_weight="4">
             <LinearLayout
                 android:orientation="vertical" 
                 android:id="@+id/scroll_view_controlli"
@@ -98,14 +98,14 @@
             android:id="@+id/display_controllo_selezionato_text"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:text="@string/controllo_mostra_controllo_attuale_prefisso"
             android:textAppearance="?android:attr/textAppearanceLarge" />
     
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="7"
+            android:layout_weight="6"
             android:orientation="vertical"
             android:weightSum="8" >
 
@@ -117,13 +117,7 @@
                 android:prompt="@string/app_name"
                 android:spinnerMode="dropdown" />
 
-            <Spinner
-                android:id="@+id/display_controllo_spinner_esito"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_weight="2"
-                android:prompt="@string/app_name"
-                android:spinnerMode="dropdown" />
+
 
             <LinearLayout
                 android:layout_width="fill_parent"

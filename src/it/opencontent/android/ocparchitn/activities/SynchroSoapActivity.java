@@ -281,7 +281,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 					fu.immagine = g.foto1;
 					break;
 				}
-				if(fu.immagine!=null && fu.immagine != ""){
+				if(fu.immagine!=null && fu.immagine.length()>1){
 					fu.nomeImmagine = suffissoImmagine + idRiferimento + "_foto_"+i;
 					map = new HashMap<String, Object>();
 					map.put("Fotoupdate", fu);

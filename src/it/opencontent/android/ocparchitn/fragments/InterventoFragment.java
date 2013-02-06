@@ -98,6 +98,10 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		
+		currentIntervento = null;
+		elencoInterventi.clear();
+		
 		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
 		View view = inflater.inflate(R.layout.intervento_fragment, container, false);
 		List<RecordTabellaSupporto> records = db.tabelleSupportoGetAllRecords(Constants.TABELLA_ESITI_INTERVENTO);
@@ -170,11 +174,8 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 	
 	private void resetInterfaccia(){
 		if(currentIntervento != null){
-			
 			String DATE_FORMAT = "yyyy-MM-dd";
 			SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT,Locale.US);
-
-
 			
 			Button pulsanteInizia = (Button) getActivity().findViewById(R.id.pulsanteIniziaIntervento);
 			Button pulsanteTermina = (Button) getActivity().findViewById(R.id.pulsanteTerminaIntervento);
@@ -214,6 +215,26 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 				v.setImageBitmap(Utils.decodeSampledBitmapFromResource(Base64.decode(currentIntervento.foto1, Base64.DEFAULT),getResources(),2,width,height));
 			}
 			
+		} else {
+			
+			TextView controlloTeaser = (TextView) getActivity().findViewById(R.id.display_controllo_selezionato_text);
+			controlloTeaser.setText(getString(R.string.controllo_mostra_controllo_attuale_prefisso));
+			
+			TextView note = (TextView) getActivity().findViewById(R.id.display_controllo_nota);
+			note.setText("");
+				
+			Spinner spinnerTipiEsito = (Spinner) getActivity().findViewById(R.id.display_controllo_spinner_esito);
+			spinnerTipiEsito.setSelection(0);					
+			
+			ImageView v;
+			v = (ImageView) getActivity().findViewById(R.id.snapshot_controllo_0);
+			v.setImageBitmap(null);
+			v = (ImageView) getActivity().findViewById(R.id.snapshot_controllo_1);
+			v.setImageBitmap(null);
+			LinearLayout l = (LinearLayout) getActivity().findViewById(R.id.scroll_view_controlli);
+			l.removeAllViews();			
+			
+			clearDisplayGioco();
 		}
 	}
 	
@@ -368,6 +389,38 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 		v.setText(tipoPavimentazione.descrizione);
 	}
 	
+	private void clearDisplayGioco(){
+		TextView v;
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_id);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_marca);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_descrizione);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_area_descrizione);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_seriale);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_posizione_rfid);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_rfid);
+		v.setText("");
+		
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsx);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsy);
+		v.setText("");		
+		v = (TextView) getActivity().findViewById(R.id.display_area_id);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_nota);
+		v.setText("");
+		v = (TextView) getActivity().findViewById(R.id.display_area_rfid);
+		v.setText("");
+		v  = (TextView) getActivity().findViewById(R.id.display_area_tipoPavimentazione_fissa);
+		v.setText("");		
+		
+	}	
+	
 	public void showError(HashMap<String,String> map){
 		
 	}
@@ -408,11 +461,17 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 			tipoStruttura = Constants.CODICE_STRUTTURA_GIOCO;
 			methodName = Constants.GET_GIOCO_METHOD_NAME;
 			soapMethodName = Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_RFID;
+			currentIntervento = null;
+			elencoInterventi.clear();
+			resetInterfaccia();
 			break;
 		case R.id.radio_area:
 			tipoStruttura = Constants.CODICE_STRUTTURA_AREA;
 			methodName = Constants.GET_AREA_METHOD_NAME;
 			soapMethodName = Constants.SOAP_GET_AREA_REQUEST_CODE_BY_RFID;
+			currentIntervento = null;
+			elencoInterventi.clear();
+			resetInterfaccia();
 			break;		
 		case R.id.pulsanteIniziaIntervento:
 			if(elencoInterventi.size()>0){

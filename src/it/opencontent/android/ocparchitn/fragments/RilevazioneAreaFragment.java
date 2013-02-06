@@ -43,6 +43,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 	private static final String TAG = RilevazioneAreaFragment.class.getSimpleName();
 
 	private ArrayAdapter<RecordTabellaSupporto> adapterTipoPavimentazione;
+	private boolean siamoEditabili =false;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,6 +64,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 	}
 
 
+
 	private void setupSpinnerTipiPavimentazione(View view, List<RecordTabellaSupporto> records) {
 		adapterTipoPavimentazione = new ArrayAdapter<RecordTabellaSupporto>(getActivity(), R.layout.default_spinner_layout,records);
 		adapterTipoPavimentazione.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -77,15 +79,15 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 					int arg2, long arg3) {
 				RecordTabellaSupporto r = (RecordTabellaSupporto) spinnerTipoPavimentazione.getAdapter().getItem(arg2);
 				Area a = MainActivity.getCurrentArea();
-				if(a!=null){
+				if(a!=null && a.rfidArea<=0){
 					a.tipoPavimentazione = r.codice;
 					MainActivity.setCurrentArea(a);
+					salvaModifiche(null);
 				}
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
 				
 			}
 		});
@@ -125,6 +127,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 	
 	public void editMe(View v){
 		Log.d(TAG,"editme nel fragment");	
+		if(siamoEditabili){
 		switch(v.getId()){
 		case R.id.display_area_tipoPavimentazione:
 			break;
@@ -132,6 +135,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 			TextView t = (TextView) v;
 			changeTextValueThroughAlert(t);
 			break;
+		}
 		}
 	}
 
@@ -202,13 +206,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 		Log.d(TAG,"Nessun piazzamento necessario per l'area");
 	}
 	public void showError(HashMap<String,String> map){
-//		TextView errorView = (TextView) getActivity().findViewById(R.id.display_gioco_warning);
-//		errorView.setText("");
-//		Iterator<Entry<String,String>> i = map.entrySet().iterator();
-//		while(i.hasNext()){
-//			Entry<String,String> n = (Entry<String, String>) i.next();
-//			errorView.append("\n"+n.getValue());
-//		}
+
 	}
 
 	@Override
@@ -222,6 +220,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 	}
 	
 	private long saveLocal(Area area){
+
 		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
 		long id = db.salvaStrutturaLocally(area);
 		db.close();
@@ -246,23 +245,14 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 		v = (TextView) getActivity().findViewById(R.id.display_area_rfid);
 		v.setText(area.rfidArea+"");
 		if(area.rfidArea>0){ //&& !possiamoModificareGliRFID
+			siamoEditabili = false;
 			Button b = (Button) getActivity().findViewById(R.id.pulsante_associa_rfid_a_area);
-					if(b!= null){
-						b.setEnabled(false);
-					}
-		}		
-		if(area.rfidArea<=0){ //&& !possiamoModificareGliRFID
-			Button b = (Button) getActivity().findViewById(R.id.pulsante_salva_modifiche_gioco);
-					if(b!= null){
-						b.setEnabled(false);
-					}
-		} else {
-			Button b = (Button) getActivity().findViewById(R.id.pulsante_salva_modifiche_gioco);
 			if(b!= null){
-				b.setEnabled(true);
-			}			
-		}		
-		
+				b.setEnabled(false);
+			}
+		} else {
+			siamoEditabili = true;
+		}
 
 		v = (TextView) getActivity().findViewById(R.id.display_area_spessore);
 		v.setText(area.spessore + "");
@@ -320,7 +310,6 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 
 	@Override
 	public void clickedMe(View v) {
-		// TODO Auto-generated method stub
 		
 	}
 	
