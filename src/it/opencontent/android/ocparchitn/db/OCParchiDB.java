@@ -558,8 +558,8 @@ public class OCParchiDB {
 		cv.put("codTipologia",i.codTipologia);
 		cv.put("descEsito",i.descEsito);
 		cv.put("descTipologia",i.descTipologia);
-		cv.put("dtFineItervento",i.dtFineItervento.toString());
-		cv.put("dtInizioItervento",i.dtInizioItervento.toString());
+		cv.put("dtFineItervento",i.dtFineItervento);
+		cv.put("dtInizioItervento",i.dtInizioItervento);
 		cv.put("idGioco",i.idGioco);
 		cv.put("idIntervento",i.idIntervento);
 		cv.put("idRiferimento",i.idRiferimento);
@@ -632,11 +632,16 @@ public class OCParchiDB {
 			Entry<String, Struttura> entry = strutture.next();
 			String[] columns = new String[] { " sincronizzato as sincronizzato " };
 			String tableName = entry.getKey();
-			String selection = " sincronizzato = ? AND ( rfid > 0 OR rfidArea >  0 ) "; // TODO: trovare un modo
-														// per metterli in
-														// qualche costante,
-														// probabilmente in
-														// values
+			String selection = " sincronizzato = ?  "; 
+			if(entry.getValue().getClass().equals(Controllo.class)){
+				selection = " sincronizzato = ? and idRiferimento > 0 ";
+			}else if(entry.getValue().getClass().equals(Gioco.class)){
+				selection = " sincronizzato = ? and rfid > 0 and rfidArea > 0";
+			}else if(entry.getValue().getClass().equals(Area.class)){
+				selection = " sincronizzato = ? and rfidArea > 0 ";
+			}else if(entry.getValue().getClass().equals(Intervento.class)){
+				selection = " sincronizzato = ? and idIntervento > 0 ";
+			}
 
 			c = query(tableName, selection, selectionArgs, columns, null);
 			if (c != null && c.moveToFirst()) {
@@ -665,11 +670,17 @@ public class OCParchiDB {
 			String[] columns = getDefaultColumnsWithoutFoto(entry.getValue().getClass());
 
 			String tableName = entry.getKey();
-			String selection = " sincronizzato = ? AND ( rfid > 0 OR rfidArea >  0 ) "; // TODO: trovare un modo
-														// per metterli in
-														// qualche costante,
-														// probabilmente in
-														// values
+			String selection = " sincronizzato = ?  "; 
+			if(entry.getValue().getClass().equals(Controllo.class)){
+				selection = " sincronizzato = ? and idRiferimento > 0 ";
+			}else if(entry.getValue().getClass().equals(Gioco.class)){
+				selection = " sincronizzato = ? and rfid > 0 and rfidArea > 0";
+			}else if(entry.getValue().getClass().equals(Area.class)){
+				selection = " sincronizzato = ? and rfidArea > 0 ";
+			}else if(entry.getValue().getClass().equals(Intervento.class)){
+				selection = " sincronizzato = ? and idIntervento > 0 ";
+			}
+			
 
 			Cursor c = query(tableName, selection, selectionArgs, columns, null);
 			if (c != null && c.moveToFirst()) {
@@ -705,8 +716,8 @@ public class OCParchiDB {
 						((Intervento) s).codTipologia = c.getInt(c.getColumnIndex("codTipologia"));
 						((Intervento) s).descEsito = c.getString(c.getColumnIndex("descEsito"));
 						((Intervento) s).descTipologia = c.getString(c.getColumnIndex("descTipologia"));
-						((Intervento) s).dtFineItervento = c.getString(c.getColumnIndex("dtFineItervento.toString()"));
-						((Intervento) s).dtInizioItervento = c.getString(c.getColumnIndex("dtInizioItervento.toString()"));
+						((Intervento) s).dtFineItervento = c.getString(c.getColumnIndex("dtFineItervento"));
+						((Intervento) s).dtInizioItervento = c.getString(c.getColumnIndex("dtInizioItervento"));
 						((Intervento) s).idGioco = c.getInt(c.getColumnIndex("idRiferimento"));
 						((Intervento) s).idIntervento = c.getInt(c.getColumnIndex("idIntervento"));
 						((Intervento) s).idRiferimento = c.getString(c.getColumnIndex("idRiferimento"));

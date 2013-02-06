@@ -6,6 +6,7 @@ import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAreaUpdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPControlloUpdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotoupdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGiocoUpdate;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPInterventoUpdate;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkAutException;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkGiochiException;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkSrvException;
@@ -13,6 +14,7 @@ import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Area;
 import it.opencontent.android.ocparchitn.db.entities.Controllo;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
+import it.opencontent.android.ocparchitn.db.entities.Intervento;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.services.IRemoteConnection;
 import it.opencontent.android.ocparchitn.utils.PlatformChecks;
@@ -21,7 +23,6 @@ import it.opencontent.android.ocparchitn.utils.SoapConnector;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -86,6 +87,9 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 					if(set.get(k).getClass().equals(Gioco.class)){
 						Gioco g = (Gioco) set.get(k);
 						sincronizzaLaStruttura(g);						
+					}else if(set.get(k).getClass().equals(Intervento.class)){
+						Intervento i = (Intervento) set.get(k);
+						sincronizzaLaStruttura(i);						
 					}else if(set.get(k).getClass().equals(Area.class)){
 						Area a = (Area) set.get(k);
 						sincronizzaLaStruttura(a);												
@@ -206,6 +210,31 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 					finish();
 				}
 			}
+		}else if(s.getClass().equals(Intervento.class)){
+			Intervento c = (Intervento) s;
+			if (c.idIntervento > 0 && c.noteEsecuzione.length() > 0) {
+				
+				SOAPInterventoUpdate iu = new SOAPInterventoUpdate();
+
+				iu.idRiferimento = c.idIntervento+"";
+				iu.dtChiusura = c.dtFineItervento;
+				iu.oraChiusura = c.oraFineItervento;
+				iu.noteEsito = c.noteEsecuzione;
+				iu.rfid = c.idGioco+"";
+				iu.tipoEsito = c.codEsito+"";
+
+								
+				map.put("Interventoupdate", iu);
+				getRemoteResponse(Constants.SET_INTERVENTO_METHOD_NAME, map, false,Constants.SET_INTERVENTO_METHOD_NAME);
+				sincronizzaTutteLeFoto(c);
+			}else {
+				Log.d(TAG,"Intervento senza dati necessari, non sincronizzato "+c.idIntervento);
+				Toast.makeText(this,"Intervento senza note, non sincronizzato "+c.idIntervento,Toast.LENGTH_SHORT).show();
+				if (queueLength <= 0) {
+					setResult(RESULT_OK, getIntent());
+					finish();
+				}
+			}
 		}
 	}
 
@@ -235,14 +264,15 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		}
 		
 
-		SOAPFotoupdate fu = new SOAPFotoupdate();
-		fu.tipoFoto = tipoFoto;
-		fu.idRiferimento = idRiferimento+"";
-		fu.sovrascrittura = true;
-		fu.estensioneImmagine = Constants.ESTENSIONE_FOTO;
+
 		
 		if(g!=null){
 			for(int i = 0; i < Constants.MAX_SNAPSHOTS_AMOUNT;i++){
+				SOAPFotoupdate fu = new SOAPFotoupdate();
+				fu.tipoFoto = tipoFoto;
+				fu.idRiferimento = idRiferimento+"";
+				fu.sovrascrittura = true;
+				fu.estensioneImmagine = Constants.ESTENSIONE_FOTO;
 				switch(i){
 				case 0:
 					fu.immagine = g.foto0;

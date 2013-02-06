@@ -49,6 +49,7 @@
 	
 	<string name="controllo_seleziona_controllo_disponibile">Seleziona un controllo fra quelli disponibili</string>
 	<string name="controllo_mostra_controllo_attuale_prefisso">Controllo selezionato: </string>
+	<string name="intervento_mostra_note_richiesta_prefisso">Note richiesta: </string>
 	
 	<string name="struttura_gioco_testo">Gioco</string>
 	<string name="struttura_area_testo">Area</string>

@@ -40,6 +40,7 @@ public class Constants {
 	public final static String GET_CONTROLLO_METHOD_NAME = "getControllo";
 	public final static String SET_CONTROLLO_METHOD_NAME = "setControllo";
 	public final static String GET_INTERVENTO_METHOD_NAME = "getIntervento";
+	public final static String SET_INTERVENTO_METHOD_NAME = "setIntervento";
 	public final static String SET_SPOSTAMENTO_METHOD_NAME = "setSpostamento";
 	
 	public final static String EXTRAKEY_FOTO_NUMBER = "fotoNumber";

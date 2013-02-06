@@ -930,6 +930,17 @@ public class MainActivity extends BaseActivity {
 					Controllo controllo = new Controllo((SOAPControllo) res.get("mapped"));
 					ControlloFragment.appendControllo(controllo);
 					setupScrollViewControlli();
+				} else{
+					Set<Entry<String,Object>> entrySet = res.entrySet();
+					Iterator<Entry<String,Object>> iterator = entrySet.iterator();
+					while(iterator.hasNext()){
+						Entry<String,Object> entry = iterator.next();
+						if(entry.getValue().getClass().equals(SOAPControllo.class)){
+							Controllo controllo = new Controllo((SOAPControllo) entry.getValue());
+							ControlloFragment.appendControllo(controllo);
+							setupScrollViewControlli();							
+						}
+					}
 				}
 			}
 			
@@ -946,6 +957,17 @@ public class MainActivity extends BaseActivity {
 					Intervento intervento = new Intervento((SOAPIntervento) res.get("mapped"));
 					InterventoFragment.appendControllo(intervento);
 					setupScrollViewInterventi();
+				}else{
+					Set<Entry<String,Object>> entrySet = res.entrySet();
+					Iterator<Entry<String,Object>> iterator = entrySet.iterator();
+					while(iterator.hasNext()){
+						Entry<String,Object> entry = iterator.next();
+						if(entry.getValue().getClass().equals(SOAPIntervento.class)){
+							Intervento intervento = new Intervento((SOAPIntervento) entry.getValue());
+							InterventoFragment.appendControllo(intervento);
+							setupScrollViewControlli();							
+						}
+					}
 				}
 			}
 			
@@ -985,11 +1007,13 @@ public class MainActivity extends BaseActivity {
 
 		case Constants.SOAP_SERVICE_INFO_REQUEST_CODE:
 			res = SynchroSoapActivity.getRes(Constants.GET_INFO_METHOD_NAME);
+			if(res != null && res.containsKey("mapped")){
 			serviceInfo = (SOAPInfo) res.get("mapped");
 			serviceInfoTaken = true;
 			Toast.makeText(this, "Server Online\nVer: "+serviceInfo.versione, Toast.LENGTH_SHORT).show();
 			errorMessages.put(Constants.STATUS_MESSAGE_SERVER_STATUS,
 					"Connessione al server: OK");
+			}
 			break;
 			default:
 				super.onActivityResult(requestCode, returnCode, intent);

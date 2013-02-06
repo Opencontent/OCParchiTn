@@ -5,17 +5,22 @@ import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.activities.MainActivity;
 import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Area;
-import it.opencontent.android.ocparchitn.db.entities.Controllo;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.Intervento;
 import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.utils.Utils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+
+import org.xml.sax.DTDHandler;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -94,7 +99,7 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
-		View view = inflater.inflate(R.layout.controllo_fragment, container, false);
+		View view = inflater.inflate(R.layout.intervento_fragment, container, false);
 		List<RecordTabellaSupporto> records = db.tabelleSupportoGetAllRecords(Constants.TABELLA_ESITI_INTERVENTO);
 		if(records != null){
 		 setupSpinnerEsitiControllo(view, records);
@@ -102,6 +107,9 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 		db.close();
 		return view;
 	}
+	
+	
+	
 	
 	public void setupScrollViewInterventi(){
 		LinearLayout controlli = (LinearLayout) getActivity().findViewById(R.id.scroll_view_controlli);
@@ -115,7 +123,7 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 			RecordTabellaSupporto rts = db.tabelleSupportoGetRecord(Constants.TABELLA_RIFERIMENTO_INTERVENTO, c.tipoIntervento);
 			db.close();
 			
-			controlloButton.setText(rts.descrizione);
+			controlloButton.setText(rts.descrizione+" "+c.idIntervento);
 			controlloButton.setTag(R.integer.controllo_button_tag, c);
 			controlloButton.setOnClickListener(new View.OnClickListener() {
 				
@@ -162,6 +170,26 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 	
 	private void resetInterfaccia(){
 		if(currentIntervento != null){
+			
+			String DATE_FORMAT = "yyyy-MM-dd";
+			SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT,Locale.US);
+
+
+			
+			Button pulsanteInizia = (Button) getActivity().findViewById(R.id.pulsanteIniziaIntervento);
+			Button pulsanteTermina = (Button) getActivity().findViewById(R.id.pulsanteTerminaIntervento);
+
+			if(currentIntervento.dtInizioItervento == null){
+				pulsanteInizia.setEnabled(true);
+			} else {
+				pulsanteInizia.setEnabled(false);
+			}
+			if(currentIntervento.dtFineItervento == null){
+				pulsanteTermina.setEnabled(true);
+			} else {
+				pulsanteTermina.setEnabled(false);
+			}
+			
 			TextView note = (TextView) getActivity().findViewById(R.id.display_controllo_nota);
 			note.setText(currentIntervento.noteEsecuzione);
 			Spinner spinnerEsitiControllo = (Spinner) getActivity().findViewById(R.id.display_controllo_spinner_esito);
@@ -170,7 +198,9 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 					spinnerEsitiControllo.setSelection(i);					
 				}
 			}
+			TextView noteRichiesta = (TextView) getActivity().findViewById(R.id.note_richiesta_intervento);
 			
+			noteRichiesta.setText(getString(R.string.intervento_mostra_note_richiesta_prefisso)+" "+currentIntervento.noteRichiesta);
 			
 			ImageView v;
 			int width=100;
@@ -207,9 +237,14 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
 		long id = db.salvaInterventoLocally(c);
 		if(id > 0){
-			Toast.makeText(getActivity().getApplicationContext(),"Operazione salvata localmente", Toast.LENGTH_SHORT).show();
+			String message  = "Operazione salvata localmente";
+			if(c.noteEsecuzione == null || c.noteEsecuzione.equals("")){
+				message += "\nMANCA LA NOTA";
+			}
+			Toast.makeText(getActivity().getApplicationContext(),message, Toast.LENGTH_LONG).show();
 			MainActivity ma = (MainActivity) getActivity();
 			ma.updateCountDaSincronizzare();
+			
 		} else if (id == -2){
 			//constraint error
 		}
@@ -378,7 +413,33 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 			tipoStruttura = Constants.CODICE_STRUTTURA_AREA;
 			methodName = Constants.GET_AREA_METHOD_NAME;
 			soapMethodName = Constants.SOAP_GET_AREA_REQUEST_CODE_BY_RFID;
-			break;			
+			break;		
+		case R.id.pulsanteIniziaIntervento:
+			if(elencoInterventi.size()>0){
+				String DATE_FORMAT = "yyyy-MM-dd";
+				String TIME_FORMAT = "HH:mm:ss";
+				SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT,Locale.US);
+				SimpleDateFormat hdf = new SimpleDateFormat(TIME_FORMAT,Locale.US);
+				Calendar calendar = Calendar.getInstance(); 			
+				elencoInterventi.get(0).dtInizioItervento = sdf.format(calendar.getTime()); 
+				elencoInterventi.get(0).oraInizioItervento = hdf.format(calendar.getTime()); 
+				resetInterfaccia();
+				salvaModifiche(null);
+			}
+			break;
+		case R.id.pulsanteTerminaIntervento:
+			if(elencoInterventi.size()>0){
+				String DATE_FORMAT = "yyyy-MM-dd";
+				String TIME_FORMAT = "HH:mm:ss";
+				SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT,Locale.US);
+				SimpleDateFormat hdf = new SimpleDateFormat(TIME_FORMAT,Locale.US);
+				Calendar calendar = Calendar.getInstance(); 			
+				elencoInterventi.get(0).dtFineItervento = sdf.format(calendar.getTime()); 
+				elencoInterventi.get(0).oraFineItervento = hdf.format(calendar.getTime());
+				resetInterfaccia();
+				salvaModifiche(null);
+			}
+			break;
 		}
 	}	
 }

@@ -42,8 +42,8 @@ public class Intervento extends Struttura {
 		codTipologia = remote.codTipologia;
 		descEsito = remote.descEsito;
 		descTipologia = remote.descTipologia;
-		dtFineItervento = remote.dtFineItervento.toString();
-		dtInizioItervento = remote.dtInizioItervento.toString();
+		dtFineItervento = remote.dtFineItervento;
+		dtInizioItervento = remote.dtInizioItervento;
 		idGioco = remote.idGioco;
 		idIntervento = remote.idIntervento;
 		idRiferimento = remote.idRiferimento;

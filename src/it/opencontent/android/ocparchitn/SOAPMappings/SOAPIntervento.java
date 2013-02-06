@@ -18,8 +18,8 @@ public class SOAPIntervento implements KvmSerializable {
 	public String descEsito;
 	public String descTipologia;
 	
-	public Date dtFineItervento;
-	public Date dtInizioItervento;
+	public String dtFineItervento;
+	public String dtInizioItervento;
 	public int idGioco;
 	public int idIntervento;
 	public String idRiferimento;
@@ -168,18 +168,10 @@ public class SOAPIntervento implements KvmSerializable {
 			codTipologia = Integer.parseInt(arg1.toString());
 			break ;
 		case 3:
-			try {
-				dtFineItervento = sdf.parse(arg1+"");
-			} catch (ParseException e) {
-				e.printStackTrace();
-			} 
+			dtFineItervento = arg1.toString();
 			break ;
 		case 4:
-			try {
-				dtInizioItervento = sdf.parse(arg1+"");
-			} catch (ParseException e) {
-				e.printStackTrace();
-			} 
+			dtInizioItervento = arg1.toString();
 			break ;
 		case 5:
 			idGioco = Integer.parseInt(arg1.toString());
