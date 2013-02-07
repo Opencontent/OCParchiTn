@@ -185,7 +185,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/snapshot_description"
                 android:gravity="center"
-                android:onClick="takeSnapshotControllo"
+                android:onClick="takeSnapshotIntervento"
                 android:padding="2dp"
                 android:src="@drawable/snapshot_teaser"
                 android:tag="0" />
@@ -198,7 +198,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/snapshot_description"
                 android:gravity="center"
-                android:onClick="takeSnapshotControllo"
+                android:onClick="takeSnapshotIntervento"
                 android:padding="2dp"
                 android:src="@drawable/snapshot_teaser"
                 android:tag="1" />

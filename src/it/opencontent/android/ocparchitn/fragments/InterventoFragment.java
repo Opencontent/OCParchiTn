@@ -49,7 +49,7 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 	public static int tipoStruttura = Constants.CODICE_STRUTTURA_GIOCO;
 	public static String methodName = Constants.GET_GIOCO_METHOD_NAME;
 	public static int soapMethodName = Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_RFID;
-	public static int tipoControllo = Constants.CODICE_STRUTTURA_CONTROLLO_VISIVO;
+	public static int tipoControllo = Constants.CODICE_STRUTTURA_INTERVENTO;
 	private ArrayAdapter<RecordTabellaSupporto> adapterEsitiControllo;
 	private ArrayAdapter<RecordTabellaSupporto> adapterTipiSegnalazione;
 	private static Intervento currentIntervento;

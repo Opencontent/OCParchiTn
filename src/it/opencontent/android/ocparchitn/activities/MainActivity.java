@@ -1029,6 +1029,18 @@ public class MainActivity extends BaseActivity {
 					mImageView = (ImageView) findViewById(R.id.snapshot_controllo_1);
 					break;
 				}
+			}else if(currentSnapshotUri.getPath().contains(StruttureEnum.INTERVENTO.tipo)){
+				String base64 = Base64.encodeToString(image, Base64.DEFAULT);
+				InterventoFragment.aggiungiSnapshotAControlloCorrente(base64, currentSnapshotID);
+				mImageView = null;
+				switch (currentSnapshotID) {
+				case 0:
+					mImageView = (ImageView) findViewById(R.id.snapshot_controllo_0);
+					break;
+				case 1:
+					mImageView = (ImageView) findViewById(R.id.snapshot_controllo_1);
+					break;
+				}
 			} else {
 			
 				if (currentStruttura == null) {
@@ -1338,6 +1350,19 @@ public class MainActivity extends BaseActivity {
 		customCamera.putExtra(Constants.EXTRAKEY_FOTO_NUMBER, whichOne);
 		currentSnapshotID = whichOne;
 		String tipo = StruttureEnum.CONTROLLO.tipo;
+		File f = Utils.createImageFile(tipo, currentQueriedId, whichOne);
+		if(f!=null){
+			customCamera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+			currentSnapshotUri = Uri.fromFile(f);
+		}
+		startActivityForResult(customCamera, Constants.FOTO_REQUEST_CODE);
+	}
+	public void takeSnapshotIntervento(View button) {
+		Intent customCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		int whichOne = Integer.parseInt((String) button.getTag());
+		customCamera.putExtra(Constants.EXTRAKEY_FOTO_NUMBER, whichOne);
+		currentSnapshotID = whichOne;
+		String tipo = StruttureEnum.INTERVENTO.tipo;
 		File f = Utils.createImageFile(tipo, currentQueriedId, whichOne);
 		if(f!=null){
 			customCamera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));

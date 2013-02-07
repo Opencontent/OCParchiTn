@@ -257,9 +257,14 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 			suffissoImmagine = "area_";
 			g = db.readAreaLocallyByID(idRiferimento);
 		}else if(g.getClass().equals(Controllo.class)){
-			tipoFoto = ((Controllo) g).tipoControllo+"";			
+			tipoFoto = Constants.CODICE_STRUTTURA_CONTROLLO +"";			
 			idRiferimento = Integer.parseInt(((Controllo) g).idRiferimento);
 			suffissoImmagine = "controllo_";
+			g = db.readControlloLocallyByID(idRiferimento+"");
+		}else if(g.getClass().equals(Intervento.class)){
+			tipoFoto = Constants.CODICE_STRUTTURA_INTERVENTO+"";			
+			idRiferimento = ((Intervento) g).idIntervento;
+			suffissoImmagine = "intervento_";
 			g = db.readControlloLocallyByID(idRiferimento+"");
 		}
 		

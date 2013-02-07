@@ -39,7 +39,13 @@ public class SpostamentoFragment extends RilevazioneGiocoFragment  implements IC
 
 	@Override
 	public void editMe(View v) {
-		super.editMe(v);
+		switch(v.getId()){
+		case R.id.display_gioco_nota:
+		case R.id.display_gioco_gpsx:
+		case R.id.display_gioco_gpsy:
+			super.actualEditing (v);
+			break;
+		}
 	}
 	public void showError(HashMap<String,String> map){
 		

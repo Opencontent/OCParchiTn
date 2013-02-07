@@ -112,10 +112,10 @@ public class Constants {
      */
     public static final int CODICE_STRUTTURA_GIOCO = 1;
     public static final int CODICE_STRUTTURA_AREA = 2;
-    public static final int CODICE_STRUTTURA_VERIFICA = 3;
-    public static final int CODICE_STRUTTURA_MANUTENZIONE = 4;
-    public static final int CODICE_STRUTTURA_CONTROLLO_VISIVO = 5;
-    public static final int CODICE_STRUTTURA_INTERVENTO = 6; 
+    public static final int CODICE_STRUTTURA_CONTROLLO = 3;
+//    public static final int CODICE_STRUTTURA_MANUTENZIONE = 4;
+//    public static final int CODICE_STRUTTURA_CONTROLLO_VISIVO = 5;
+    public static final int CODICE_STRUTTURA_INTERVENTO = 4; 
     
 	public static final int FOTO_REQUEST_CODE = 1;
 	public static final int FOTO_CONTROLLO_REQUEST_CODE = 5;

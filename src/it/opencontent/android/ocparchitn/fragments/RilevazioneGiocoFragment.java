@@ -80,6 +80,11 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 	public void editMe(View v){
 		if(siamoEditabili){
 		Log.d(TAG,"editme nel fragment");	
+		actualEditing(v);		
+		}
+	}
+
+	protected void actualEditing(View v) {
 		TextView t = (TextView) v;
 		
 		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
@@ -138,8 +143,7 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 					}
 				});
 
-		alert.show();		
-		}
+		alert.show();
 	}
 	public void placeMe(View v){
 		Gioco g = MainActivity.getCurrentGioco();

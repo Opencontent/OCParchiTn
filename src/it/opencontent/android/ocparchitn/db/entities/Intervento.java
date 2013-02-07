@@ -38,7 +38,8 @@ public class Intervento extends Struttura {
 		super();
 		tipo = "intervento";
 
-		codEsito = remote.codEsito;
+//		codEsito = remote.codEsito;
+		codEsito = 1;
 		codTipologia = remote.codTipologia;
 		descEsito = remote.descEsito;
 		descTipologia = remote.descTipologia;
