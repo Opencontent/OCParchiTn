@@ -101,6 +101,7 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 		switch(viewId){
 		case R.id.display_gioco_gpsx:
 		case R.id.display_gioco_gpsy:
+		case R.id.display_gioco_seriale:
 			input.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_CLASS_NUMBER);
 			break;
 			
@@ -127,6 +128,9 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 						break;
 					case R.id.display_gioco_gpsy:
 						g.gpsy = value;
+						break;
+					case R.id.display_gioco_seriale:
+						g.numeroSerie = value;
 						break;
 					}
 					saveLocal(g);

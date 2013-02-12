@@ -15,11 +15,12 @@ import android.util.Log;
 public class Struttura {
 
 	private static final String TAG = Struttura.class.getSimpleName();
-	public static String tipo;
+	public String tipo;
 
 	public boolean sincronizzato = false;
 	public boolean hasDirtyData = false;
 	public int ultimaSincronizzazione = 0;
+	public String erroreRemoto = ""; 
 
 	public String dirtyElements = "0";
 	public int rfid = 0;

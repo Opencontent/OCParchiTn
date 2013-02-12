@@ -73,7 +73,7 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 			currentIntervento = c;
 		} 
 			OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
-			Intervento cc = db.readInterventoLocallyByID(c.idIntervento+"");
+			Intervento cc = db.readInterventoLocallyByID(c.idIntervento+"",true);
 			if(cc!=null){
 				currentIntervento = cc;
 				Log.d(TAG,cc.toString());

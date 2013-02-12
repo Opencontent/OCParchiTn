@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <Button
+        android:id="@+id/pulsante_lancia_singola_sincronizzazione"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="clickedMe"
+        android:text="@string/pulsante_sincronizza_modifiche_list_item_testo" />
+
+    <TextView
+        android:id="@+id/testo_tipo_singola_sincronizzazione"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/pulsante_lancia_singola_sincronizzazione"
+        android:padding="5dp"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/testo_rfidgioco_singola_sincronizzazione"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/testo_tipo_singola_sincronizzazione"
+        android:padding="5dp"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/testo_errore_singola_sincronizzazione"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/testo_tipo_singola_sincronizzazione"
+        android:layout_toRightOf="@+id/pulsante_lancia_singola_sincronizzazione"
+        android:padding="5dp"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/warning" />
+
+    <TextView
+        android:id="@+id/testo_rfidarea_singola_sincronizzazione"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/testo_rfidgioco_singola_sincronizzazione"
+        android:padding="5dp"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+	<Button
+	    android:id="@+id/pulsante_elimina_singola_sincronizzazione"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentRight="true"
+	    android:layout_alignParentTop="true"
+	    android:onClick="clickedMe"
+	    android:text="@string/pulsante_sincronizza_modifiche_list_item_testo_elimina" />
+
+	<CheckBox
+	    android:id="@+id/checkbox_sincronizzazione_ok"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentTop="true"
+	    android:layout_toLeftOf="@+id/pulsante_elimina_singola_sincronizzazione"
+	    android:checked="false" />
+
+</RelativeLayout>

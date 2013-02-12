@@ -8,12 +8,14 @@ import org.ksoap2.serialization.PropertyInfo;
 public class SOAPInterventoUpdate implements KvmSerializable {
 	
 	
-	public String dtChiusura;
+	public String dtFineIntervento;
 	public String idRiferimento;
 	public String noteEsito;
-	public String oraChiusura;
+	public String oraFineIntervento;
 	public String rfid;
 	public String tipoEsito;	
+	public String dtInizioIntervento; 
+	public String oraInizioIntervento; 
 	
 
 	
@@ -21,25 +23,28 @@ public class SOAPInterventoUpdate implements KvmSerializable {
 	public Object getProperty(int arg0) {
 		switch(arg0){
 		case 0:
-			return dtChiusura;
+			return dtFineIntervento;
 		case 1:
 			return idRiferimento;
 		case 2:
 			return noteEsito;
 		case 3:
-			return oraChiusura;
+			return oraFineIntervento;
 		case 4:
 			return rfid;
 		case 5:
 			return tipoEsito;
-	
+		case 6:
+			return dtInizioIntervento;
+		case 7:
+			return oraInizioIntervento;
 		}
 		return null;
 	}
 
 	@Override
 	public int getPropertyCount() {
-		return 6;
+		return 8;
 	}
 
 	@Override
@@ -47,7 +52,7 @@ public class SOAPInterventoUpdate implements KvmSerializable {
 		arg2.type = PropertyInfo.STRING_CLASS;
 		switch(arg0){
 		case 0:
-			arg2.name = "dtChiusura";
+			arg2.name = "dtFineIntervento";
 			break;
 		case 1:
 			arg2.name = "idRiferimento";
@@ -56,7 +61,7 @@ public class SOAPInterventoUpdate implements KvmSerializable {
 			arg2.name = "noteEsito";
 			break;
 		case 3:
-			arg2.name = "oraChiusura";
+			arg2.name = "oraFineIntervento";
 			break;
 		case 4:
 			arg2.name = "rfid";
@@ -64,7 +69,12 @@ public class SOAPInterventoUpdate implements KvmSerializable {
 		case 5:
 			arg2.name = "tipoEsito";
 			break;
-
+		case 6:
+			arg2.name = "dtInizioIntervento";
+			break;
+		case 7:
+			arg2.name = "oraInizioIntervento";
+			break;
 		}
 	}
 
@@ -75,7 +85,7 @@ public class SOAPInterventoUpdate implements KvmSerializable {
 		}
 		switch(arg0){
 		case 0:
-			dtChiusura = arg1.toString();
+			dtFineIntervento = arg1.toString();
 			break;
 		case 1:
 			idRiferimento = arg1.toString();
@@ -84,7 +94,7 @@ public class SOAPInterventoUpdate implements KvmSerializable {
 			noteEsito = arg1.toString();
 			break;
 		case 3:
-			 oraChiusura = arg1.toString();
+			 oraFineIntervento = arg1.toString();
 			break;
 		case 4:
 			rfid  = arg1.toString();
@@ -92,7 +102,12 @@ public class SOAPInterventoUpdate implements KvmSerializable {
 		case 5:
 			tipoEsito = arg1.toString();
 			break;
-
+		case 6:
+			dtInizioIntervento = arg1.toString();
+			break;
+		case 7:
+			oraInizioIntervento = arg1.toString();
+			break;
 			}
 	}
 

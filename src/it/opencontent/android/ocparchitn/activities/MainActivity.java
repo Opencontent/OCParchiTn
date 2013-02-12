@@ -1079,7 +1079,7 @@ public class MainActivity extends BaseActivity {
 	private void manageSOAPGenericStrutturaResponse(
 			HashMap<String, Object> res, int tipoStruttura) {
 		Struttura remoteStruttura = null;
-		Struttura localStruttura = null;
+//		Struttura localStruttura = null;
 		if(res!=null && !res.containsKey("success")) {
 			switch(tipoStruttura){
 			case Constants.CODICE_STRUTTURA_GIOCO:
@@ -1090,7 +1090,7 @@ public class MainActivity extends BaseActivity {
 				remoteStruttura = new Gioco(res.entrySet(),
 						getApplicationContext());
 			}
-			localStruttura = db.readGiocoLocallyByID(remoteStruttura.idGioco);
+//			localStruttura = db.readGiocoLocallyByID(remoteStruttura.idGioco);
 			break;
 			case Constants.CODICE_STRUTTURA_AREA:
 				if(res.containsKey("mapped")){
@@ -1100,7 +1100,7 @@ public class MainActivity extends BaseActivity {
 					remoteStruttura = new Area(res.entrySet(),
 							getApplicationContext());
 				}
-				localStruttura = db.readAreaLocallyByID(((Area)remoteStruttura).idArea);
+//				localStruttura = db.readAreaLocallyByID(((Area)remoteStruttura).idArea);
 				break;
 			}
 		} else if(res.containsKey("success") && res.get("success").equals(false) ){
@@ -1113,7 +1113,7 @@ public class MainActivity extends BaseActivity {
 				remoteStruttura = new Area();
 				break;
 			}
-			localStruttura = db.readGiocoLocallyByID(currentQueriedId);
+//			localStruttura = db.readGiocoLocallyByID(currentQueriedId);
 		}else {
 			//res == null
 			gestisciRispostaServerNulla();
@@ -1125,14 +1125,15 @@ public class MainActivity extends BaseActivity {
 				remoteStruttura = new Area();
 				break;
 			}				
-		 localStruttura = db.readGiocoLocallyByID(currentQueriedId);
+//		 localStruttura = db.readGiocoLocallyByID(currentQueriedId);
 		}
 		
 		
 		/**
 		 * TODO: Togliere la scelta e scegliere in automatico 
 		 */
-		if (localStruttura != null) {
+		/*
+		 if (localStruttura != null) {
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 			alert.setTitle("Decidi quali dati tenere");
 			TextView content = new TextView(this);
@@ -1178,7 +1179,9 @@ public class MainActivity extends BaseActivity {
 			
 
 			//Le foto le abbiamo già in locale
-		} else if(PlatformChecks.siamoOnline(getApplicationContext()) && remoteStruttura !=null){
+		} else */ 
+			
+		if(PlatformChecks.siamoOnline(getApplicationContext()) && remoteStruttura !=null){
 			currentStruttura = remoteStruttura;
 			//Lo showStruttura viene chiamato dal loop delle foto
 			if(currentStruttura.numeroFotografie > 0){
@@ -1195,14 +1198,14 @@ public class MainActivity extends BaseActivity {
 		} else {
 				switch(tipoStruttura){
 				case Constants.CODICE_STRUTTURA_GIOCO:
-					currentStruttura = db.readGiocoLocallyByID(currentQueriedId);
+					currentStruttura = db.readGiocoLocallyByID(currentQueriedId,false);
 					if(currentStruttura == null){
 					currentStruttura = new Gioco();
 					((Gioco) currentStruttura).idGioco = currentQueriedId;
 					}
 					break;
 				case Constants.CODICE_STRUTTURA_AREA:
-					currentStruttura = db.readAreaLocallyByID(currentQueriedId);
+					currentStruttura = db.readAreaLocallyByID(currentQueriedId,false);
 					if(currentStruttura == null){
 					currentStruttura = new Area();
 					((Area) currentStruttura).idArea = currentQueriedId;

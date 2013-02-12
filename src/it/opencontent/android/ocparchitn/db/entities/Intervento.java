@@ -43,16 +43,16 @@ public class Intervento extends Struttura {
 		codTipologia = remote.codTipologia;
 		descEsito = remote.descEsito;
 		descTipologia = remote.descTipologia;
-		dtFineItervento = remote.dtFineItervento;
-		dtInizioItervento = remote.dtInizioItervento;
+		dtFineItervento = remote.dtFineIntervento;
+		dtInizioItervento = remote.dtInizioIntervento;
 		idGioco = remote.idGioco;
 		idIntervento = remote.idIntervento;
 		idRiferimento = remote.idRiferimento;
 		intervento = remote.intervento;
 		noteEsecuzione = remote.noteEsecuzione;
 		noteRichiesta = remote.noteRichiesta;
-		oraFineItervento = remote.oraFineItervento;
-		oraInizioItervento = remote.oraInizioItervento;
+		oraFineItervento = remote.oraFineIntervento1;
+		oraInizioItervento = remote.oraInizioIntervento;
 		try{
 			rfid = Integer.parseInt(remote.rfid);
 		} catch (NumberFormatException e){

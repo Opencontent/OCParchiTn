@@ -48,11 +48,6 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 	private ArrayAdapter<RecordTabellaSupporto> adapterTipiSegnalazione;
 	private static Controllo currentControllo;
 
-	/**
-	 * Il primo controlo sullo stack sarà sempre quello attivo
-	 * cui faranno riferimento i metodi delle altre classi
-	 * Se la lista è vuota ne sarà creato uno
-	 */
 	private static List<Controllo> elencoControlli = new ArrayList<Controllo>();
 	
 	public static void appendControllo(Controllo controllo){
@@ -67,7 +62,7 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 			currentControllo = c;
 		} 
 			OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
-			Controllo cc = db.readControlloLocallyByID(c.idRiferimento);
+			Controllo cc = db.readControlloLocallyByID(c.idRiferimento,true);
 			if(cc!=null){
 				currentControllo = cc;
 				Log.d(TAG,cc.toString());
@@ -77,13 +72,13 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 	}
 	
 	public static void aggiungiSnapshotAControlloCorrente(String base64, int indice){
-		if(elencoControlli.size()>0){
+		if(currentControllo != null){
 			switch(indice){
 			case 0:
-				elencoControlli.get(0).foto0 = base64;
+				currentControllo.foto0 = base64;
 				break;
 			case 1:
-				elencoControlli.get(0).foto1 = base64;
+				currentControllo.foto1 = base64;
 				break;
 			}
 		}
@@ -152,9 +147,9 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
 				RecordTabellaSupporto r = (RecordTabellaSupporto) spinnerTipiSegnalazione.getAdapter().getItem(arg2);
-				if(elencoControlli.size()>0){
-					elencoControlli.get(0).tipoSegnalazione = r.codice;
-					saveLocal(elencoControlli.get(0));
+				if(currentControllo != null){
+					currentControllo.tipoSegnalazione = r.codice;
+					saveLocal(currentControllo);
 				}
 			}
 			
@@ -271,9 +266,9 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 				try {
 					switch(viewId){
 					case R.id.display_controllo_nota:
-						if(elencoControlli.size()>0){
-							elencoControlli.get(0).noteControllo =value;
-							saveLocal(elencoControlli.get(0));
+						if(currentControllo != null){
+							currentControllo.noteControllo =value;
+							saveLocal(currentControllo);
 							updateText(viewId,value);
 						}
 						break;

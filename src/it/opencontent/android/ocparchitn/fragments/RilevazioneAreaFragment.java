@@ -43,7 +43,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 	private static final String TAG = RilevazioneAreaFragment.class.getSimpleName();
 
 	private ArrayAdapter<RecordTabellaSupporto> adapterTipoPavimentazione;
-	private boolean siamoEditabili =false;
+	private boolean siamoEditabili =true;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,8 +57,14 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 		 */
 		List<RecordTabellaSupporto> records = db.tabelleSupportoGetAllRecords(Constants.TABELLA_TIPO_PAVIMENTAZIONI);
 		db.close();
+		
 		if(records != null){
-		setupSpinnerTipiPavimentazione(view, records);
+			RecordTabellaSupporto recordNullo = new RecordTabellaSupporto();
+			recordNullo.codice = 0;
+			recordNullo.numeroTabella = Constants.TABELLA_TIPO_PAVIMENTAZIONI;
+			recordNullo.descrizione = "Non impostato";
+			records.add(0,recordNullo);
+			setupSpinnerTipiPavimentazione(view, records);
 		}
 		return view;
 	}
@@ -185,6 +191,9 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 					case R.id.display_area_superficie:
 						a.superficie = value;
 						break;
+					case R.id.display_area_descrizione:
+						a.descrizioneArea = value;
+						break;
 					}
 					saveLocal(a);
 				} catch (NumberFormatException nfe) {
@@ -244,15 +253,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 		v.setText(area.note);
 		v = (TextView) getActivity().findViewById(R.id.display_area_rfid);
 		v.setText(area.rfidArea+"");
-		if(area.rfidArea>0){ //&& !possiamoModificareGliRFID
-			siamoEditabili = false;
-			Button b = (Button) getActivity().findViewById(R.id.pulsante_associa_rfid_a_area);
-			if(b!= null){
-				b.setEnabled(false);
-			}
-		} else {
-			siamoEditabili = true;
-		}
+		
 
 		v = (TextView) getActivity().findViewById(R.id.display_area_spessore);
 		v.setText(area.spessore + "");
@@ -266,7 +267,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 		Spinner s = (Spinner) getActivity().findViewById(R.id.display_area_tipoPavimentazione);
 		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
 		RecordTabellaSupporto tipoPavimentazione = db.tabelleSupportoGetRecord(Constants.TABELLA_TIPO_PAVIMENTAZIONI, area.tipoPavimentazione);
-		int position = getAdapterRecordPosition(tipoPavimentazione);
+		int position = Math.max(getAdapterRecordPosition(tipoPavimentazione),0);
 		s.setSelection(position);
 		
 		setupSnapshots(area);

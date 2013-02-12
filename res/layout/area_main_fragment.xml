@@ -3,14 +3,14 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
-    android:weightSum="8" >
+    android:weightSum="10" >
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="2"
         android:orientation="vertical"
-        android:weightSum="4" >
+        android:weightSum="3" >
 
         <Button
             android:id="@+id/pulsante_start_by_rfid"
@@ -35,21 +35,13 @@
             android:layout_weight="1"
             android:onClick="associaRFIDStruttura"
             android:text="@string/pulsante_associa_rfid_a_area_testo" />
-
-        <Button
-            android:id="@+id/pulsante_sincronizza_modifiche_gioco"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:onClick="sincronizzaModifiche"
-            android:text="@string/pulsante_sincronizza_modifiche_gioco_testo" />
     </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/wrapper_dati_gioco"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="6"
+                android:layout_weight="8"
                 android:orientation="vertical"
                 android:weightSum="12" >
 
@@ -95,25 +87,35 @@
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1" >
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:weightSum="5" >
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="2"
                         android:text="@string/display_area_descrizione"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/editable" />
 
                     <TextView
                         android:id="@+id/display_area_descrizione"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="3"
+                        android:background="@color/dialog_border"
+                        android:clickable="true"
+                        android:onClick="editMe"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
+
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
                     android:layout_weight="3"
+                    android:padding="5dp"
                     android:weightSum="5" >
 
                     <TextView
@@ -133,49 +135,6 @@
                         android:prompt="@string/prompt_spinner_tipo_pavimentazione"
                         android:spinnerMode="dialog" />
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="2" >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/display_area_superficie"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textColor="@color/editable" />
-
-                    <TextView
-                        android:id="@+id/display_area_superficie"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@color/dialog_border"
-                        android:clickable="true"
-                        android:onClick="editMe"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                    
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/display_area_spessore"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textColor="@color/editable" />
-
-                    <TextView
-                        android:id="@+id/display_area_spessore"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@color/dialog_border"
-                        android:clickable="true"
-                        android:onClick="editMe"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                                    
                 </LinearLayout>
 
                 <LinearLayout
@@ -235,6 +194,50 @@
                         android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="2"
+                    android:padding="5dp" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/display_area_superficie"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/editable" />
+
+                    <TextView
+                        android:id="@+id/display_area_superficie"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/dialog_border"
+                        android:clickable="true"
+                        android:onClick="editMe"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/display_area_spessore"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/editable" />
+
+                    <TextView
+                        android:id="@+id/display_area_spessore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/dialog_border"
+                        android:clickable="true"
+                        android:onClick="editMe"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </LinearLayout>
+
             </LinearLayout>
 
 
