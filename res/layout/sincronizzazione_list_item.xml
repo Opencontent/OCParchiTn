@@ -10,6 +10,8 @@
         android:layout_height="wrap_content"
         android:onClick="clickedMe"
         android:text="@string/pulsante_sincronizza_modifiche_list_item_testo" />
+    
+        
 
     <TextView
         android:id="@+id/testo_tipo_singola_sincronizzazione"
@@ -60,6 +62,13 @@
 	    android:layout_alignParentTop="true"
 	    android:onClick="clickedMe"
 	    android:text="@string/pulsante_sincronizza_modifiche_list_item_testo_elimina" />
+	<Button
+        android:id="@+id/pulsante_invia_foto_singola_sincronizzazione"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/checkbox_sincronizzazione_ok"
+        android:onClick="clickedMe"
+        android:text="@string/pulsante_invia_foto_list_item_testo" />
 
 	<CheckBox
 	    android:id="@+id/checkbox_sincronizzazione_ok"
@@ -67,6 +76,7 @@
 	    android:layout_height="wrap_content"
 	    android:layout_alignParentTop="true"
 	    android:layout_toLeftOf="@+id/pulsante_elimina_singola_sincronizzazione"
-	    android:checked="false" />
+	    android:checked="false"
+	    android:text="@string/checkbox_stato_sincronizzazione_testo" />
 
 </RelativeLayout>

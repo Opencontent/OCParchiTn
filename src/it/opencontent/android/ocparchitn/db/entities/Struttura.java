@@ -37,6 +37,8 @@ public class Struttura {
 	public String descrizioneGioco = "";
 
 	public String note = "";
+	public boolean hasFoto0 = false;
+	public boolean hasFoto1 = false;
 	public String foto0 = "";
 	public String foto1 = "";
 	

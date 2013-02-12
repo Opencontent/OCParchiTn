@@ -6,7 +6,6 @@ import it.opencontent.android.ocparchitn.db.entities.Controllo;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
 import it.opencontent.android.ocparchitn.db.entities.Intervento;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
-import it.opencontent.android.ocparchitn.db.entities.StruttureEnum;
 
 import java.util.List;
 
@@ -16,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class SyncItemAdapter extends ArrayAdapter<Struttura> {
@@ -53,6 +53,13 @@ public class SyncItemAdapter extends ArrayAdapter<Struttura> {
 		b = (Button) row.findViewById(R.id.pulsante_elimina_singola_sincronizzazione);
 		b.setTag(R.integer.controllo_button_tag,s);
 		b.setTag(R.integer.controllo_button_tag_posizione, position);
+		b = (Button) row.findViewById(R.id.pulsante_invia_foto_singola_sincronizzazione);
+		b.setTag(R.integer.controllo_button_tag,s);
+		b.setTag(R.integer.controllo_button_tag_posizione, position);
+		
+		
+		CheckBox cb = (CheckBox) row.findViewById(R.id.checkbox_sincronizzazione_ok);
+		cb.setChecked(s.sincronizzato);
 		
 		TextView t;
 		t = (TextView) row.findViewById(R.id.testo_tipo_singola_sincronizzazione);
@@ -63,7 +70,7 @@ public class SyncItemAdapter extends ArrayAdapter<Struttura> {
 		} else if(s.getClass().equals(Area.class)){
 			t.setText(s.getClass().getSimpleName()+" id:"+((Area) s).idArea);
 		} else if(s.getClass().equals(Intervento.class)){
-			t.setText(s.getClass().getSimpleName()+" "+((Intervento) s).idIntervento);
+			t.setText(s.getClass().getSimpleName()+" "+((Intervento) s).idRiferimento);
 		}	
 		
 

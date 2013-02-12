@@ -17,7 +17,6 @@ public class Intervento extends Struttura {
 	public String descTipologia;
 	public String dtFineItervento;
 	public String dtInizioItervento;
-	public int idIntervento;
 	public int intervento;
 	public String noteEsecuzione;
 	public String noteRichiesta;
@@ -46,7 +45,6 @@ public class Intervento extends Struttura {
 		dtFineItervento = remote.dtFineIntervento;
 		dtInizioItervento = remote.dtInizioIntervento;
 		idGioco = remote.idGioco;
-		idIntervento = remote.idIntervento;
 		idRiferimento = remote.idRiferimento;
 		intervento = remote.intervento;
 		noteEsecuzione = remote.noteEsecuzione;
@@ -92,9 +90,6 @@ public class Intervento extends Struttura {
 			}
 			if (e.getKey().equals("idGioco")) {
 				idGioco = bindIntToProperty(e.getValue(), e.getKey());
-			}
-			if (e.getKey().equals("idIntervento")) {
-				idIntervento = bindIntToProperty(e.getValue(), e.getKey());
 			}
 			if (e.getKey().equals("idRiferimento")) {
 				idRiferimento = bindStringToProperty(e.getValue(), e.getKey());

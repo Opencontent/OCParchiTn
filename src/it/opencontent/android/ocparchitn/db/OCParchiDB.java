@@ -206,7 +206,7 @@ public class OCParchiDB {
 		}
 	}
 	public Intervento readInterventoLocallyByID(String id,boolean withFoto) {
-		String selection = " idIntervento  = ? ";
+		String selection = " idRiferimento  = ? ";
 		
 		String[] selectionArgs = new String[] { id };
 		String[] columns;
@@ -242,12 +242,50 @@ public class OCParchiDB {
 		mDatabaseOpenHelper.getWritableDatabase().endTransaction();
 	}
 	public List<RecordTabellaSupporto> tabelleSupportoGetAllRecords(int tabella){
-		String selection = " numeroTabella  = ?  ";
+		/*String selection = " numeroTabella  = ?  ";
 		String[] selectionArgs = new String[] { tabella+""  };
 		String orderBy = " codice ASC ";
 		Cursor c = mDatabaseOpenHelper.getReadableDatabase().query(
 				RecordTabellaSupporto.class.getSimpleName(), getDefaultColumns(RecordTabellaSupporto.class), selection,
 				selectionArgs, null, null, orderBy);
+		if(c.moveToFirst()){
+			List<RecordTabellaSupporto> output = new ArrayList<RecordTabellaSupporto>();
+			do{		
+				RecordTabellaSupporto r = new RecordTabellaSupporto();
+				r.tipo = "";
+				r.validita = c.getLong(c.getColumnIndex("validita"));
+				r.codice = c.getInt(c.getColumnIndex("codice"));
+				r.numeroTabella = tabella;
+				r.descrizione = c.getString(c.getColumnIndex("descrizione"));
+				output.add(r);
+			}while(c.moveToNext());
+			c.close();
+			return output;
+		}else {
+			c.close();
+			return null;
+		}*/
+		return tabelleSupportoGetAllRecordsFiltered(tabella, 0, 0);
+	}
+	
+	public List<RecordTabellaSupporto> tabelleSupportoGetAllRecordsFiltered(int tabella, int min, int max){
+		String[] selectionArgs;
+		String selection;
+		if(max > 0 && min > 0){
+			 selection = " numeroTabella  = ?  AND codice BETWEEN ? AND ? ";
+			 selectionArgs = new String[] { tabella+"" , min+"", max+"" };
+		
+		} else {			
+			selection = " numeroTabella  = ?  ";
+			selectionArgs = new String[] { tabella+""  };
+		}
+		
+		String orderBy = " codice ASC ";
+
+		Cursor c = mDatabaseOpenHelper.getReadableDatabase().query(
+				RecordTabellaSupporto.class.getSimpleName(), getDefaultColumns(RecordTabellaSupporto.class), selection,
+				selectionArgs, null, null, orderBy);
+		
 		if(c.moveToFirst()){
 			List<RecordTabellaSupporto> output = new ArrayList<RecordTabellaSupporto>();
 			do{		
@@ -284,6 +322,8 @@ public class OCParchiDB {
 		c.close();
 		return r;
 	}
+
+	
 	
 	public boolean tabelleSupportoScadute(){
 		String timestamp = new Date().getTime() + "";
@@ -352,7 +392,7 @@ public class OCParchiDB {
 		} else if(tipo.equals(StruttureEnum.CONTROLLO.tipo)){
 			whereClause = " idRiferimento = ? ";
 		} else if(tipo.equals(StruttureEnum.INTERVENTO.tipo)){
-			whereClause = " idIntervento = ? ";
+			whereClause = " idRiferimento = ? ";
 		} 
 		String[] args = new String[]{ indice };
 		
@@ -531,6 +571,8 @@ public class OCParchiDB {
 		cv.put("gpsx", struttura.gpsx);
 		cv.put("gpsy", struttura.gpsy);
 		cv.put("note", struttura.note);
+		cv.put("hasFoto0", struttura.hasFoto0);
+		cv.put("hasFoto1", struttura.hasFoto1);
 		cv.put("foto0", struttura.foto0);
 		cv.put("foto1", struttura.foto1);
 		cv.put("numeroserie", struttura.numeroSerie);
@@ -585,6 +627,8 @@ public class OCParchiDB {
 		cv.put("tipoControllo",c.tipoControllo);
 		cv.put("tipoEsito",c.tipoEsito);
 		cv.put("tipoSegnalazione",c.tipoSegnalazione);
+		cv.put("hasFoto0", c.hasFoto0);
+		cv.put("hasFoto1", c.hasFoto1);
 		cv.put("foto0",c.foto0);
 		cv.put("foto1",c.foto1);
 		cv.put("sincronizzato",false);
@@ -611,7 +655,6 @@ public class OCParchiDB {
 		cv.put("dtFineItervento",i.dtFineItervento);
 		cv.put("dtInizioItervento",i.dtInizioItervento);
 		cv.put("idGioco",i.idGioco);
-		cv.put("idIntervento",i.idIntervento);
 		cv.put("idRiferimento",i.idRiferimento);
 		cv.put("intervento",i.intervento);
 		cv.put("noteEsecuzione",i.noteEsecuzione);
@@ -622,6 +665,11 @@ public class OCParchiDB {
 		cv.put("rfidArea",i.rfidArea);		
 		cv.put("stato",i.stato);
 		cv.put("tipoIntervento",i.tipoIntervento);
+		
+		cv.put("hasFoto0", i.hasFoto0);
+		cv.put("hasFoto1", i.hasFoto1);
+		
+		
 		
 		cv.put("foto0",i.foto0);
 		cv.put("foto1",i.foto1);
@@ -640,18 +688,37 @@ public class OCParchiDB {
 		return id;		
 	}
 	
+	public void marcaCopiaLocaleDiStrutturaSincronizzata(String tipo, String indice){
+		
+		ContentValues cv = new ContentValues();
+		cv.put("sincronizzato", true);		
+		String whereClause = null;
+		
+		if(tipo.equals(StruttureEnum.GIOCHI.tipo)){
+			whereClause = " idGioco = ? ";
+		} else if(tipo.equals(StruttureEnum.AREE.tipo)){
+			whereClause = " idArea = ? ";
+		} else if(tipo.equals(StruttureEnum.CONTROLLO.tipo)){
+			whereClause = " idRiferimento = ? ";
+		} else if(tipo.equals(StruttureEnum.INTERVENTO.tipo)){
+			whereClause = " idRiferimento = ? ";
+		} 
+		String[] args = new String[]{ indice };
+		
+		mDatabaseOpenHelper.getWritableDatabase().update(tipo, cv, whereClause, args);
+	}	
 	public void eliminaCopiaLocaleDiStrutturaSincronizzata(Struttura s){
 
 			String selection = "";
 			String[] selectionArgs = null;
 			String tipo = "";
 			if(s.getClass().equals(Intervento.class)){
-				selection = " idIntervento LIKE ? ";
-				selectionArgs = new String[] { ((Intervento) s).idIntervento+"" };
+				selection = " idRiferimento LIKE ? ";
+				selectionArgs = new String[] { ((Intervento) s).idRiferimento };
 				tipo=StruttureEnum.INTERVENTO.tipo;
 			}else if(s.getClass().equals(Controllo.class)){
 				selection = " idRiferimento LIKE ? ";
-				selectionArgs = new String[] { ((Controllo) s).idRiferimento+"" };
+				selectionArgs = new String[] { ((Controllo) s).idRiferimento };
 				tipo=StruttureEnum.CONTROLLO.tipo;
 			}else if(s.getClass().equals(Gioco.class)){
 				selection = " rfid  = ? ";
@@ -691,7 +758,7 @@ public class OCParchiDB {
 			}else if(entry.getValue().getClass().equals(Area.class)){
 				selection = " sincronizzato = ? and rfidArea > 0 ";
 			}else if(entry.getValue().getClass().equals(Intervento.class)){
-				selection = " sincronizzato = ? and idIntervento > 0 ";
+				selection = " sincronizzato = ? and idRiferimento > 0 ";
 			}
 
 			c = query(tableName, selection, selectionArgs, columns, null);
@@ -704,13 +771,13 @@ public class OCParchiDB {
 		return result;
 	}
 	
-	public LinkedHashMap<String,Struttura> getStruttureDaSincronizzare() {
+	public LinkedHashMap<String,Struttura> getStruttureDaSincronizzare(boolean ancheLeSincronizzate) {
 		LinkedHashMap<String, Struttura> res = new LinkedHashMap<String, Struttura>();
 
 		Iterator<Entry<String, Struttura>> strutture = mSchemaMap.entrySet()
 				.iterator();
 
-		String[] selectionArgs = new String[] { "0" };
+		
 
 		while (strutture.hasNext()) {
 
@@ -719,15 +786,25 @@ public class OCParchiDB {
 			String[] columns = getDefaultColumnsWithoutFoto(entry.getValue().getClass());
 
 			String tableName = entry.getKey();
-			String selection = " sincronizzato = ?  "; 
+			
+			String[] selectionArgs = null ;	
+			String selection = "";
+			if(ancheLeSincronizzate){
+				
+				selection = " ";
+			} else {
+				selectionArgs = new String[] { "0" };
+				selection = " sincronizzato = ? and ";
+			}
+			
 			if(entry.getValue().getClass().equals(Controllo.class)){
-				selection = " sincronizzato = ? and idRiferimento > 0 ";
+				selection += " idRiferimento > 0 ";
 			}else if(entry.getValue().getClass().equals(Gioco.class)){
-				selection = " sincronizzato = ? and rfid > 0 and rfidArea > 0";
+				selection += " rfid > 0 and rfidArea > 0";
 			}else if(entry.getValue().getClass().equals(Area.class)){
-				selection = " sincronizzato = ? and rfidArea > 0 ";
+				selection += " rfidArea > 0 ";
 			}else if(entry.getValue().getClass().equals(Intervento.class)){
-				selection = " sincronizzato = ? and idIntervento > 0 ";
+				selection += " idRiferimento > 0 ";
 			}
 			
 
@@ -771,7 +848,6 @@ public class OCParchiDB {
 						((Intervento) s).dtFineItervento = c.getString(c.getColumnIndex("dtFineItervento"));
 						((Intervento) s).dtInizioItervento = c.getString(c.getColumnIndex("dtInizioItervento"));
 						((Intervento) s).idGioco = c.getInt(c.getColumnIndex("idRiferimento"));
-						((Intervento) s).idIntervento = c.getInt(c.getColumnIndex("idIntervento"));
 						((Intervento) s).idRiferimento = c.getString(c.getColumnIndex("idRiferimento"));
 						((Intervento) s).intervento = c.getInt(c.getColumnIndex("intervento"));
 						((Intervento) s).noteEsecuzione = c.getString(c.getColumnIndex("noteEsecuzione"));
@@ -780,7 +856,7 @@ public class OCParchiDB {
 						((Intervento) s).oraInizioItervento = c.getString(c.getColumnIndex("oraInizioItervento"));
 						((Intervento) s).stato = c.getInt(c.getColumnIndex("stato"));
 						((Intervento) s).tipoIntervento = c.getInt(c.getColumnIndex("tipoIntervento"));
-						indice = c.getInt(c.getColumnIndex("idIntervento"))+"";
+						indice = c.getInt(c.getColumnIndex("idRiferimento"))+"";
 					}else{
 						s = new Struttura();
 					}
@@ -793,9 +869,15 @@ public class OCParchiDB {
 					s.note = c.getString(c.getColumnIndex("note"));
 					s.idGioco = c.getInt(c.getColumnIndex("idGioco"));
 					
+					s.hasFoto0 = "1".equals(c.getString(c.getColumnIndex("hasFoto0")));
+					s.hasFoto1 = "1".equals(c.getString(c.getColumnIndex("hasFoto1")));
+					
 					s.rfid = c.getInt(c.getColumnIndex("rfid"));
 					s.rfidArea = c.getInt(c.getColumnIndex("rfidArea"));
 					s.erroreRemoto = c.getString(c.getColumnIndex("erroreRemoto"));
+					
+					s.sincronizzato = "1".equals(c.getString(c.getColumnIndex("sincronizzato")));
+					
 					res.put(tableName + "_" + indice, s);
 
 				} while (c.moveToNext());
@@ -865,7 +947,7 @@ public class OCParchiDB {
 				}else if(entry.getKey().equals(StruttureEnum.CONTROLLO.tipo)){
 					sqlCreateCode += ",UNIQUE (idRiferimento) "; 
 				} else if(entry.getKey().equals(StruttureEnum.INTERVENTO.tipo)){
-					sqlCreateCode += ",UNIQUE (idIntervento) ";					
+					sqlCreateCode += ",UNIQUE (idRiferimento) ";					
 				}
 				sqlCreateCode += ")";
 				Log.d(TAG, sqlCreateCode);

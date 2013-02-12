@@ -51,6 +51,7 @@ public class Constants {
 	public final static String EXTRAKEY_RFID = "rfid";
 	public final static String EXTRAKEY_SYNC_ALL = "sync_all";
 	public final static String EXTRAKEY_SYNC_ONE = "sync_one";
+	public final static String EXTRAKEY_SYNC_ONE_FOTO = "sync_one_foto";
 	public final static String EXTRAKEY_SYNC_INDEX = "sync_index";
 	public final static String EXTRAKEY_ID_TABELLA_REMOTA = "id_tabella";
 	
@@ -119,8 +120,6 @@ public class Constants {
     public static final int CODICE_STRUTTURA_GIOCO = 1;
     public static final int CODICE_STRUTTURA_AREA = 2;
     public static final int CODICE_STRUTTURA_CONTROLLO = 3;
-//    public static final int CODICE_STRUTTURA_MANUTENZIONE = 4;
-//    public static final int CODICE_STRUTTURA_CONTROLLO_VISIVO = 5;
     public static final int CODICE_STRUTTURA_INTERVENTO = 4; 
     
 	public static final int FOTO_REQUEST_CODE = 1;
@@ -132,6 +131,7 @@ public class Constants {
 
 	public static final int SOAP_SINCRONIZZA_TUTTO_REQUEST_CODE = 90;
 	public static final int SOAP_SINCRONIZZA_SINGOLO_REQUEST_CODE = 94;
+	public static final int SOAP_SINCRONIZZA_SINGOLO_FOTO_REQUEST_CODE = 95;
 	public static final int SOAP_GET_TABELLA_REQUEST_CODE = 91;
 	public static final int SOAP_GET_CONTROLLO_REQUEST_CODE_BY_RFID = 92;
 	public static final int SOAP_GET_INTERVENTO_REQUEST_CODE_BY_RFID = 93;

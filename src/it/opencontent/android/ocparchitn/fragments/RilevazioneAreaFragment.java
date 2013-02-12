@@ -85,7 +85,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 					int arg2, long arg3) {
 				RecordTabellaSupporto r = (RecordTabellaSupporto) spinnerTipoPavimentazione.getAdapter().getItem(arg2);
 				Area a = MainActivity.getCurrentArea();
-				if(a!=null && a.rfidArea<=0){
+				if(a!=null){
 					a.tipoPavimentazione = r.codice;
 					MainActivity.setCurrentArea(a);
 					salvaModifiche(null);

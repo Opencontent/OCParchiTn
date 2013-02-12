@@ -47,7 +47,7 @@ public class SyncFragment extends Fragment  implements ICustomFragment{
 	public void onStart(){
 		super.onStart();
 		OCParchiDB db = new OCParchiDB(getActivity());
-		LinkedHashMap<String, Struttura> sincronizzazioni = db.getStruttureDaSincronizzare();
+		LinkedHashMap<String, Struttura> sincronizzazioni = db.getStruttureDaSincronizzare(true);
 		db.close();
 		sincronizzazioniList  = new ArrayList<Struttura>(sincronizzazioni.values());
 		adapterSincronizzazioni = new SyncItemAdapter(getActivity(), R.layout.sincronizzazione_list_item, sincronizzazioniList);
@@ -82,6 +82,38 @@ public class SyncFragment extends Fragment  implements ICustomFragment{
 	public void clickedMe(View v) {
 		Object struttura;
 		switch(v.getId()){
+		case R.id.pulsante_invia_foto_singola_sincronizzazione:
+			//TODO: sincronizziamo le foto
+			struttura = v.getTag(R.integer.controllo_button_tag);
+			if(struttura != null && struttura instanceof Struttura){
+				Intent serviceIntent = new Intent();
+				serviceIntent.setClass(getActivity(),
+						SynchroSoapActivity.class);
+				serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME,
+						Constants.EXTRAKEY_SYNC_ONE_FOTO);
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				
+				String tipo = ((Struttura) struttura).tipo;
+				String id = "";
+				map.put(Constants.EXTRAKEY_STRUCTURE_TYPE, tipo);
+				if(struttura.getClass().equals(Gioco.class)){
+					id=((Gioco) struttura).idGioco+"";
+				} else if(struttura.getClass().equals(Area.class)){
+					id = ((Area) struttura).idArea+"";
+				} else if(struttura.getClass().equals(Controllo.class)){
+					id = ((Controllo) struttura).idRiferimento;
+				} else if(struttura.getClass().equals(Intervento.class)){
+					id = ((Intervento) struttura).idRiferimento;
+				}
+				map.put(Constants.EXTRAKEY_STRUCTURE_ID, id);
+				serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
+				
+				String mapId = Constants.PREFISSO_SINCRONIZZAZIONE+tipo+"_"+id;
+				serviceIntent.putExtra(Constants.EXTRAKEY_MAPID, mapId);
+				serviceIntent.putExtra(Constants.EXTRAKEY_SYNC_INDEX, Integer.parseInt(v.getTag(R.integer.controllo_button_tag_posizione)+"" ));				
+				startActivityForResult(serviceIntent, Constants.SOAP_SINCRONIZZA_SINGOLO_FOTO_REQUEST_CODE);
+			}
+			break;
 		case R.id.pulsante_lancia_singola_sincronizzazione:
 			struttura = v.getTag(R.integer.controllo_button_tag);
 			if(struttura != null && struttura instanceof Struttura){
@@ -100,9 +132,9 @@ public class SyncFragment extends Fragment  implements ICustomFragment{
 				} else if(struttura.getClass().equals(Area.class)){
 					id = ((Area) struttura).idArea+"";
 				} else if(struttura.getClass().equals(Controllo.class)){
-					id = ((Controllo) struttura).idRiferimento+"";
+					id = ((Controllo) struttura).idRiferimento;
 				} else if(struttura.getClass().equals(Intervento.class)){
-					id = ((Intervento) struttura).idIntervento+"";
+					id = ((Intervento) struttura).idRiferimento;
 				}
 				map.put(Constants.EXTRAKEY_STRUCTURE_ID, id);
 				serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
@@ -135,10 +167,14 @@ public class SyncFragment extends Fragment  implements ICustomFragment{
 			if(resultCode == Activity.RESULT_OK){
 				String mapId = intent.getExtras().getString(Constants.EXTRAKEY_MAPID);
 				res = SynchroSoapActivity.getRes(mapId);
+				OCParchiDB db = new OCParchiDB(getActivity());
+				HashMap<String,Object> map = (HashMap<String,Object>) intent.getExtras().get(Constants.EXTRAKEY_DATAMAP);
+				String tipo = (String) map.get(Constants.EXTRAKEY_STRUCTURE_TYPE);
+				String id = (String) map.get(Constants.EXTRAKEY_STRUCTURE_ID);
+				int posizione = intent.getExtras().getInt(Constants.EXTRAKEY_SYNC_INDEX);
 				if(res!= null && res.containsKey("success")){
 					if(res.containsKey("exception")){
 
-						OCParchiDB db = new OCParchiDB(getActivity());
 						Object exception = res.get("exception");
 						String messaggio = "";
 						if(exception.getClass().equals(SOAPSrvGiocoArkGiochiException.class)){
@@ -149,24 +185,23 @@ public class SyncFragment extends Fragment  implements ICustomFragment{
 							messaggio = ((SOAPSrvGiocoArkAutException) exception).message;
 						}
 							
-							HashMap<String,Object> map = (HashMap<String,Object>) intent.getExtras().get(Constants.EXTRAKEY_DATAMAP);
-							String tipo = (String) map.get(Constants.EXTRAKEY_STRUCTURE_TYPE);
-							String id = (String) map.get(Constants.EXTRAKEY_STRUCTURE_ID);
 							
-							int posizione = intent.getExtras().getInt(Constants.EXTRAKEY_SYNC_INDEX);
-							sincronizzazioniList.get(posizione).sincronizzato = true;
-							adapterSincronizzazioni.notifyDataSetChanged();
+						sincronizzazioniList.get(posizione).erroreRemoto = messaggio;
 						db.segnaEccezioneRemotaSuUpdate(tipo, id, messaggio);
-						//TODO: mostrarla a schermo 
-//						ListView lv = (ListView) getActivity().findViewById(R.id.sync_main_listview);
+						adapterSincronizzazioni.notifyDataSetChanged();
 					}
 					Log.d(TAG,"res non nullo");
 				} else if(res != null){
-					//TODO: eliminare sincronizzazione da 
+					sincronizzazioniList.get(posizione).sincronizzato = true;
+					db.marcaCopiaLocaleDiStrutturaSincronizzata(tipo,id);
+					sincronizzazioniList.get(posizione).erroreRemoto = "";
+					db.segnaEccezioneRemotaSuUpdate(tipo, id, "");
+					adapterSincronizzazioni.notifyDataSetChanged();
 					
 				}else {
 					Log.d(TAG,"res nullo");
 				}
+				db.close();
 			}			
 			break;
 		}

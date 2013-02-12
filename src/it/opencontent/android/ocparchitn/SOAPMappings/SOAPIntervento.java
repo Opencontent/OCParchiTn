@@ -21,7 +21,6 @@ public class SOAPIntervento implements KvmSerializable {
 	public String dtFineIntervento;
 	public String dtInizioIntervento;
 	public int idGioco;
-	public int idIntervento;
 	public String idRiferimento;
 	public int intervento;
 	public String noteEsecuzione;
@@ -48,26 +47,24 @@ public class SOAPIntervento implements KvmSerializable {
 		case 5:
 			return idGioco;
 		case 6:
-			return idIntervento;
-		case 7:
 			return idRiferimento;
-		case 8:
+		case 7:
 			return intervento;
-		case 9:
+		case 8:
 			return noteEsecuzione;
-		case 10:
+		case 9:
 			return noteRichiesta;
-		case 11:
+		case 10:
 			return oraFineIntervento1;
-		case 12:
+		case 11:
 			return oraInizioIntervento;
-		case 13:
+		case 12:
 			return rfid;
-		case 14:
+		case 13:
 			return stato;
-		case 15:
+		case 14:
 			return tipoIntervento;
-		case 16:
+		case 15:
 			return descTipologia;
 		}
 		return null;
@@ -75,7 +72,7 @@ public class SOAPIntervento implements KvmSerializable {
 
 	@Override
 	public int getPropertyCount() {
-		return 17;
+		return 16;
 	}
 
 	@Override
@@ -106,46 +103,42 @@ public class SOAPIntervento implements KvmSerializable {
 			arg2.type = PropertyInfo.INTEGER_CLASS ;
 			break ;
 		case 6:
-			arg2.name = "idIntervento";
-			arg2.type = PropertyInfo.INTEGER_CLASS ;
-			break ;
-		case 7:
 			arg2.name = "idRiferimento";
 			arg2.type = PropertyInfo.STRING_CLASS ;
 			break ;
-		case 8:
+		case 7:
 			arg2.name = "intervento";
 			arg2.type = PropertyInfo.INTEGER_CLASS ;
 			break ;		
-		case 9:
+		case 8:
 			arg2.name = "noteEsecuzione";
 			arg2.type = PropertyInfo.STRING_CLASS ;
 			break ;
-		case 10:
+		case 9:
 			arg2.name = "noteRichiesta";
 			arg2.type = PropertyInfo.STRING_CLASS ;
 			break ;
-		case 11:
+		case 10:
 			arg2.name = "oraFineIntervento1";
 			arg2.type = PropertyInfo.STRING_CLASS ;
 			break ;
-		case 12:
+		case 11:
 			arg2.name = "oraInizioIntervento";
 			arg2.type = PropertyInfo.STRING_CLASS ;
 			break ;
-		case 13:
+		case 12:
 			arg2.name = "rfid";
 			arg2.type = PropertyInfo.STRING_CLASS ;
 			break ;
-		case 14:
+		case 13:
 			arg2.name = "stato";
 			arg2.type = PropertyInfo.INTEGER_CLASS ;
 			break ;
-		case 15:
+		case 14:
 			arg2.name = "tipoIntervento";
 			arg2.type = PropertyInfo.INTEGER_CLASS ;
 			break ;
-		case 16:
+		case 15:
 			arg2.name = "descTipologia";
 			arg2.type = PropertyInfo.STRING_CLASS;
 			break ;
@@ -177,37 +170,33 @@ public class SOAPIntervento implements KvmSerializable {
 			idGioco = Integer.parseInt(arg1.toString());
 			break ;
 		case 6:
-			idIntervento = Integer.parseInt(arg1.toString());
-			break ;
-		case 7:
-			
 			idRiferimento =arg1.toString();
 			break ;
-		case 8:
+		case 7:
 			intervento = Integer.parseInt(arg1.toString());
 			break ;
-		case 9:
+		case 8:
 			noteEsecuzione =arg1.toString();
 			break ;
-		case 10:
+		case 9:
 			noteRichiesta =arg1.toString();
 			break ;
-		case 11:
+		case 10:
 			oraFineIntervento1 =arg1.toString();
 			break ;
-		case 12:
+		case 11:
 			oraInizioIntervento =arg1.toString();
 			break ;
-		case 13:
+		case 12:
 			rfid =arg1.toString();
 			break ;
-		case 14:
+		case 13:
 			stato = Integer.parseInt(arg1.toString());
 			break ;
-		case 15:
+		case 14:
 			tipoIntervento = Integer.parseInt(arg1.toString());
 			break ;			
-		case 16:
+		case 15:
 			descTipologia = arg1.toString();
 			break ;			
 		}

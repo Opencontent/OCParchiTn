@@ -852,6 +852,7 @@ public class MainActivity extends BaseActivity {
 			updateCountDaSincronizzare();
 			break;
 		case Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_ID:
+			if(intent!=null){
 			res = SynchroSoapActivity.getRes(Constants.GET_GIOCO_ID_METHOD_NAME);
 			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
 			manageSOAPGenericStrutturaResponse(res, tipoStruttura);
@@ -861,13 +862,17 @@ public class MainActivity extends BaseActivity {
 					((Gioco) currentStruttura).spostamento = 1;
 				}
 			}
+			}
 			break;
 		case Constants.SOAP_GET_AREA_REQUEST_CODE_BY_ID:
+			if(intent!=null){
 			res = SynchroSoapActivity.getRes(Constants.GET_AREA_ID_METHOD_NAME);
 			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
 			manageSOAPGenericStrutturaResponse(res, tipoStruttura);
+			}
 			break;
 		case Constants.SOAP_GET_GIOCO_REQUEST_CODE_BY_RFID:
+			if(intent!=null){
 			res = SynchroSoapActivity.getRes(Constants.GET_GIOCO_METHOD_NAME);
 			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
 			manageSOAPGenericStrutturaResponse(res, tipoStruttura);
@@ -882,8 +887,10 @@ public class MainActivity extends BaseActivity {
 			} else if(intent.getExtras().containsKey(Constants.EXTRAKEY_RECOVER_INTERVENTI)){
 				getInterventiPerStruttura(tipoStruttura);
 			}
+			}
 			break;
 		case Constants.SOAP_GET_AREA_REQUEST_CODE_BY_RFID:
+			if(intent!=null){
 			res = SynchroSoapActivity.getRes(Constants.GET_AREA_METHOD_NAME);
 			tipoStruttura = intent.getExtras().getInt(Constants.EXTRAKEY_STRUCTURE_TYPE);
 			manageSOAPGenericStrutturaResponse(res, tipoStruttura);
@@ -891,6 +898,7 @@ public class MainActivity extends BaseActivity {
 				getControlliPerStruttura(tipoStruttura);
 			} else if(intent.getExtras().containsKey(Constants.EXTRAKEY_RECOVER_INTERVENTI)){
 				getInterventiPerStruttura(tipoStruttura);
+			}
 			}
 			break;
 		case Constants.SOAP_GET_CONTROLLO_REQUEST_CODE_BY_RFID:

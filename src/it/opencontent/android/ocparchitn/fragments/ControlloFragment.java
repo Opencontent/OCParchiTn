@@ -67,6 +67,32 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 				currentControllo = cc;
 				Log.d(TAG,cc.toString());
 			}
+			
+			Spinner view = (Spinner) getActivity().findViewById(R.id.display_controllo_spinner_segnalazione);
+			
+			int min = 0;
+			int max = 0;
+			
+			switch(currentControllo.tipoControllo){
+			case 1: 
+				min = 1;
+				max = 10;
+				break;
+			case 2: 
+				min = 11;
+				max = 19;
+				break;
+			case 3: 
+				min = 21;
+				max = 29;
+				break;
+			}
+			
+			List<RecordTabellaSupporto> records = db.tabelleSupportoGetAllRecordsFiltered(Constants.TABELLA_SEGNALAZIONI,min,max);
+			db.close();
+			if(records != null){
+				setupSpinnerTipiSegnalazione( view , records);
+			}			
 		
 		resetInterfaccia();
 	}
@@ -90,14 +116,9 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 		
 		currentControllo = null;
 		elencoControlli.clear();
-		
-		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
 		View view = inflater.inflate(R.layout.controllo_fragment, container, false);
-		List<RecordTabellaSupporto> records = db.tabelleSupportoGetAllRecords(Constants.TABELLA_SEGNALAZIONI);
-		db.close();
-		if(records != null){
-			setupSpinnerTipiSegnalazione(view, records);
-		}		
+		
+		
 		return view;
 	}
 	
@@ -134,10 +155,10 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 		
 	}
 	
-	private void setupSpinnerTipiSegnalazione(View view, List<RecordTabellaSupporto> records) {
+	private void setupSpinnerTipiSegnalazione(Spinner view, List<RecordTabellaSupporto> records) {
 		adapterTipiSegnalazione = new ArrayAdapter<RecordTabellaSupporto>(getActivity(), R.layout.default_spinner_layout,records);
 		adapterTipiSegnalazione.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		final Spinner spinnerTipiSegnalazione = (Spinner) view.findViewById(R.id.display_controllo_spinner_segnalazione);
+		final Spinner spinnerTipiSegnalazione = view;
 		spinnerTipiSegnalazione.setAdapter(adapterTipiSegnalazione);
 		
 		
@@ -167,6 +188,7 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 			note.setText(currentControllo.noteControllo);
 
 			Spinner spinnerTipiSegnalazione = (Spinner) getActivity().findViewById(R.id.display_controllo_spinner_segnalazione);
+			spinnerTipiSegnalazione.setSelection(0);	
 			for(int i = 0; i < adapterTipiSegnalazione.getCount(); i++ ){
 				if(adapterTipiSegnalazione.getItem(i).codice == currentControllo.tipoSegnalazione){
 					spinnerTipiSegnalazione.setSelection(i);					

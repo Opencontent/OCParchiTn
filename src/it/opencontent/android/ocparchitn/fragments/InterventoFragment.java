@@ -73,7 +73,7 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 			currentIntervento = c;
 		} 
 			OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
-			Intervento cc = db.readInterventoLocallyByID(c.idIntervento+"",true);
+			Intervento cc = db.readInterventoLocallyByID(c.idRiferimento+"",true);
 			if(cc!=null){
 				currentIntervento = cc;
 				Log.d(TAG,cc.toString());
@@ -83,13 +83,13 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 	}
 	
 	public static void aggiungiSnapshotAControlloCorrente(String base64, int indice){
-		if(elencoInterventi.size()>0){
+		if(currentIntervento != null){
 			switch(indice){
 			case 0:
-				elencoInterventi.get(0).foto0 = base64;
+				currentIntervento.foto0 = base64;
 				break;
 			case 1:
-				elencoInterventi.get(0).foto1 = base64;
+				currentIntervento.foto1 = base64;
 				break;
 			}
 		}
@@ -127,7 +127,7 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 			RecordTabellaSupporto rts = db.tabelleSupportoGetRecord(Constants.TABELLA_RIFERIMENTO_INTERVENTO, c.tipoIntervento);
 			db.close();
 			
-			controlloButton.setText(rts.descrizione+" "+c.idIntervento);
+			controlloButton.setText(rts.descrizione+" "+c.idRiferimento);
 			controlloButton.setTag(R.integer.controllo_button_tag, c);
 			controlloButton.setOnClickListener(new View.OnClickListener() {
 				
@@ -157,9 +157,9 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
 				RecordTabellaSupporto r = (RecordTabellaSupporto) spinnerEsitiControllo.getAdapter().getItem(arg2);
-				if(elencoInterventi.size()>0){
-					elencoInterventi.get(0).codEsito = r.codice;
-					saveLocal(elencoInterventi.get(0));
+				if(currentIntervento != null){
+					currentIntervento.codEsito = r.codice;
+					saveLocal(currentIntervento);
 				}
 			}
 
@@ -180,15 +180,15 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 			Button pulsanteInizia = (Button) getActivity().findViewById(R.id.pulsanteIniziaIntervento);
 			Button pulsanteTermina = (Button) getActivity().findViewById(R.id.pulsanteTerminaIntervento);
 
-			if(currentIntervento.dtInizioItervento == null){
-				pulsanteInizia.setEnabled(true);
-			} else {
+			if(currentIntervento.dtInizioItervento != null && currentIntervento.dtInizioItervento.length() > 1){
 				pulsanteInizia.setEnabled(false);
-			}
-			if(currentIntervento.dtFineItervento == null){
-				pulsanteTermina.setEnabled(true);
 			} else {
+				pulsanteInizia.setEnabled(true);
+			}
+			if(currentIntervento.dtFineItervento != null && currentIntervento.dtFineItervento.length() > 1){
 				pulsanteTermina.setEnabled(false);
+			} else {
+				pulsanteTermina.setEnabled(true);
 			}
 			
 			TextView note = (TextView) getActivity().findViewById(R.id.display_controllo_nota);
@@ -245,12 +245,8 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 
 	@Override
 	public void salvaModifiche(View v) {
-		Log.d(TAG,"salva modifiche alla periodica");
-		if(elencoInterventi.size()>0){
-			long id = saveLocal(elencoInterventi.get(0));
-//			if(id>0){
-//				elencoControlli.remove(0);
-//			}
+		if(currentIntervento != null){
+			saveLocal(currentIntervento);
 		}
 	}
 	
@@ -474,29 +470,29 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 			resetInterfaccia();
 			break;		
 		case R.id.pulsanteIniziaIntervento:
-			if(elencoInterventi.size()>0){
+			if(currentIntervento !=null){
 				String DATE_FORMAT = "yyyy-MM-dd";
 				String TIME_FORMAT = "HH:mm:ss";
 				SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT,Locale.US);
 				SimpleDateFormat hdf = new SimpleDateFormat(TIME_FORMAT,Locale.US);
 				Calendar calendar = Calendar.getInstance(); 			
-				elencoInterventi.get(0).dtInizioItervento = sdf.format(calendar.getTime()); 
-				elencoInterventi.get(0).oraInizioItervento = hdf.format(calendar.getTime()); 
-				resetInterfaccia();
+				currentIntervento.dtInizioItervento = sdf.format(calendar.getTime()); 
+				currentIntervento.oraInizioItervento = hdf.format(calendar.getTime()); 
 				salvaModifiche(null);
+				resetInterfaccia();
 			}
 			break;
 		case R.id.pulsanteTerminaIntervento:
-			if(elencoInterventi.size()>0){
+			if(currentIntervento != null){
 				String DATE_FORMAT = "yyyy-MM-dd";
 				String TIME_FORMAT = "HH:mm:ss";
 				SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT,Locale.US);
 				SimpleDateFormat hdf = new SimpleDateFormat(TIME_FORMAT,Locale.US);
 				Calendar calendar = Calendar.getInstance(); 			
-				elencoInterventi.get(0).dtFineItervento = sdf.format(calendar.getTime()); 
-				elencoInterventi.get(0).oraFineItervento = hdf.format(calendar.getTime());
-				resetInterfaccia();
+				currentIntervento.dtFineItervento = sdf.format(calendar.getTime()); 
+				currentIntervento.oraFineItervento = hdf.format(calendar.getTime());
 				salvaModifiche(null);
+				resetInterfaccia();
 			}
 			break;
 		}
