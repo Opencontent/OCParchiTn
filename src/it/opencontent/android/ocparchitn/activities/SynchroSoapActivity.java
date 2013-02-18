@@ -173,7 +173,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		}else {
 			getRemoteResponse(methodName, requestParameters, true,methodName);			
 		}
-		
+		db.close();
 	}
 
 

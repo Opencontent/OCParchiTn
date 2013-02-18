@@ -2,12 +2,16 @@ package it.opencontent.android.ocparchitn.activities;
 
 import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.layouts.CameraSurfaceView;
+
+import java.io.File;
+import java.io.FileOutputStream;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -46,9 +50,9 @@ public class CameraActivity extends BaseActivity {
 										Camera camera) {
 									System.out.println("data length="
 											+ data.length);
-
+									/*
 									BitmapFactory.Options options = new BitmapFactory.Options();
-									options.inSampleSize = 4; // 1/4 of the
+									options.inSampleSize = 1; // 1/4 of the
 																// original
 																// image
 									mImageBitmap = BitmapFactory
@@ -63,6 +67,16 @@ public class CameraActivity extends BaseActivity {
 									mImageBitmap = Bitmap.createBitmap(
 											mImageBitmap, 0, 0, tempW, tempH,
 											mtx, true);
+									*/
+									Uri uri = (Uri) getIntent().getExtras().get(MediaStore.EXTRA_OUTPUT);
+									try {
+										FileOutputStream fos = new FileOutputStream(new File(uri.getPath()));
+										fos.write(data);
+										fos.close();
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+									
 									// mImageBitmap =
 									// BitmapFactory.decodeByteArray(data, 0,
 									// data.length);

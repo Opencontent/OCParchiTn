@@ -22,7 +22,6 @@ import it.opencontent.android.ocparchitn.fragments.AvailableFragment;
 import it.opencontent.android.ocparchitn.fragments.ControlloFragment;
 import it.opencontent.android.ocparchitn.fragments.ICustomFragment;
 import it.opencontent.android.ocparchitn.fragments.InterventoFragment;
-import it.opencontent.android.ocparchitn.fragments.RilevazioneAreaFragment;
 import it.opencontent.android.ocparchitn.fragments.RilevazioneGiocoFragment;
 import it.opencontent.android.ocparchitn.fragments.SpostamentoFragment;
 import it.opencontent.android.ocparchitn.utils.AuthCheck;
@@ -181,6 +180,7 @@ public class MainActivity extends BaseActivity {
 		} else {
 			Toast.makeText(this, "Rescupero delle tabelle di appoggio impossibile senza connessione", Toast.LENGTH_LONG).show();
 		}
+		
 	}
 	
 	private void setupActionBar(){
@@ -464,23 +464,46 @@ public class MainActivity extends BaseActivity {
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		try {
-			NdefMessage rawMsg = (NdefMessage) intent
-					.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)[0];
 
-			int length = rawMsg.toByteArray().length;
-			byte[] res = new byte[length - 5];
-			for (int i = 5; i < length; i++) {
-				res[i - 5] = rawMsg.toByteArray()[i];
-			}
-			String out = new String(res);
-			
-			currentRFID = parseNDEFForRFID(out);
-		} catch (Exception e) {
-			// Non è un intent che ci interessa in questo caso
+			try {
+				NdefMessage rawMsg = (NdefMessage) intent
+						.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)[0];
+	
+				int length = rawMsg.toByteArray().length;
+				byte[] res = new byte[length - 5];
+				for (int i = 5; i < length; i++) {
+					res[i - 5] = rawMsg.toByteArray()[i];
+				}
+				String out = new String(res);
+				
+				currentRFID = parseNDEFForRFID(out);
+			} catch (Exception e) {
+				e.printStackTrace();
 		}
 	}
 
+	public void editRilevazione(){
+		String tabDaAbilitare = "";
+		if(currentStruttura != null){
+			Struttura tmpStruttura = currentStruttura; //La resettiamo sul cambio di tab, quindi tocca tenerne una copia
+			if(currentStruttura.getClass().equals(Area.class)){
+				tabDaAbilitare = AvailableFragment.RILEVAZIONE_AREA.label;
+			} else if(currentStruttura.getClass().equals(Gioco.class)){
+				tabDaAbilitare = AvailableFragment.RILEVAZIONE_GIOCO.label;
+			}
+			if(tabDaAbilitare != ""){
+				for(int i = 0; i < actionBar.getTabCount(); i ++){
+					if(actionBar.getTabAt(i).getTag().equals(tabDaAbilitare)){
+						actionBar.setSelectedNavigationItem(i);
+//						ICustomFragment mf = (ICustomFragment) getFragmentManager()
+//								.findFragmentByTag(actionBar.getSelectedTab().getTag().toString());
+//						mf.showStrutturaData(tmpStruttura);
+					}
+				}
+				currentStruttura = tmpStruttura;
+			}
+		}
+	}
 
 	public int parseNDEFForRFID(String out) {
 		String trimmedAndStripped = "";
@@ -975,6 +998,7 @@ public class MainActivity extends BaseActivity {
 					}
 				}
 			}
+			setupActionBar(); //evitiamo un nullpointer sul primo caricamento di area
 			break;
 		case Constants.SOAP_GET_GIOCO_FOTO_REQUEST_CODE:
 			if (returnCode == RESULT_OK) {
@@ -1010,76 +1034,76 @@ public class MainActivity extends BaseActivity {
 	}
 
 	private void legaSnapshotAStruttura(Intent intent) {
+		if(intent!=null){
 		try {
-			if(intent!=null){
-				snapshot = (Bitmap) intent.getExtras().get("data");
-			} else{
+				Bundle extras = intent.getExtras();
 				try{
-				snapshot = BitmapFactory.decodeFile(currentSnapshotUri.getPath());
+					snapshot = BitmapFactory.decodeFile(currentSnapshotUri.getPath());
 				}catch(OutOfMemoryError e){
 					Toast.makeText(this, "Troppe Immagini", Toast.LENGTH_SHORT).show();
 				}
-			}
-			ImageView mImageView;
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			snapshot.compress(Bitmap.CompressFormat.JPEG, 80, stream);
-			byte[] image = stream.toByteArray();
-
-			if(currentSnapshotUri.getPath().contains(StruttureEnum.CONTROLLO.tipo)){
-				String base64 = Base64.encodeToString(image, Base64.DEFAULT);
-				ControlloFragment.aggiungiSnapshotAControlloCorrente(base64, currentSnapshotID);
-				mImageView = null;
-				switch (currentSnapshotID) {
-				case 0:
-					mImageView = (ImageView) findViewById(R.id.snapshot_controllo_0);
-					break;
-				case 1:
-					mImageView = (ImageView) findViewById(R.id.snapshot_controllo_1);
-					break;
-				}
-			}else if(currentSnapshotUri.getPath().contains(StruttureEnum.INTERVENTO.tipo)){
-				String base64 = Base64.encodeToString(image, Base64.DEFAULT);
-				InterventoFragment.aggiungiSnapshotAControlloCorrente(base64, currentSnapshotID);
-				mImageView = null;
-				switch (currentSnapshotID) {
-				case 0:
-					mImageView = (ImageView) findViewById(R.id.snapshot_controllo_0);
-					break;
-				case 1:
-					mImageView = (ImageView) findViewById(R.id.snapshot_controllo_1);
-					break;
-				}
-			} else {
+				
+				ImageView mImageView;
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				snapshot.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+				byte[] image = stream.toByteArray();
+	
+				if(currentSnapshotUri.getPath().contains(StruttureEnum.CONTROLLO.tipo)){
+					String base64 = Base64.encodeToString(image, Base64.DEFAULT);
+					ControlloFragment.aggiungiSnapshotAControlloCorrente(base64, currentSnapshotID);
+					mImageView = null;
+					switch (currentSnapshotID) {
+					case 0:
+						mImageView = (ImageView) findViewById(R.id.snapshot_controllo_0);
+						break;
+					case 1:
+						mImageView = (ImageView) findViewById(R.id.snapshot_controllo_1);
+						break;
+					}
+				}else if(currentSnapshotUri.getPath().contains(StruttureEnum.INTERVENTO.tipo)){
+					String base64 = Base64.encodeToString(image, Base64.DEFAULT);
+					InterventoFragment.aggiungiSnapshotAControlloCorrente(base64, currentSnapshotID);
+					mImageView = null;
+					switch (currentSnapshotID) {
+					case 0:
+						mImageView = (ImageView) findViewById(R.id.snapshot_controllo_0);
+						break;
+					case 1:
+						mImageView = (ImageView) findViewById(R.id.snapshot_controllo_1);
+						break;
+					}
+				} else {
+				
+					if (currentStruttura == null) {
+						currentStruttura = new Struttura();
+						currentStruttura.sincronizzato = false;
+						currentStruttura.hasDirtyData = true;
+						currentRFID = 0;
+					}
 			
-				if (currentStruttura == null) {
-					currentStruttura = new Struttura();
+					mImageView = null;
+					switch (currentSnapshotID) {
+					case 0:
+						mImageView = (ImageView) findViewById(R.id.snapshot_gioco_0);
+						currentStruttura.foto0 = Base64.encodeToString(image, Base64.DEFAULT);
+						break;
+					case 1:
+						mImageView = (ImageView) findViewById(R.id.snapshot_gioco_1);
+						currentStruttura.foto1 = Base64.encodeToString(image, Base64.DEFAULT);
+						break;
+					}
 					currentStruttura.sincronizzato = false;
 					currentStruttura.hasDirtyData = true;
-					currentRFID = 0;
+	
 				}
-		
-				mImageView = null;
-				switch (currentSnapshotID) {
-				case 0:
-					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_0);
-					currentStruttura.foto0 = Base64.encodeToString(image, Base64.DEFAULT);
-					break;
-				case 1:
-					mImageView = (ImageView) findViewById(R.id.snapshot_gioco_1);
-					currentStruttura.foto1 = Base64.encodeToString(image, Base64.DEFAULT);
-					break;
+				if (snapshot != null && mImageView != null) {
+					mImageView.setImageBitmap(snapshot);
 				}
-				currentStruttura.sincronizzato = false;
-				currentStruttura.hasDirtyData = true;
-
-			}
-			if (snapshot != null && mImageView != null) {
-				mImageView.setImageBitmap(snapshot);
-			}
-			salvaModifiche(null);
+				salvaModifiche(null);
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 			Log.d(TAG, "Immagine nulla");
+		}
 		}
 	}
 
@@ -1288,6 +1312,9 @@ public class MainActivity extends BaseActivity {
 			currentStruttura = a;
 		}
 	}
+	public static void setCurrentStruttura(Struttura s) {		
+			currentStruttura = s;		
+	}
 
 	public void editMe(View v) {
 		String currentTag = (String) actionBar.getSelectedTab().getTag();
@@ -1335,9 +1362,13 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	public void takeSnapshot(View button) {
-		Intent customCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		
+		
+		Intent customCamera = new Intent(Constants.TAKE_SNAPSHOT);
 		int whichOne = Integer.parseInt((String) button.getTag());
 		customCamera.putExtra(Constants.EXTRAKEY_FOTO_NUMBER, whichOne);
+		customCamera.setClass(getApplicationContext(), CameraActivity.class);
+
 		currentSnapshotID = whichOne;
 		String tipo = "";
 		if(currentStruttura == null){
@@ -1356,9 +1387,10 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	public void takeSnapshotControllo(View button) {
-		Intent customCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		Intent customCamera = new Intent(Constants.TAKE_SNAPSHOT);
 		int whichOne = Integer.parseInt((String) button.getTag());
 		customCamera.putExtra(Constants.EXTRAKEY_FOTO_NUMBER, whichOne);
+		customCamera.setClass(getApplicationContext(), CameraActivity.class);
 		currentSnapshotID = whichOne;
 		String tipo = StruttureEnum.CONTROLLO.tipo;
 		File f = Utils.createImageFile(tipo, currentQueriedId, whichOne);
@@ -1369,9 +1401,10 @@ public class MainActivity extends BaseActivity {
 		startActivityForResult(customCamera, Constants.FOTO_REQUEST_CODE);
 	}
 	public void takeSnapshotIntervento(View button) {
-		Intent customCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		Intent customCamera = new Intent(Constants.TAKE_SNAPSHOT);
 		int whichOne = Integer.parseInt((String) button.getTag());
 		customCamera.putExtra(Constants.EXTRAKEY_FOTO_NUMBER, whichOne);
+		customCamera.setClass(getApplicationContext(), CameraActivity.class);
 		currentSnapshotID = whichOne;
 		String tipo = StruttureEnum.INTERVENTO.tipo;
 		File f = Utils.createImageFile(tipo, currentQueriedId, whichOne);
@@ -1419,8 +1452,7 @@ public class MainActivity extends BaseActivity {
 			}
 			
 			if(mFragment.getClass().equals(RilevazioneGiocoFragment.class) || 
-				mFragment.getClass().equals(RilevazioneAreaFragment.class) ||
-				mFragment.getClass().equals(SpostamentoFragment.class)){
+ 			   mFragment.getClass().equals(SpostamentoFragment.class)){
 				((MainActivity) mActivity).startGps();
 			} else {
 				((MainActivity) mActivity).stopGps();

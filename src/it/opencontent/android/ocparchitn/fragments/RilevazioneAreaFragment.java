@@ -44,11 +44,13 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 
 	private ArrayAdapter<RecordTabellaSupporto> adapterTipoPavimentazione;
 	private boolean siamoEditabili =true;
+	private int selectTriggerEventsCount = 0;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
+
 		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
 		View view = inflater.inflate(R.layout.rilevazione_area, container, false);
 		
@@ -66,6 +68,9 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 			records.add(0,recordNullo);
 			setupSpinnerTipiPavimentazione(view, records);
 		}
+		
+		
+		
 		return view;
 	}
 
@@ -85,11 +90,12 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 					int arg2, long arg3) {
 				RecordTabellaSupporto r = (RecordTabellaSupporto) spinnerTipoPavimentazione.getAdapter().getItem(arg2);
 				Area a = MainActivity.getCurrentArea();
-				if(a!=null){
+				if(selectTriggerEventsCount > 1 && a!=null){
 					a.tipoPavimentazione = r.codice;
 					MainActivity.setCurrentArea(a);
 					salvaModifiche(null);
 				}
+				selectTriggerEventsCount++;
 			}
 
 			@Override
@@ -115,6 +121,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 		super.onResume();
 		if(MainActivity.getCurrentArea() != null){
 			showStrutturaData(MainActivity.getCurrentArea());
+			selectTriggerEventsCount++;
 		}
 	}
 
@@ -245,6 +252,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 	
 
 	public void showStrutturaData(Struttura a) {
+		selectTriggerEventsCount = 0;
 		Area area = (Area) a;
 		TextView v;
 		v = (TextView) getActivity().findViewById(R.id.display_area_id);
@@ -253,7 +261,12 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 		v.setText(area.note);
 		v = (TextView) getActivity().findViewById(R.id.display_area_rfid);
 		v.setText(area.rfidArea+"");
-		
+		Button b = (Button) getActivity().findViewById(R.id.pulsante_associa_rfid_a_area);
+		if(area.rfidArea>0){
+			b.setEnabled(false);
+		} else {
+			b.setEnabled(true);
+		}
 
 		v = (TextView) getActivity().findViewById(R.id.display_area_spessore);
 		v.setText(area.spessore + "");

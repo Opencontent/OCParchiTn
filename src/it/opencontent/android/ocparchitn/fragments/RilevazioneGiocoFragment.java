@@ -198,19 +198,22 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 		v.setText(((Gioco) gioco).posizioneRfid);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_rfid);
 		v.setText(gioco.rfid+"");
-		if(gioco.rfid>0){ //&& !possiamoModificareGliRFID
-			Button b = (Button) getActivity().findViewById(R.id.pulsante_associa_rfid_a_gioco);
-					if(b!= null){
-						b.setEnabled(false);
-					}
-					
-		} 
+		Button b = (Button) getActivity().findViewById(R.id.pulsante_associa_rfid_a_gioco);
+		if(b!= null){
+			if(gioco.rfid>0){ //&& !possiamoModificareGliRFID
+				b.setEnabled(false);
+			} else {
+				b.setEnabled(true);				
+			}
+		}					
 		
-		if(gioco.rfidArea>0){ //&& !possiamoModificareGliRFID
-			Button b = (Button) getActivity().findViewById(R.id.pulsante_associa_rfid_a_area);
-					if(b!= null){
-						b.setEnabled(false);
-					}
+		b = (Button) getActivity().findViewById(R.id.pulsante_associa_rfid_a_area);
+		if(b!= null){
+			if(gioco.rfidArea>0){ //&& !possiamoModificareGliRFID
+				b.setEnabled(false);
+			} else {
+				b.setEnabled(true);			
+			}
 		}
 		
 		if(gioco.rfid > 0 && gioco.rfidArea >0){

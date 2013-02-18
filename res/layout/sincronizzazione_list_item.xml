@@ -11,7 +11,13 @@
         android:onClick="clickedMe"
         android:text="@string/pulsante_sincronizza_modifiche_list_item_testo" />
     
-        
+    <Button
+        android:id="@+id/pulsante_lancia_edit_singola_sincronizzazione"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/pulsante_invia_foto_singola_sincronizzazione"
+        android:onClick="clickedMe"
+        android:text="@string/pulsante_edit_modifiche_list_item_testo" />        
 
     <TextView
         android:id="@+id/testo_tipo_singola_sincronizzazione"

@@ -56,6 +56,9 @@ public class SyncItemAdapter extends ArrayAdapter<Struttura> {
 		b = (Button) row.findViewById(R.id.pulsante_invia_foto_singola_sincronizzazione);
 		b.setTag(R.integer.controllo_button_tag,s);
 		b.setTag(R.integer.controllo_button_tag_posizione, position);
+		b = (Button) row.findViewById(R.id.pulsante_lancia_edit_singola_sincronizzazione);
+		b.setTag(R.integer.controllo_button_tag,s);
+		b.setTag(R.integer.controllo_button_tag_posizione, position);
 		
 		
 		CheckBox cb = (CheckBox) row.findViewById(R.id.checkbox_sincronizzazione_ok);

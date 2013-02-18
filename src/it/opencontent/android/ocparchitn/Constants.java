@@ -27,6 +27,15 @@ public class Constants {
 	public final static String EXTRAKEY_STRUCTURE_ID = "idStruttura";
 	public final static String EXTRAKEY_RECOVER_CONTROLS = "getControllo";
 	public final static String EXTRAKEY_RECOVER_INTERVENTI = "getIntervento";
+	public final static String EXTRAKEY_FOTO_NUMBER = "fotoNumber";
+	public final static String EXTRAKEY_RFID = "rfid";
+	public final static String EXTRAKEY_SYNC_ALL = "sync_all";
+	public final static String EXTRAKEY_SYNC_ONE = "sync_one";
+	public final static String EXTRAKEY_SYNC_ONE_FOTO = "sync_one_foto";
+	public final static String EXTRAKEY_SYNC_INDEX = "sync_index";
+	public final static String EXTRAKEY_ID_TABELLA_REMOTA = "id_tabella";
+	public final static String EXTRAKEY_FRAGMENT_TAG = "fragment_tag";
+	
 	
 	public final static String GET_GIOCO_METHOD_NAME = "getGioco";
 	public final static String SET_GIOCO_METHOD_NAME = "setGioco";
@@ -47,13 +56,6 @@ public class Constants {
 	public final static String SET_INTERVENTO_METHOD_NAME = "setIntervento";
 	public final static String SET_SPOSTAMENTO_METHOD_NAME = "setSpostamento";
 	
-	public final static String EXTRAKEY_FOTO_NUMBER = "fotoNumber";
-	public final static String EXTRAKEY_RFID = "rfid";
-	public final static String EXTRAKEY_SYNC_ALL = "sync_all";
-	public final static String EXTRAKEY_SYNC_ONE = "sync_one";
-	public final static String EXTRAKEY_SYNC_ONE_FOTO = "sync_one_foto";
-	public final static String EXTRAKEY_SYNC_INDEX = "sync_index";
-	public final static String EXTRAKEY_ID_TABELLA_REMOTA = "id_tabella";
 	
 	public final static int TABELLA_MARCHE = 1;
 	public final static int TABELLA_TIPO_MAUNTENZIONI = 2;
@@ -152,6 +154,8 @@ public class Constants {
 	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO_PER_INTERVENTI = 995;
 	public static final int LEGGI_RFID_AREA_DA_LETTORE_ESTERNO_E_LEGALO_A_GIOCO = 998;
 	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO_E_LEGALO_A_STRUTTURA = 997;
+	
+	public final static int EDIT_RILEVAZIONE = 800;
 	
 	
 }

@@ -149,11 +149,21 @@ public class SyncFragment extends Fragment  implements ICustomFragment{
 			OCParchiDB db = new OCParchiDB(getActivity());
 			struttura = v.getTag(R.integer.controllo_button_tag);
 			int posizione = Integer.parseInt(v.getTag(R.integer.controllo_button_tag_posizione)+"");
-			sincronizzazioniList.remove(posizione);
-			adapterSincronizzazioni.notifyDataSetChanged();
-			db.eliminaCopiaLocaleDiStrutturaSincronizzata((Struttura) struttura);
-			db.close();
+			try{
+				sincronizzazioniList.remove(posizione);
+				adapterSincronizzazioni.notifyDataSetChanged();
+				db.eliminaCopiaLocaleDiStrutturaSincronizzata((Struttura) struttura);
+				db.close();
+			}catch (Exception e){
+				//Se le rimuoviamo cliccando velocemente pare che non ci stia dietro e si arrivi ad un OutOfBounds
+				e.printStackTrace();
+			}
 			((MainActivity) getActivity()).updateCountDaSincronizzare();
+			break;
+		case R.id.pulsante_lancia_edit_singola_sincronizzazione:
+			struttura = v.getTag(R.integer.controllo_button_tag);
+			MainActivity.setCurrentStruttura((Struttura) struttura);
+			((MainActivity) getActivity()).editRilevazione();			
 			break;
 		}
 		
