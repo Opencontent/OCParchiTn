@@ -90,7 +90,7 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 					int arg2, long arg3) {
 				RecordTabellaSupporto r = (RecordTabellaSupporto) spinnerTipoPavimentazione.getAdapter().getItem(arg2);
 				Area a = MainActivity.getCurrentArea();
-				if(selectTriggerEventsCount > 1 && a!=null){
+				if(selectTriggerEventsCount > 0 && a!=null){
 					a.tipoPavimentazione = r.codice;
 					MainActivity.setCurrentArea(a);
 					salvaModifiche(null);

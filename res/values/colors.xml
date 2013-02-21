@@ -3,6 +3,6 @@
     <color name="transparent">#99000000</color>
     <color name="dialog_border">#bbaaaaaa</color>
     <color name="dialog_text">#eeeeee</color>
-    <color name="warning">#bb4444</color>
-    <color name="editable">#44eecc</color>
+    <color name="warning">#F60018</color>
+    <color name="editable">#2C17B1</color>
 </resources>

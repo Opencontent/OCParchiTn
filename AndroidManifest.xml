@@ -34,7 +34,7 @@
 
         <activity
             android:name=".activities.MainActivity"
-          	android:theme="@android:style/Theme.Holo"
+          	
             android:label="@string/title_activity_main"
             android:screenOrientation="landscape" 
             android:configChanges="orientation">
