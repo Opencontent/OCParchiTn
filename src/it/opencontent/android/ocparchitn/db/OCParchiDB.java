@@ -7,6 +7,7 @@ import it.opencontent.android.ocparchitn.db.entities.Intervento;
 import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.db.entities.StruttureEnum;
+import it.opencontent.android.ocparchitn.utils.StruttureComparator;
 
 import java.lang.reflect.Field;
 import java.security.InvalidParameterException;
@@ -17,6 +18,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -576,6 +578,7 @@ public class OCParchiDB {
 		cv.put("foto0", struttura.foto0);
 		cv.put("foto1", struttura.foto1);
 		cv.put("numeroserie", struttura.numeroSerie);
+		cv.put("ultimaSincronizzazione", struttura.ultimaSincronizzazione);
 		if(struttura.getClass().equals(Gioco.class)){
 			tabella = StruttureEnum.GIOCHI.tipo;
 			Gioco g = (Gioco) struttura;
@@ -586,6 +589,7 @@ public class OCParchiDB {
 			cv.put("posizioneRfid", g.posizioneRfid);
 			cv.put("rfidArea", g.rfidArea);
 			cv.put("spostamento", g.spostamento);
+			cv.put("rifCartografia", g.rifCartografia);
 		} else if(struttura.getClass().equals(Area.class)){
 			tabella = StruttureEnum.AREE.tipo;
 			Area a = (Area) struttura;
@@ -617,7 +621,7 @@ public class OCParchiDB {
 	public long salvaControlloLocally(Controllo c){
 		ContentValues cv = new ContentValues();
 		String tabella = Controllo.class.getSimpleName();
-		
+		cv.put("ultimaSincronizzazione", c.ultimaSincronizzazione);
 		cv.put("controllo",c.controllo);
 		cv.put("dtScadenzaControllo",c.dtScadenzaControllo);
 		cv.put("noteControllo",c.noteControllo);
@@ -647,7 +651,7 @@ public class OCParchiDB {
 		ContentValues cv = new ContentValues();
 		String tabella = Intervento.class.getSimpleName();
 		
-		
+		cv.put("ultimaSincronizzazione", i.ultimaSincronizzazione);
 		cv.put("codEsito",i.codEsito);
 		cv.put("codTipologia",i.codTipologia);
 		cv.put("descEsito",i.descEsito);
@@ -771,8 +775,11 @@ public class OCParchiDB {
 		return result;
 	}
 	
-	public LinkedHashMap<String,Struttura> getStruttureDaSincronizzare(boolean ancheLeSincronizzate) {
-		LinkedHashMap<String, Struttura> res = new LinkedHashMap<String, Struttura>();
+//	public LinkedHashMap<String,Struttura> getStruttureDaSincronizzare(boolean ancheLeSincronizzate) {
+	public TreeMap<String,Struttura> getStruttureDaSincronizzare(boolean ancheLeSincronizzate) {
+		
+		HashMap<String, Struttura> res = new HashMap<String, Struttura>();
+		
 
 		Iterator<Entry<String, Struttura>> strutture = mSchemaMap.entrySet()
 				.iterator();
@@ -817,6 +824,7 @@ public class OCParchiDB {
 						s = new Gioco();
 						((Gioco) s).posizioneRfid = c.getString(c.getColumnIndex("posizioneRfid"));
 						((Gioco) s).spostamento = c.getInt(c.getColumnIndex("spostamento"));
+						((Gioco) s).rifCartografia = c.getString(c.getColumnIndex("rifCartografia"));
 						indice = c.getInt(c.getColumnIndex("idGioco"))+"";
 					} else if(tableName.equals(StruttureEnum.AREE.tipo)) {
 						s = new Area();
@@ -877,15 +885,24 @@ public class OCParchiDB {
 					s.erroreRemoto = c.getString(c.getColumnIndex("erroreRemoto"));
 					
 					s.sincronizzato = "1".equals(c.getString(c.getColumnIndex("sincronizzato")));
+					s.ultimaSincronizzazione = c.getInt(c.getColumnIndex("ultimaSincronizzazione"));
 					
-					res.put(tableName + "_" + indice, s);
+//					res.put(tableName + "_" + indice, s);
+					res.put(s.ultimaSincronizzazione + "" + indice, s);
 
 				} while (c.moveToNext());
 				c.close();
 			}
 		}
 		
-		return res;
+		
+		StruttureComparator sc = new StruttureComparator(res);
+        TreeMap<String,Struttura> sorted_map = new TreeMap<String,Struttura>(sc);
+        sorted_map.putAll(res);
+        res.clear();
+        
+        
+		return sorted_map;
 	}
 
 	private class OCParchiOpenHelper extends SQLiteOpenHelper {

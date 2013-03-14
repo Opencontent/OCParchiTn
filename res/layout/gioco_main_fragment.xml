@@ -52,7 +52,7 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="8"
                 android:orientation="vertical"
-                android:weightSum="12" >
+                android:weightSum="11" >
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -193,12 +193,38 @@
 
                 </LinearLayout>
 
-                
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:weightSum="5" >
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="2"
+                        android:text="@string/display_gioco_codice_cartografico"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/editable" />
+
+                    <TextView
+                        android:id="@+id/display_gioco_codice_cartografico"
+                        android:layout_width="0dp"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="3"
+                        android:background="@color/dialog_border"
+                        android:tag="gioco_codice_cartografico"
+                        android:onClick="editMe"
+                        android:clickable="true"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                </LinearLayout>                
 
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="3"
+                    android:layout_weight="2"
                     android:padding="5dp"
                     android:weightSum="5" >
 
@@ -227,7 +253,7 @@
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="3"
+                    android:layout_weight="2"
                     android:padding="5dp"
                     android:weightSum="5" >
 

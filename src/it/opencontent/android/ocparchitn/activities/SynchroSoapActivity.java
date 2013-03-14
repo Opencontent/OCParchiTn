@@ -26,9 +26,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
@@ -79,8 +79,8 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 		
 		if (methodName.equals(Constants.EXTRAKEY_SYNC_ALL)) {
 			
-			LinkedHashMap<String, Struttura> set = db
-					.getStruttureDaSincronizzare(false);
+//			LinkedHashMap<String, Struttura> set = db.getStruttureDaSincronizzare(false);
+			TreeMap<String, Struttura> set = db.getStruttureDaSincronizzare(false);
 			if (!set.isEmpty() && PlatformChecks.siamoOnline(getApplicationContext())) {
 				Iterator<String> keyIterator = set.keySet().iterator();
 				while (keyIterator.hasNext()) {
@@ -150,7 +150,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				String tipo = (String) requestParameters.get(Constants.EXTRAKEY_STRUCTURE_TYPE);
 				String id = (String) requestParameters.get(Constants.EXTRAKEY_STRUCTURE_ID);
 				Struttura s = null; 
-				String mapId = (String) intent.getExtras().get(Constants.EXTRAKEY_MAPID);
+//				String mapId = (String) intent.getExtras().get(Constants.EXTRAKEY_MAPID);
 				if(tipo.equals(StruttureEnum.GIOCHI.tipo)){
 					s = db.readGiocoLocallyByID(Integer.parseInt(id),false);
 				} else if(tipo.equals(StruttureEnum.AREE.tipo)){
@@ -191,6 +191,7 @@ public class SynchroSoapActivity extends Activity implements IRemoteConnection {
 				gu.gpsy = "" + g.gpsy;
 				gu.note = g.note;
 				gu.numeroSerie = g.numeroSerie;
+				gu.rifCartografia = g.rifCartografia;
 				if(g.rfidArea > 0){
 				gu.rfidArea = "" + g.rfidArea;
 				}

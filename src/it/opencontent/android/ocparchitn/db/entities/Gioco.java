@@ -12,7 +12,7 @@ public class Gioco extends Struttura {
 
 	public String posizioneRfid;
 	public int spostamento;
-	  
+	public String rifCartografia;  
 	
 	public Gioco() {
 		tipo = "gioco";
@@ -26,6 +26,7 @@ public class Gioco extends Struttura {
 		descrizioneMarca = remote.descrizioneMarca;
 		descrizioneArea = remote.descrizioneArea;
 		descrizioneGioco = remote.descrizioneGioco;
+		rifCartografia = remote.rifCartografia;
 		try{
 			rfid = Integer.parseInt(remote.rfid);
 		} catch(NumberFormatException e){
@@ -71,6 +72,9 @@ public class Gioco extends Struttura {
 			}
 			if (e.getKey().equals("spostamento")) {
 				spostamento = bindIntToProperty(e.getValue(), e.getKey());
+			}
+			if( e.getKey().equals("rifCartografia")){
+				rifCartografia = bindStringToProperty(e.getValue(), e.getKey());
 			}
 			
 			

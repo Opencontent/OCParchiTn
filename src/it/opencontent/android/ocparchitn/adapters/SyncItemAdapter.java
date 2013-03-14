@@ -9,6 +9,8 @@ import it.opencontent.android.ocparchitn.db.entities.Struttura;
 
 import java.util.List;
 
+import org.nfctools.snep.GetResponseListener;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,13 +69,25 @@ public class SyncItemAdapter extends ArrayAdapter<Struttura> {
 		TextView t;
 		t = (TextView) row.findViewById(R.id.testo_tipo_singola_sincronizzazione);
 		if(s.getClass().equals(Controllo.class)){
+			b = (Button) row.findViewById(R.id.pulsante_lancia_edit_singola_sincronizzazione);
+			b.setVisibility(View.INVISIBLE);
 			t.setText(s.getClass().getSimpleName()+" id:"+((Controllo) s).idRiferimento);
+			row.setBackgroundColor(mContext.getResources().getColor(R.color.syncbg_controllo));
 		}else if(s.getClass().equals(Gioco.class)){
+			b = (Button) row.findViewById(R.id.pulsante_lancia_edit_singola_sincronizzazione);
+			b.setVisibility(View.VISIBLE);
 			t.setText(s.getClass().getSimpleName()+" id:"+((Gioco) s).idGioco);
+			row.setBackgroundColor(mContext.getResources().getColor(R.color.syncbg_gioco));
 		} else if(s.getClass().equals(Area.class)){
+			b = (Button) row.findViewById(R.id.pulsante_lancia_edit_singola_sincronizzazione);
+			b.setVisibility(View.VISIBLE);
 			t.setText(s.getClass().getSimpleName()+" id:"+((Area) s).idArea);
+			row.setBackgroundColor(mContext.getResources().getColor(R.color.syncbg_area));
 		} else if(s.getClass().equals(Intervento.class)){
+			b = (Button) row.findViewById(R.id.pulsante_lancia_edit_singola_sincronizzazione);
+			b.setVisibility(View.INVISIBLE);
 			t.setText(s.getClass().getSimpleName()+" "+((Intervento) s).idRiferimento);
+			row.setBackgroundColor(mContext.getResources().getColor(R.color.syncbg_intervento));
 		}	
 		
 

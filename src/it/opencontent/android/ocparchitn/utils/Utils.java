@@ -7,10 +7,6 @@ import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkGiochiExcep
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPSrvGiocoArkSrvException;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import org.ksoap2.serialization.KvmSerializable;
 import org.kxml2.kdom.Element;
@@ -157,5 +153,7 @@ public class Utils {
 			
 		}
 	}
+	
+
 	
 }

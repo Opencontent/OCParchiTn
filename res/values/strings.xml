@@ -21,6 +21,7 @@
 	<string name="display_area_id">ID Area: </string>
 	<string name="display_gioco_id">ID Gioco: </string>
 	<string name="display_gioco_seriale">Seriale: </string>
+	<string name="display_gioco_codice_cartografico">Codice cartografico: </string>
 	<string name="display_gioco_gps">Coordinate GPS: </string>
 	<string name="display_gioco_marca">Marca: </string>
 	<string name="display_gioco_nota">Nota: </string>
@@ -40,8 +41,8 @@
 	<string name="display_gioco_gpsy">GPSY: </string>
 	<string name="display_gioco_confidence">Precisione: </string>
 	<string name="display_gioco_posizione_rfid">Posizione RFID: </string>
-	<string name="display_area_superficie">Superficie: </string>
-	<string name="display_area_spessore">Spessore: </string>
+	<string name="display_area_superficie">Superficie (mq): </string>
+	<string name="display_area_spessore">Spessore (cm): </string>
 	
 	<string name="pulsante_invalidate_token_testo">Invalida il token</string>
 	<string name="pulsante_status_token_testo">Status del token</string>

@@ -143,6 +143,7 @@ public class Constants {
 	public static final int SOAP_GET_GIOCO_REQUEST_CODE_BY_RFID = 102;
 	public static final int SOAP_GET_AREA_REQUEST_CODE_BY_ID = 103;
 	public static final int SOAP_GET_AREA_REQUEST_CODE_BY_RFID = 104;
+	public static final int SOAP_GET_AREA_REQUEST_CODE_FOR_ALERT = 105;
 
 	public static final int SOAP_GET_TOKEN_REQUEST_CODE = 200;
 	public static final String SOAP_EXCEPTION_ARKAUT_TOKEN_SCADUTO = "AUT104";

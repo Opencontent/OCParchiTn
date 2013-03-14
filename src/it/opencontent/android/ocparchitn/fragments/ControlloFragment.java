@@ -7,6 +7,7 @@ import it.opencontent.android.ocparchitn.db.OCParchiDB;
 import it.opencontent.android.ocparchitn.db.entities.Area;
 import it.opencontent.android.ocparchitn.db.entities.Controllo;
 import it.opencontent.android.ocparchitn.db.entities.Gioco;
+import it.opencontent.android.ocparchitn.db.entities.Intervento;
 import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
 import it.opencontent.android.ocparchitn.db.entities.Struttura;
 import it.opencontent.android.ocparchitn.utils.Utils;
@@ -51,6 +52,10 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 	
 	public static void appendControllo(Controllo controllo){
 		elencoControlli.add(controllo);		
+	}
+	
+	public static Controllo getCurrentIntervento(){
+		return currentControllo;
 	}
 	
 	public final void abilitaControllo(Controllo c){

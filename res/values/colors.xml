@@ -5,4 +5,9 @@
     <color name="dialog_text">#eeeeee</color>
     <color name="warning">#F60018</color>
     <color name="editable">#2C17B1</color>
+    <color name="syncbg_gioco">#EAE2FF</color>
+    <color name="syncbg_area">#E5F3FF</color>
+    <color name="syncbg_spostamento">#FFFAAE</color>
+    <color name="syncbg_controllo">#ffffdf</color>
+    <color name="syncbg_intervento">#aeffdc</color>
 </resources>

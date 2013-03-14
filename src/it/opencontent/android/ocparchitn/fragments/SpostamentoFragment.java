@@ -43,6 +43,9 @@ public class SpostamentoFragment extends RilevazioneGiocoFragment  implements IC
 		case R.id.display_gioco_nota:
 		case R.id.display_gioco_gpsx:
 		case R.id.display_gioco_gpsy:
+		case R.id.display_gioco_codice_cartografico:
+		case R.id.display_gioco_seriale:
+		case R.id.display_gioco_posizione_rfid:
 			super.actualEditing (v);
 			break;
 		}
@@ -76,6 +79,8 @@ public class SpostamentoFragment extends RilevazioneGiocoFragment  implements IC
 		v.setText(gioco.gpsx + "");
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_gpsy);
 		v.setText(gioco.gpsy + "");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_codice_cartografico);
+		v.setText(((Gioco) gioco).rifCartografia + "");
 		setupSnapshots(gioco);
 	}
 	

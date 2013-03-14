@@ -17,7 +17,7 @@ import it.opencontent.android.ocparchitn.db.entities.Struttura;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -47,7 +47,8 @@ public class SyncFragment extends Fragment  implements ICustomFragment{
 	public void onStart(){
 		super.onStart();
 		OCParchiDB db = new OCParchiDB(getActivity());
-		LinkedHashMap<String, Struttura> sincronizzazioni = db.getStruttureDaSincronizzare(true);
+//		LinkedHashMap<String, Struttura> sincronizzazioni = db.getStruttureDaSincronizzare(true);
+		TreeMap<String, Struttura> sincronizzazioni = db.getStruttureDaSincronizzare(true);
 		db.close();
 		sincronizzazioniList  = new ArrayList<Struttura>(sincronizzazioni.values());
 		adapterSincronizzazioni = new SyncItemAdapter(getActivity(), R.layout.sincronizzazione_list_item, sincronizzazioniList);

@@ -132,6 +132,9 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 					case R.id.display_gioco_seriale:
 						g.numeroSerie = value;
 						break;
+					case R.id.display_gioco_codice_cartografico:
+						g.rifCartografia  = value;
+						break;
 					}
 					saveLocal(g);
 				} catch (NumberFormatException nfe) {
@@ -198,6 +201,8 @@ public class RilevazioneGiocoFragment extends Fragment implements ICustomFragmen
 		v.setText(((Gioco) gioco).posizioneRfid);
 		v = (TextView) getActivity().findViewById(R.id.display_gioco_rfid);
 		v.setText(gioco.rfid+"");
+		v = (TextView) getActivity().findViewById(R.id.display_gioco_codice_cartografico);
+		v.setText(((Gioco) gioco).rifCartografia+"");
 		Button b = (Button) getActivity().findViewById(R.id.pulsante_associa_rfid_a_gioco);
 		if(b!= null){
 			if(gioco.rfid>0){ //&& !possiamoModificareGliRFID

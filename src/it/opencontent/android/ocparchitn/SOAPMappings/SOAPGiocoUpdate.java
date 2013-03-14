@@ -16,6 +16,7 @@ public class SOAPGiocoUpdate implements KvmSerializable {
 	public String rfidArea;
 	public String posizioneRfid;
 	public String numeroSerie;
+	public String rifCartografia;
 	
 	public SOAPGiocoUpdate(){
 		
@@ -41,14 +42,15 @@ public class SOAPGiocoUpdate implements KvmSerializable {
 			return posizioneRfid;
 		case 7:
 			return numeroSerie;
+		case 8:
+			return rifCartografia;
 		}
 		return null;
 	}
 
 	@Override
 	public int getPropertyCount() {
-		// TODO Auto-generated method stub
-		return 8;
+		return 9;
 	}
 
 	@Override
@@ -79,6 +81,9 @@ public class SOAPGiocoUpdate implements KvmSerializable {
 			break;
 		case 7:
 			info.name = "numeroSerie";
+			break;
+		case 8:
+			info.name = "rifCartografia";
 			break;
         }
 	}
@@ -112,6 +117,9 @@ public class SOAPGiocoUpdate implements KvmSerializable {
 			break;
 		case 7:
 			numeroSerie = arg1.toString();
+			break;
+		case 8:
+			rifCartografia = arg1.toString();
 			break;
 		}		
 	}

@@ -65,6 +65,10 @@ public class InterventoFragment extends Fragment implements ICustomFragment {
 		elencoInterventi.add(intervento);		
 	}
 	
+	public static Intervento getCurrentIntervento(){
+		return currentIntervento;
+	}
+	
 	public final void abilitaControllo(Intervento c){
 		TextView controlloTeaser = (TextView) getActivity().findViewById(R.id.display_controllo_selezionato_text);
 		controlloTeaser.setText(getString(R.string.controllo_mostra_controllo_attuale_prefisso)+" "+c.descTipologia);

@@ -2,6 +2,7 @@ package it.opencontent.android.ocparchitn.db.entities;
 
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPFotografia;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class Struttura {
 	
 	
 	public Struttura() {
-
+		this.ultimaSincronizzazione = (int) new Date().getTime()/1000;
 	}
 
 	public void addImmagine(Set<Entry<String, Object>> set) {
@@ -98,12 +99,14 @@ public class Struttura {
 
 	public Struttura(Set<Entry<String, Object>> set, Context context) {
 		this(set, -1, context);
+		this.ultimaSincronizzazione = (int) new Date().getTime()/1000;
+		
 	}
 
 
 	public Struttura(Set<Entry<String, Object>> set, int rfid_argomento,
 			Context context) {
-
+		this.ultimaSincronizzazione = (int) new Date().getTime()/1000;
 		Iterator<Entry<String, Object>> iterator = set.iterator();
 
 		while (iterator.hasNext()) {

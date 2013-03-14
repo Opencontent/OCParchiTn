@@ -22,6 +22,14 @@
         android:padding="2dp"
         android:src="@drawable/snapshot_teaser"
         android:tag="0" />
+        <Button 
+            android:onClick="zoomPicture"
+            android:tag="0"
+            android:layout_width="fill_parent"
+            android:layout_height="60dp"
+            android:layout_margin="10dp"
+            android:text="Zoom"
+            />    
 
     <ImageView
         android:id="@+id/snapshot_gioco_1"
@@ -34,5 +42,12 @@
         android:padding="2dp"
         android:src="@drawable/snapshot_teaser"
         android:tag="1" />
-
+        <Button 
+            android:onClick="zoomPicture"
+            android:tag="1"
+            android:layout_width="fill_parent"
+            android:layout_height="60dp"
+            android:layout_margin="10dp"
+            android:text="Zoom"
+            />
 </LinearLayout>
