@@ -1,5 +1,52 @@
 package it.opencontent.android.ocparchitn.activities;
 
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.app.PendingIntent;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.location.GpsStatus;
+import android.location.GpsStatus.Listener;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.Uri;
+import android.nfc.NdefMessage;
+import android.nfc.NfcAdapter;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.provider.MediaStore;
+import android.text.InputType;
+import android.util.Base64;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.ksoap2.serialization.KvmSerializable;
+import org.kxml2.kdom.Element;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import it.opencontent.android.ocparchitn.Constants;
 import it.opencontent.android.ocparchitn.R;
 import it.opencontent.android.ocparchitn.SOAPMappings.SOAPAutGiochi;
@@ -28,55 +75,6 @@ import it.opencontent.android.ocparchitn.utils.AuthCheck;
 import it.opencontent.android.ocparchitn.utils.FileNameCreator;
 import it.opencontent.android.ocparchitn.utils.PlatformChecks;
 import it.opencontent.android.ocparchitn.utils.Utils;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.ksoap2.serialization.KvmSerializable;
-import org.kxml2.kdom.Element;
-
-import android.annotation.SuppressLint;
-import android.app.ActionBar;
-import android.app.ActionBar.Tab;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.app.PendingIntent;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.location.GpsStatus;
-import android.location.GpsStatus.Listener;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.net.Uri;
-import android.nfc.NdefMessage;
-import android.nfc.NfcAdapter;
-import android.os.Bundle;
-import android.os.Environment;
-import android.preference.PreferenceManager;
-import android.provider.MediaStore;
-import android.text.InputType;
-import android.util.Base64;
-import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends BaseActivity {
 
@@ -120,7 +118,23 @@ public class MainActivity extends BaseActivity {
             }
         }
     };	
-	
+
+    private Intent associaClasseLettoreAIntent(Intent i){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        int tipoDiLettore = Integer.parseInt(prefs.getString(Constants.PREFERENZE_LETTORE_NFC, Constants.LETTORE_NFC_INTERNO+""));
+        switch(tipoDiLettore){
+            case Constants.LETTORE_NFC_INTERNO:
+                i.setClass(this, InternalNDEFReadActivity.class);
+                break;
+            case Constants.LETTORE_NFC_ESTERNO:
+                i.setClass(this, NDEFReadActivity.class);
+                break;
+        }
+        return i;
+
+    }
+
     private static void resetDatiStatici(){
     	currentStruttura = null;
     	currentSnapshotUri = null;
@@ -594,7 +608,8 @@ public class MainActivity extends BaseActivity {
 	public void startRilevazioneDaRFID(View v){
 		Log.d(TAG,"Partiamo da rfid, lancio l'activity");
 		Intent leggiRFID = new Intent();
-		leggiRFID.setClass(this, NDEFReadActivity.class);
+        leggiRFID = associaClasseLettoreAIntent(leggiRFID);
+
 		partitiDaID = false;
 		partitiDaRFID = true;
 		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO);
@@ -602,17 +617,15 @@ public class MainActivity extends BaseActivity {
 
 	public void associaRFIDStruttura(View v){
 		Log.d(TAG,"Leghiamo l'rfid dell'area, lancio l'activity");
-		Intent leggiRFID = new Intent();
-		leggiRFID.setClass(this, NDEFReadActivity.class);
-		partitiDaID = false;
+		Intent leggiRFID = associaClasseLettoreAIntent(new Intent());
+        partitiDaID = false;
 		partitiDaRFID = true;
 		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO_E_LEGALO_A_STRUTTURA);		
 	}
 	
 	public void associaRFIDArea(View v){
 		Log.d(TAG,"Leghiamo l'rfid dell'area al gioco, lancio l'activity");
-		Intent leggiRFID = new Intent();
-		leggiRFID.setClass(this, NDEFReadActivity.class);
+        Intent leggiRFID = associaClasseLettoreAIntent(new Intent());
 		partitiDaID = false;
 		partitiDaRFID = true;
 		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_AREA_DA_LETTORE_ESTERNO_E_LEGALO_A_GIOCO);		

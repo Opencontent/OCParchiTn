@@ -42,15 +42,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <action android:name="android.nfc.action.TECH_DISCOVERED"/>
-				<data android:host="struttura"></data>
-				<data android:scheme="parchi"></data>
-            </intent-filter>
-            <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
-                android:resource="@xml/nfc_filters"/>
         </activity>
         
         <activity
@@ -62,7 +53,9 @@
         </activity>
         
         <activity android:name=".activities.NDEFReadActivity">
-            
+        </activity>
+
+        <activity android:name=".activities.InternalNDEFReadActivity">
         </activity>
         <activity android:name=".activities.SettingsActivity">
             

@@ -12,8 +12,12 @@ public class Constants {
 	public final static int UTENTE_ADMIN = 0;
 	public final static int UTENTE_COOPERATIVA = 1;
 	public final static int UTENTE_COMUNE = 2;
-	public final static String PREFERENZE_LIVELLO_LASTLOGIN = "livelloLastLogin"; 
-	
+	public final static String PREFERENZE_LIVELLO_LASTLOGIN = "livelloLastLogin";
+
+    public final static String PREFERENZE_LETTORE_NFC = "nfcreader";
+    public final static int    LETTORE_NFC_INTERNO = 1;
+    public final static int    LETTORE_NFC_ESTERNO = 2;
+
 	
 	public final static String PREFISSO_NDEF = "parchi://struttura";
 	public final static String PREFISSO_SINCRONIZZAZIONE = "sincronizza_";

@@ -3,5 +3,5 @@
     <item type="integer" name="tag_view_id">1</item>
     <item type="integer" name="tag_view_type">2</item>
 	<item type="integer" name="controllo_button_tag">1</item>
-	<item type="integer" name="controllo_button_tag_posizione">1</item>	
+	<item type="integer" name="controllo_button_tag_posizione">1</item>
 </resources>
