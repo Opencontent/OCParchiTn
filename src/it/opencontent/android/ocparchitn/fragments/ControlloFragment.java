@@ -1,22 +1,5 @@
 package it.opencontent.android.ocparchitn.fragments;
 
-import it.opencontent.android.ocparchitn.Constants;
-import it.opencontent.android.ocparchitn.R;
-import it.opencontent.android.ocparchitn.activities.MainActivity;
-import it.opencontent.android.ocparchitn.db.OCParchiDB;
-import it.opencontent.android.ocparchitn.db.entities.Area;
-import it.opencontent.android.ocparchitn.db.entities.Controllo;
-import it.opencontent.android.ocparchitn.db.entities.Gioco;
-import it.opencontent.android.ocparchitn.db.entities.Intervento;
-import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
-import it.opencontent.android.ocparchitn.db.entities.Struttura;
-import it.opencontent.android.ocparchitn.utils.Utils;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
@@ -36,6 +19,22 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import it.opencontent.android.ocparchitn.Constants;
+import it.opencontent.android.ocparchitn.R;
+import it.opencontent.android.ocparchitn.activities.MainActivity;
+import it.opencontent.android.ocparchitn.db.OCParchiDB;
+import it.opencontent.android.ocparchitn.db.entities.Area;
+import it.opencontent.android.ocparchitn.db.entities.Controllo;
+import it.opencontent.android.ocparchitn.db.entities.Gioco;
+import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
+import it.opencontent.android.ocparchitn.db.entities.Struttura;
+import it.opencontent.android.ocparchitn.utils.Utils;
 
 public class ControlloFragment extends Fragment implements ICustomFragment {
 
@@ -121,7 +120,7 @@ public class ControlloFragment extends Fragment implements ICustomFragment {
 		currentControllo = null;
 		elencoControlli.clear();
 		View view = inflater.inflate(R.layout.controllo_fragment, container, false);
-		
+
 		
 		return view;
 	}

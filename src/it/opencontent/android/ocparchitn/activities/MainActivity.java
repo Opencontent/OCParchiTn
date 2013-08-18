@@ -93,6 +93,8 @@ public class MainActivity extends BaseActivity {
 	private static Uri currentSnapshotUri;
 	private Bitmap snapshot;
 
+
+    private static int currentPressedButtonWaitingForRFID = 0;
 	private static boolean partitiDaID = false;
 	private static int currentQueriedId =0;
 	private static boolean partitiDaRFID = false;
@@ -106,6 +108,12 @@ public class MainActivity extends BaseActivity {
 	private static float currentLat = 0;
 	private static float currentLon = 0;
 
+    private View currentPressedButton;
+    private int currentRequestCode;
+    private boolean mustResetPressedButton = false;
+
+    private static int tipoDiLettore = Constants.LETTORE_NFC_INTERNO;
+
 	private static HashMap<String, String> errorMessages = new HashMap<String, String>();
 	
     public OnSharedPreferenceChangeListener mListener = new OnSharedPreferenceChangeListener() {        
@@ -116,23 +124,15 @@ public class MainActivity extends BaseActivity {
             		|| key.equals(getString(R.string.settings_key_password))){
             	tokenIsValid = false;
             }
+            if(key.equals(getString(R.string.settings_key_reader))){
+                tipoDiLettore = Integer.parseInt(sharedPreferences.getString(key,Constants.LETTORE_NFC_INTERNO+""));
+            }
         }
     };	
 
-    private Intent associaClasseLettoreAIntent(Intent i){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        int tipoDiLettore = Integer.parseInt(prefs.getString(Constants.PREFERENZE_LETTORE_NFC, Constants.LETTORE_NFC_INTERNO+""));
-        switch(tipoDiLettore){
-            case Constants.LETTORE_NFC_INTERNO:
-                i.setClass(this, InternalNDEFReadActivity.class);
-                break;
-            case Constants.LETTORE_NFC_ESTERNO:
-                i.setClass(this, NDEFReadActivity.class);
-                break;
-        }
-        return i;
-
+    public static String getCurrentTag(){
+        return (String) actionBar.getSelectedTab().getTag();
     }
 
     private static void resetDatiStatici(){
@@ -147,7 +147,11 @@ public class MainActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);    
-        prefs.registerOnSharedPreferenceChangeListener(mListener);		
+        prefs.registerOnSharedPreferenceChangeListener(mListener);
+
+
+        tipoDiLettore = Integer.parseInt(prefs.getString(Constants.PREFERENZE_LETTORE_NFC, Constants.LETTORE_NFC_INTERNO+""));
+
 
 		db = new OCParchiDB(getApplicationContext());
 		if (!serviceInfoTaken) {
@@ -516,6 +520,13 @@ public class MainActivity extends BaseActivity {
 				String out = new String(res);
 				
 				currentRFID = parseNDEFForRFID(out);
+
+                //TODO: fare il proxy per le chiamate
+                currentPressedButton.setEnabled(mustResetPressedButton);
+                Intent rispostaFake = new Intent();
+                rispostaFake.putExtra(Constants.EXTRAKEY_RFID, out);
+                onActivityResult(currentRequestCode,RESULT_OK,rispostaFake);
+
 			} catch (Exception e) {
 				e.printStackTrace();
 		}
@@ -607,28 +618,60 @@ public class MainActivity extends BaseActivity {
 	
 	public void startRilevazioneDaRFID(View v){
 		Log.d(TAG,"Partiamo da rfid, lancio l'activity");
-		Intent leggiRFID = new Intent();
-        leggiRFID = associaClasseLettoreAIntent(leggiRFID);
+        partitiDaID = false;
+        partitiDaRFID = true;
+        mustResetPressedButton = v.isEnabled();
+        switch(tipoDiLettore){
+            case Constants.LETTORE_NFC_INTERNO:
+                v.setEnabled(false);
+                currentRequestCode = Constants.LEGGI_RFID_DA_LETTORE_ESTERNO;
+                currentPressedButton = v;
+                break;
+            case Constants.LETTORE_NFC_ESTERNO:
+                Intent leggiRFID = new Intent();
+                leggiRFID.setClass(this, NDEFReadActivity.class);
+                startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO);
+                break;
+        }
 
-		partitiDaID = false;
-		partitiDaRFID = true;
-		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO);
 	}
 
 	public void associaRFIDStruttura(View v){
 		Log.d(TAG,"Leghiamo l'rfid dell'area, lancio l'activity");
-		Intent leggiRFID = associaClasseLettoreAIntent(new Intent());
         partitiDaID = false;
-		partitiDaRFID = true;
-		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO_E_LEGALO_A_STRUTTURA);		
+        partitiDaRFID = true;
+        mustResetPressedButton = v.isEnabled();
+        switch(tipoDiLettore){
+            case Constants.LETTORE_NFC_INTERNO:
+                v.setEnabled(false);
+                currentRequestCode = Constants.LEGGI_RFID_DA_LETTORE_ESTERNO_E_LEGALO_A_STRUTTURA;
+                currentPressedButton = v;
+                break;
+            case Constants.LETTORE_NFC_ESTERNO:
+                Intent leggiRFID = new Intent();
+                leggiRFID.setClass(this, NDEFReadActivity.class);
+                startActivityForResult(leggiRFID, Constants.LEGGI_RFID_DA_LETTORE_ESTERNO_E_LEGALO_A_STRUTTURA);
+                break;
+        }
 	}
 	
 	public void associaRFIDArea(View v){
 		Log.d(TAG,"Leghiamo l'rfid dell'area al gioco, lancio l'activity");
-        Intent leggiRFID = associaClasseLettoreAIntent(new Intent());
 		partitiDaID = false;
-		partitiDaRFID = true;
-		startActivityForResult(leggiRFID, Constants.LEGGI_RFID_AREA_DA_LETTORE_ESTERNO_E_LEGALO_A_GIOCO);		
+        partitiDaRFID = true;
+        mustResetPressedButton = v.isEnabled();
+        switch(tipoDiLettore){
+            case Constants.LETTORE_NFC_INTERNO:
+                v.setEnabled(false);
+                currentRequestCode = Constants.LEGGI_RFID_AREA_DA_LETTORE_ESTERNO_E_LEGALO_A_GIOCO;
+                currentPressedButton = v;
+                break;
+            case Constants.LETTORE_NFC_ESTERNO:
+                Intent leggiRFID = new Intent();
+                leggiRFID.setClass(this, NDEFReadActivity.class);
+                startActivityForResult(leggiRFID, Constants.LEGGI_RFID_AREA_DA_LETTORE_ESTERNO_E_LEGALO_A_GIOCO);
+                break;
+        }
 	}
 	
 	private void getServiceInfo() {
@@ -845,7 +888,9 @@ public class MainActivity extends BaseActivity {
 				} else if (partitiDaRFID) {
 					getStructureDataByRFID(currentRFID,false);
 				}
-			} else {
+			} else if(returnCode != RESULT_OK){
+
+            } else {
 				Toast.makeText(this, "Tag non riconosciuto", Toast.LENGTH_LONG).show();
 			}
 			break;
@@ -1166,7 +1211,6 @@ public class MainActivity extends BaseActivity {
 	private Struttura manageSOAPGenericStrutturaResponse(
 			HashMap<String, Object> res, int tipoStruttura, boolean returnStruttura) {
 		Struttura remoteStruttura = null;
-//		Struttura localStruttura = null;
 		if(res!=null && !res.containsKey("success")) {
 			switch(tipoStruttura){
 			case Constants.CODICE_STRUTTURA_GIOCO:

@@ -12,7 +12,7 @@
         android:title="@string/settings_field_password"
         />
     <ListPreference
-            android:key="nfcreader"
+            android:key="@string/settings_key_reader"
             android:id="@+id/setting_reader"
             android:defaultValue="1"
             android:entryValues="@array/implementedReaders"

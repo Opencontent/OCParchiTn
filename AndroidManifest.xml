@@ -23,18 +23,10 @@
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-         
         android:theme="@style/AppTheme" >
         
-        <service android:name=".services.SOAPService" />
-        
-        <activity 
-            android:name=".activities.MainMeuFragment"
-            />
-
         <activity
             android:name=".activities.MainActivity"
-          	
             android:label="@string/title_activity_main"
             android:screenOrientation="landscape" 
             android:configChanges="orientation">
@@ -42,6 +34,16 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!--intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED"/>
+                <data android:scheme="parchi"/>
+                <data android:host="struttura"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
+                       android:resource="@xml/nfc_filters"
+                       /-->
+
         </activity>
         
         <activity
@@ -52,30 +54,10 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".activities.NDEFReadActivity">
-        </activity>
-
-        <activity android:name=".activities.InternalNDEFReadActivity">
-        </activity>
-        <activity android:name=".activities.SettingsActivity">
+        <activity android:name=".activities.NDEFReadActivity"/>
+        <activity android:name=".activities.SettingsActivity"/>
+        <activity android:name=".activities.SynchroSoapActivity" android:theme="@style/Theme.Transparent"/>
             
-        </activity>
-        <activity android:name=".activities.RendicontazioneActivity">
-            
-        </activity>
-        <activity android:name=".activities.SpostamentoActivity">
-            
-        </activity>
-        <activity android:name=".activities.RilevazioneActivity">
-            
-        </activity>
-        <activity android:name=".activities.AttivitaPeriodicaActivity">
-            
-        </activity>
-        <activity android:name=".activities.SynchroSoapActivity" android:theme="@style/Theme.Transparent">
-            
-        </activity>
-        
     </application>
 
 </manifest>

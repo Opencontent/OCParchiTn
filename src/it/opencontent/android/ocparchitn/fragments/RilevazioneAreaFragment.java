@@ -1,17 +1,5 @@
 package it.opencontent.android.ocparchitn.fragments;
 
-import it.opencontent.android.ocparchitn.Constants;
-import it.opencontent.android.ocparchitn.R;
-import it.opencontent.android.ocparchitn.activities.MainActivity;
-import it.opencontent.android.ocparchitn.db.OCParchiDB;
-import it.opencontent.android.ocparchitn.db.entities.Area;
-import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
-import it.opencontent.android.ocparchitn.db.entities.Struttura;
-import it.opencontent.android.ocparchitn.utils.Utils;
-
-import java.util.HashMap;
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
@@ -33,6 +21,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
+import java.util.List;
+
+import it.opencontent.android.ocparchitn.Constants;
+import it.opencontent.android.ocparchitn.R;
+import it.opencontent.android.ocparchitn.activities.MainActivity;
+import it.opencontent.android.ocparchitn.db.OCParchiDB;
+import it.opencontent.android.ocparchitn.db.entities.Area;
+import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
+import it.opencontent.android.ocparchitn.db.entities.Struttura;
+import it.opencontent.android.ocparchitn.utils.Utils;
+
 /**
  * 
  * @author Marco Albarelli <info@marcoalbarelli.eu>
@@ -53,7 +53,6 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 
 		OCParchiDB db = new OCParchiDB(getActivity().getApplicationContext());
 		View view = inflater.inflate(R.layout.rilevazione_area, container, false);
-		
 		/**
 		 * Setup spinners
 		 */
@@ -68,9 +67,6 @@ public class RilevazioneAreaFragment extends Fragment implements ICustomFragment
 			records.add(0,recordNullo);
 			setupSpinnerTipiPavimentazione(view, records);
 		}
-		
-		
-		
 		return view;
 	}
 

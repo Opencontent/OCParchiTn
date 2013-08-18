@@ -1,9 +1,5 @@
 package it.opencontent.android.ocparchitn.activities;
 
-import it.opencontent.android.ocparchitn.Constants;
-import it.opencontent.android.ocparchitn.R;
-import it.opencontent.android.ocparchitn.utils.nfc.LoggingNdefOperationsListener;
-import it.opencontent.android.ocparchitn.utils.nfc.ReaderStateChangeListener;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -32,6 +28,11 @@ import com.acs.smartcard.PinVerify;
 import com.acs.smartcard.ReadKeyOption;
 import com.acs.smartcard.Reader;
 import com.acs.smartcard.TlvProperties;
+
+import it.opencontent.android.ocparchitn.Constants;
+import it.opencontent.android.ocparchitn.R;
+import it.opencontent.android.ocparchitn.utils.nfc.LoggingNdefOperationsListener;
+import it.opencontent.android.ocparchitn.utils.nfc.ReaderStateChangeListener;
 
 
 
@@ -715,7 +716,6 @@ public class NDEFReadActivity extends Activity {
 
                 // Clear slot items
                 mSlotAdapter.clear();
-                //TODO: estrarre metodo per la chiusura, da chiamare prima del finish();
                 // Close reader
                 logMsg("Closing reader...");
                 new CloseTask().execute();

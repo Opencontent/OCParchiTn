@@ -14,6 +14,7 @@
 	<string name="settings_field_password">Password</string>
 	<string name="settings_key_password">password</string>
 	<string name="settings_field_password2">(ripeti)</string>
+    <string name="settings_key_reader">reader</string>
 	
 	<!--  schermata main della struttura -->
 	<string name="display_area_tipoPavimentazione">Pavimentazione: </string>

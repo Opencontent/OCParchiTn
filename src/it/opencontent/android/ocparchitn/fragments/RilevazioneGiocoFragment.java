@@ -1,15 +1,5 @@
 package it.opencontent.android.ocparchitn.fragments;
 
-import it.opencontent.android.ocparchitn.Constants;
-import it.opencontent.android.ocparchitn.R;
-import it.opencontent.android.ocparchitn.activities.MainActivity;
-import it.opencontent.android.ocparchitn.db.OCParchiDB;
-import it.opencontent.android.ocparchitn.db.entities.Gioco;
-import it.opencontent.android.ocparchitn.db.entities.Struttura;
-import it.opencontent.android.ocparchitn.utils.Utils;
-
-import java.util.HashMap;
-
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
@@ -26,6 +16,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.HashMap;
+
+import it.opencontent.android.ocparchitn.Constants;
+import it.opencontent.android.ocparchitn.R;
+import it.opencontent.android.ocparchitn.activities.MainActivity;
+import it.opencontent.android.ocparchitn.db.OCParchiDB;
+import it.opencontent.android.ocparchitn.db.entities.Gioco;
+import it.opencontent.android.ocparchitn.db.entities.Struttura;
+import it.opencontent.android.ocparchitn.utils.Utils;
 
 /**
  * 

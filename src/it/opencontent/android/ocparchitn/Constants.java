@@ -154,6 +154,9 @@ public class Constants {
 	public static final int SOAP_GET_TOKEN_STATUS_REQUEST_CODE = 201;
 	public static final int SOAP_GET_INVALIDATE_TOKEN_REQUEST_CODE = 202;
 
+    public static final int AMBITO_RFID_REQUEST_CODE = 300;
+
+
 	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO = 999;
 	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO_PER_CONTROLLI = 996;
 	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO_PER_INTERVENTI = 995;
@@ -161,6 +164,13 @@ public class Constants {
 	public static final int LEGGI_RFID_DA_LETTORE_ESTERNO_E_LEGALO_A_STRUTTURA = 997;
 	
 	public final static int EDIT_RILEVAZIONE = 800;
-	
-	
+
+    /**
+     * Return codes per la lettura da rfid interno
+     */
+    public static final int LETTORE_INTERNO_LEGGI_GIOCO_RETURN_CODE = 100;
+    public static final int LETTORE_INTERNO_LEGGI_AREA_RETURN_CODE = 101;
+    public static final int LETTORE_INTERNO_ASSOCIA_RFID_AD_AREA_RETURN_CODE = 102;
+    public static final int LETTORE_INTERNO_ASSOCIA_RFID_A_GIOCO_RETURN_CODE = 103;
+    public static final int LETTORE_INTERNO_ASSOCIA_AREA_A_GIOCO_RETURN_CODE = 104;
 }

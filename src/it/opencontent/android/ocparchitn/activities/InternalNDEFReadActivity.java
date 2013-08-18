@@ -48,6 +48,8 @@ public class InternalNDEFReadActivity extends Activity {
         IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
         try {
             ndef.addDataType("*/*");
+            ndef.setPriority(999);
+            ndef.addDataScheme("parchi");
         } catch (IntentFilter.MalformedMimeTypeException e) {
             throw new RuntimeException("fail", e);
         }
@@ -55,14 +57,16 @@ public class InternalNDEFReadActivity extends Activity {
         IntentFilter tech = new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED);
         try {
             tech.addDataType("*/*");
+            tech.setPriority(999);
+            tech.addDataScheme("parchi");
         } catch (IntentFilter.MalformedMimeTypeException e) {
             throw new RuntimeException("fail", e);
         }
 
-
         mFilters = new IntentFilter[] {
-                ndef, tech
+                ndef, tech,
         };
+
 
         // Setup a tech list for all NfcF tags
         mTechLists =  new String[][] { new String[] { NfcA.class.getName(),
