@@ -521,7 +521,6 @@ public class MainActivity extends BaseActivity {
 				
 				currentRFID = parseNDEFForRFID(out);
 
-                //TODO: fare il proxy per le chiamate
                 currentPressedButton.setEnabled(mustResetPressedButton);
                 Intent rispostaFake = new Intent();
                 rispostaFake.putExtra(Constants.EXTRAKEY_RFID, out);
