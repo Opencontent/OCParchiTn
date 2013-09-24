@@ -11,7 +11,7 @@
         android:layout_height="fill_parent"
         android:layout_weight="2"
         android:orientation="vertical"
-        android:weightSum="4" >
+        android:weightSum="5" >
 
         <Button
             android:id="@+id/pulsante_start_by_rfid"
@@ -47,6 +47,15 @@
             android:layout_weight="1"
             android:onClick="associaRFIDArea"
             android:text="@string/pulsante_associa_rfid_a_area_testo"
+            android:textSize="16dp" />
+
+        <Button
+            android:id="@+id/pulsante_get_manuale"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:onClick="getManuale"
+            android:text="@string/pulsante_get_manuale_per_gioco"
             android:textSize="16dp" />
     </LinearLayout>
 

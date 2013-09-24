@@ -4,6 +4,7 @@ public class Constants {
 	public static final String IMAGE_SUBDIRECTORY = "parchi_img_tmp";
 	public static final String ESTENSIONE_FOTO = "jpg";
 	public final static String TAKE_SNAPSHOT = "it.opencontent.android.ocparchitn.CameraAction";
+    public final static String PDFNAME_QUERY_PARAMETER = "pdfName";
 	
 	public final static int PERMESSO_NONE = 0;
 	public final static int PERMESSO_VISUALIZZA = 15;
@@ -40,6 +41,10 @@ public class Constants {
 	public final static String EXTRAKEY_SYNC_INDEX = "sync_index";
 	public final static String EXTRAKEY_ID_TABELLA_REMOTA = "id_tabella";
 	public final static String EXTRAKEY_FRAGMENT_TAG = "fragment_tag";
+	public final static String EXTRAKEY_DOWNLOAD_URL = "download_url";
+	public final static String EXTRAKEY_DOWNLOAD_MANUALE_ACTUAL_PATH = "actual_path";
+
+
 	
 	
 	public final static String GET_GIOCO_METHOD_NAME = "getGioco";
@@ -117,6 +122,7 @@ public class Constants {
 	
 	
     public final static String SOAP_ENDPOINT ="https://webapps.comune.trento.it/parcogiochiSrv/";
+    public final static String SOAP_ENDPOINT_NO_SLASH ="https://webapps.comune.trento.it/parcogiochiSrv";
     public final static String SOAP_NAMESPACE = "http://gioco.parcogiochi";
     public final static String SOAP_URL = "https://webapps.comune.trento.it/parcogiochiSrv/services/SrvGioco?wsdl";
 
@@ -150,6 +156,7 @@ public class Constants {
 	public static final int SOAP_GET_AREA_REQUEST_CODE_BY_RFID = 104;
 	public static final int SOAP_GET_AREA_REQUEST_CODE_FOR_ALERT = 105;
 	public static final int SOAP_GET_URL_SCHEDA_REQUEST_CODE = 106;
+	public static final int DOWNLOAD_MANUALE_REQUEST_CODE = 107;
 
 	public static final int SOAP_GET_TOKEN_REQUEST_CODE = 200;
 	public static final String SOAP_EXCEPTION_ARKAUT_TOKEN_SCADUTO = "AUT104";

@@ -14,6 +14,7 @@ public class Gioco extends Struttura {
 	public int spostamento;
 	public String rifCartografia;
     public String idScheda;
+    public String idModello;
 	
 	public Gioco() {
 		tipo = "gioco";
@@ -22,6 +23,7 @@ public class Gioco extends Struttura {
 	public Gioco(SOAPGioco remote,Context context){
 		super();
 		tipo="gioco";
+        idModello = remote.idModello;
 		gpsx = remote.gpsx;
 		gpsy = remote.gpsy;
 		descrizioneMarca = remote.descrizioneMarca;

@@ -30,6 +30,7 @@ import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -723,10 +724,13 @@ public class MainActivity extends BaseActivity {
 		startActivityForResult(serviceIntent, Constants.SOAP_GET_TABELLA_REQUEST_CODE);
 	}
 
-    private void getUrlScheda() {
+    private void getUrlScheda(String idScheda) {
         Intent serviceIntent = new Intent();
         serviceIntent.setClass(getApplicationContext(),
                 SynchroSoapActivity.class);
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("args0", idScheda);
+        serviceIntent.putExtra(Constants.EXTRAKEY_DATAMAP, map);
         serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.EXTRAKEY_GET_URL_SCHEDA);
         startActivityForResult(serviceIntent, Constants.SOAP_GET_URL_SCHEDA_REQUEST_CODE);
     }
@@ -884,6 +888,48 @@ public class MainActivity extends BaseActivity {
 		String currentTag;
 		int tipoStruttura = -1;
 		switch (requestCode) {
+        case Constants.DOWNLOAD_MANUALE_REQUEST_CODE:
+            String actualPath = intent.getExtras().get(Constants.EXTRAKEY_DOWNLOAD_MANUALE_ACTUAL_PATH)+"";
+            String extension = MimeTypeMap.getFileExtensionFromUrl(actualPath);
+            if(extension != null){
+                String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+                Intent viewIntent = new Intent();
+                viewIntent.setAction(Intent.ACTION_VIEW);
+                viewIntent.setDataAndType(Uri.parse(actualPath),mime);
+                startActivity(viewIntent);
+            } else {
+                Toast.makeText(this, "File di manuale non gestibile o riconosciuto", Toast.LENGTH_LONG).show();
+            }
+            break;
+
+        case Constants.SOAP_GET_URL_SCHEDA_REQUEST_CODE:
+
+            if(intent==null){
+                Toast.makeText(this, "Errore remoto generico", Toast.LENGTH_LONG).show();
+            } else {
+                res = SynchroSoapActivity.getRes(Constants.EXTRAKEY_GET_URL_SCHEDA);
+                if(res != null && res.get("primitive") != null  ){
+                    String urlManualeCrudo = res.get("primitive").toString();
+
+
+
+                    Intent manualeIntent = new Intent();
+                    manualeIntent.setClass(this,DownloadActivity.class);
+                    manualeIntent.putExtra(Constants.EXTRAKEY_DOWNLOAD_URL,urlManualeCrudo);
+
+                    startActivityForResult(manualeIntent,Constants.DOWNLOAD_MANUALE_REQUEST_CODE);
+                    //If file -> file
+                    //else -> get file
+                } else {
+                    Toast.makeText(this, "Nessun manuale o servizio remoto temporaneamente non disponibile, riprovare a breve", Toast.LENGTH_LONG).show();
+                }
+                //TODO: cerchiamo di vedere se abbiamo il file in locale
+                //Se sì allora scateniamo un intent per leggerlo
+                //altrimenti lo scarichiamo e poi scateniamo l'intent
+            }
+
+            break;
+
 		case Constants.LEGGI_RFID_DA_LETTORE_ESTERNO:
 			if(intent == null){
 				Toast.makeText(this, "Lettura annullata", Toast.LENGTH_LONG).show();
@@ -1474,7 +1520,17 @@ public class MainActivity extends BaseActivity {
 		startActivityForResult(customCamera, Constants.FOTO_REQUEST_CODE);
 	}
 	
-	
+	public void getManuale(View v){
+        if(currentStruttura == null || !currentStruttura.getClass().equals(Gioco.class) ){
+            //Non dovremmo essere qui
+        } else {
+            String idScheda = ((Gioco)currentStruttura).idScheda+"" ;
+//            String idScheda = "77";
+            getUrlScheda(idScheda);
+        }
+    }
+
+
 	public void zoomPicture(View button){
 		String filename = "tmpimage.jpg";
 		FileOutputStream outputStream;

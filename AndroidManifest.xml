@@ -57,7 +57,8 @@
         <activity android:name=".activities.NDEFReadActivity"/>
         <activity android:name=".activities.SettingsActivity"/>
         <activity android:name=".activities.SynchroSoapActivity" android:theme="@style/Theme.Transparent"/>
-            
+        <activity android:name=".activities.DownloadActivity" android:theme="@style/Theme.Transparent"/>
+
     </application>
 
 </manifest>

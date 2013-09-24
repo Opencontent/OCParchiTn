@@ -588,6 +588,7 @@ public class OCParchiDB {
 			cv.put("spostamento", g.spostamento);
 			cv.put("rifCartografia", g.rifCartografia);
             cv.put("idScheda",g.idScheda);
+            cv.put("idModello",g.idModello);
 		} else if(struttura.getClass().equals(Area.class)){
 			tabella = StruttureEnum.AREE.tipo;
 			Area a = (Area) struttura;
@@ -823,6 +824,8 @@ public class OCParchiDB {
 						((Gioco) s).posizioneRfid = c.getString(c.getColumnIndex("posizioneRfid"));
 						((Gioco) s).spostamento = c.getInt(c.getColumnIndex("spostamento"));
 						((Gioco) s).rifCartografia = c.getString(c.getColumnIndex("rifCartografia"));
+						((Gioco) s).idModello = c.getString(c.getColumnIndex("idModello"));
+						((Gioco) s).idScheda = c.getString(c.getColumnIndex("idScheda"));
 						indice = c.getInt(c.getColumnIndex("idGioco"))+"";
 					} else if(tableName.equals(StruttureEnum.AREE.tipo)) {
 						s = new Area();
