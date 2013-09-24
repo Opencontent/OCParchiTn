@@ -1,9 +1,9 @@
 package it.opencontent.android.ocparchitn.SOAPMappings;
 
-import java.util.Hashtable;
-
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
+
+import java.util.Hashtable;
 
 public class SOAPGioco implements KvmSerializable {
 	
@@ -20,6 +20,7 @@ public class SOAPGioco implements KvmSerializable {
 	public String gpsy;
 	public String idGioco;
 	public String idModello;
+	public String idScheda;
 	public String idTipoGioco;
 	public String note;
 	public int    numeroFotografie;
@@ -60,21 +61,23 @@ public class SOAPGioco implements KvmSerializable {
 			return idGioco;
 		case 12:
 			return idModello;
-		case 13:
-			return idTipoGioco;
+        case 13:
+            return idScheda;
 		case 14:
-			return note;
+			return idTipoGioco;
 		case 15:
-			return numeroFotografie;
+			return note;
 		case 16:
-			return numeroSerie;
+			return numeroFotografie;
 		case 17:
-			return posizioneRfid;
+			return numeroSerie;
 		case 18:
-			return rfid;
+			return posizioneRfid;
 		case 19:
-			return rfidArea;
+			return rfid;
 		case 20:
+			return rfidArea;
+		case 21:
 			return rifCartografia;
 		}
 		return null;
@@ -82,7 +85,7 @@ public class SOAPGioco implements KvmSerializable {
 
 	@Override
 	public int getPropertyCount() {
-		return 21;
+		return 22;
 	}
 
 	@Override
@@ -128,29 +131,32 @@ public class SOAPGioco implements KvmSerializable {
 		case 12:
 			arg2.name = "idModello";
 			break;
-		case 13:
+        case 13:
+            arg2.name = "idScheda";
+            break;
+		case 14:
 			arg2.name = "idTipoGioco";
 			break;
-		case 14:
+		case 15:
 			arg2.name = "note";
 			break;
-		case 15:
+		case 16:
 			arg2.name = "numeroFotografie";
 			arg2.type = PropertyInfo.INTEGER_CLASS;
 			break;
-		case 16:
+		case 17:
 			arg2.name = "numeroSerie";
 			break;
-		case 17:
+		case 18:
 			arg2.name = "posizioneRfid";
 			break;
-		case 18:
+		case 19:
 			arg2.name = "rfid";
 			break;
-		case 19:
+		case 20:
 			arg2.name = "rfidArea";
 			break;
-		case 20:
+		case 21:
 			arg2.name = "rifCartografia";
 			break;
 		}
@@ -201,28 +207,31 @@ public class SOAPGioco implements KvmSerializable {
 		case 12:
 			idModello= arg1.toString();
 			break;
-		case 13:
+        case 13:
+            idScheda = arg1.toString();
+            break;
+        case 14:
 			idTipoGioco= arg1.toString();
 			break;
-		case 14:
+		case 15:
 			note= arg1.toString();
 			break;
-		case 15:
+		case 16:
 			numeroFotografie= Integer.parseInt(arg1.toString());
 			break;
-		case 16:
+		case 17:
 			numeroSerie= arg1.toString();
 			break;
-		case 17:
+		case 18:
 			posizioneRfid= arg1.toString();
 			break;
-		case 18:
+		case 19:
 			rfid= arg1.toString();
 			break;
-		case 19:
+		case 20:
 			rfidArea= arg1.toString();
 			break;
-		case 20:
+		case 21:
 			rifCartografia= arg1.toString();
 			break;
 		}		

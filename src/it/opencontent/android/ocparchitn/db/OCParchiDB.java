@@ -1,25 +1,5 @@
 package it.opencontent.android.ocparchitn.db;
 
-import it.opencontent.android.ocparchitn.db.entities.Area;
-import it.opencontent.android.ocparchitn.db.entities.Controllo;
-import it.opencontent.android.ocparchitn.db.entities.Gioco;
-import it.opencontent.android.ocparchitn.db.entities.Intervento;
-import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
-import it.opencontent.android.ocparchitn.db.entities.Struttura;
-import it.opencontent.android.ocparchitn.db.entities.StruttureEnum;
-import it.opencontent.android.ocparchitn.utils.StruttureComparator;
-
-import java.lang.reflect.Field;
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -28,6 +8,25 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
+
+import java.lang.reflect.Field;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
+import it.opencontent.android.ocparchitn.db.entities.Area;
+import it.opencontent.android.ocparchitn.db.entities.Controllo;
+import it.opencontent.android.ocparchitn.db.entities.Gioco;
+import it.opencontent.android.ocparchitn.db.entities.Intervento;
+import it.opencontent.android.ocparchitn.db.entities.RecordTabellaSupporto;
+import it.opencontent.android.ocparchitn.db.entities.Struttura;
+import it.opencontent.android.ocparchitn.db.entities.StruttureEnum;
+import it.opencontent.android.ocparchitn.utils.StruttureComparator;
 
 public class OCParchiDB {
 
@@ -47,8 +46,6 @@ public class OCParchiDB {
 	public OCParchiDB(Context context) {
 		mDatabaseOpenHelper = new OCParchiOpenHelper(context);
 		this.context = context;
-//		 mDatabaseOpenHelper.getWritableDatabase();
-//		 context.deleteDatabase(DATABASE_NAME);
 	}
 
 	private static HashMap<String, Struttura> buildSchemaMap() {
@@ -590,6 +587,7 @@ public class OCParchiDB {
 			cv.put("rfidArea", g.rfidArea);
 			cv.put("spostamento", g.spostamento);
 			cv.put("rifCartografia", g.rifCartografia);
+            cv.put("idScheda",g.idScheda);
 		} else if(struttura.getClass().equals(Area.class)){
 			tabella = StruttureEnum.AREE.tipo;
 			Area a = (Area) struttura;

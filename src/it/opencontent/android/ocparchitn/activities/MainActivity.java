@@ -722,6 +722,14 @@ public class MainActivity extends BaseActivity {
 		serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.GET_TABELLA_METHOD_NAME);
 		startActivityForResult(serviceIntent, Constants.SOAP_GET_TABELLA_REQUEST_CODE);
 	}
+
+    private void getUrlScheda() {
+        Intent serviceIntent = new Intent();
+        serviceIntent.setClass(getApplicationContext(),
+                SynchroSoapActivity.class);
+        serviceIntent.putExtra(Constants.EXTRAKEY_METHOD_NAME, Constants.EXTRAKEY_GET_URL_SCHEDA);
+        startActivityForResult(serviceIntent, Constants.SOAP_GET_URL_SCHEDA_REQUEST_CODE);
+    }
 	
 	private void getControlliPerStruttura(int tipoStruttura){
 		Intent serviceIntent = new Intent();

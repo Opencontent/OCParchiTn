@@ -31,6 +31,7 @@ public class Constants {
 	public final static String EXTRAKEY_STRUCTURE_ID = "idStruttura";
 	public final static String EXTRAKEY_RECOVER_CONTROLS = "getControllo";
 	public final static String EXTRAKEY_RECOVER_INTERVENTI = "getIntervento";
+	public final static String EXTRAKEY_GET_URL_SCHEDA = "getUrlScheda";
 	public final static String EXTRAKEY_FOTO_NUMBER = "fotoNumber";
 	public final static String EXTRAKEY_RFID = "rfid";
 	public final static String EXTRAKEY_SYNC_ALL = "sync_all";
@@ -148,6 +149,7 @@ public class Constants {
 	public static final int SOAP_GET_AREA_REQUEST_CODE_BY_ID = 103;
 	public static final int SOAP_GET_AREA_REQUEST_CODE_BY_RFID = 104;
 	public static final int SOAP_GET_AREA_REQUEST_CODE_FOR_ALERT = 105;
+	public static final int SOAP_GET_URL_SCHEDA_REQUEST_CODE = 106;
 
 	public static final int SOAP_GET_TOKEN_REQUEST_CODE = 200;
 	public static final String SOAP_EXCEPTION_ARKAUT_TOKEN_SCADUTO = "AUT104";

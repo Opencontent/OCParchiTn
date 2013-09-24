@@ -1,18 +1,19 @@
 package it.opencontent.android.ocparchitn.db.entities;
 
-import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGioco;
+import android.content.Context;
 
-import java.util.Map.Entry;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 
-import android.content.Context;
+import it.opencontent.android.ocparchitn.SOAPMappings.SOAPGioco;
 
 public class Gioco extends Struttura {
 
 	public String posizioneRfid;
 	public int spostamento;
-	public String rifCartografia;  
+	public String rifCartografia;
+    public String idScheda;
 	
 	public Gioco() {
 		tipo = "gioco";
@@ -49,6 +50,7 @@ public class Gioco extends Struttura {
 		numeroSerie = remote.numeroSerie;
 		posizioneRfid = remote.posizioneRfid;
 		spostamento = 0;
+        idScheda = remote.idScheda;
 	}
 	
 	public Gioco(Set<Entry<String, Object>> entrySet,int rfid,Context context) {
