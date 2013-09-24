@@ -889,13 +889,14 @@ public class MainActivity extends BaseActivity {
 		int tipoStruttura = -1;
 		switch (requestCode) {
         case Constants.DOWNLOAD_MANUALE_REQUEST_CODE:
+            //Si occupa il downloader di fornirmi il file, sia che sia cachato sia che sia fresco
             String actualPath = intent.getExtras().get(Constants.EXTRAKEY_DOWNLOAD_MANUALE_ACTUAL_PATH)+"";
             String extension = MimeTypeMap.getFileExtensionFromUrl(actualPath);
             if(extension != null){
                 String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-                Intent viewIntent = new Intent();
-                viewIntent.setAction(Intent.ACTION_VIEW);
+                Intent viewIntent = new Intent(Intent.ACTION_VIEW);
                 viewIntent.setDataAndType(Uri.parse(actualPath),mime);
+                viewIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(viewIntent);
             } else {
                 Toast.makeText(this, "File di manuale non gestibile o riconosciuto", Toast.LENGTH_LONG).show();
@@ -910,22 +911,14 @@ public class MainActivity extends BaseActivity {
                 res = SynchroSoapActivity.getRes(Constants.EXTRAKEY_GET_URL_SCHEDA);
                 if(res != null && res.get("primitive") != null  ){
                     String urlManualeCrudo = res.get("primitive").toString();
-
-
-
                     Intent manualeIntent = new Intent();
                     manualeIntent.setClass(this,DownloadActivity.class);
                     manualeIntent.putExtra(Constants.EXTRAKEY_DOWNLOAD_URL,urlManualeCrudo);
 
                     startActivityForResult(manualeIntent,Constants.DOWNLOAD_MANUALE_REQUEST_CODE);
-                    //If file -> file
-                    //else -> get file
                 } else {
                     Toast.makeText(this, "Nessun manuale o servizio remoto temporaneamente non disponibile, riprovare a breve", Toast.LENGTH_LONG).show();
                 }
-                //TODO: cerchiamo di vedere se abbiamo il file in locale
-                //Se sì allora scateniamo un intent per leggerlo
-                //altrimenti lo scarichiamo e poi scateniamo l'intent
             }
 
             break;
@@ -1087,7 +1080,7 @@ public class MainActivity extends BaseActivity {
 				if(res.containsKey("mapped")){
 					Controllo controllo = new Controllo((SOAPControllo) res.get("mapped"));
 					ControlloFragment.appendControllo(controllo);
-					setupScrollViewControlli();
+
 				} else{
 					Set<Entry<String,Object>> entrySet = res.entrySet();
 					Iterator<Entry<String,Object>> iterator = entrySet.iterator();
@@ -1096,10 +1089,10 @@ public class MainActivity extends BaseActivity {
 						if(entry.getValue().getClass().equals(SOAPControllo.class)){
 							Controllo controllo = new Controllo((SOAPControllo) entry.getValue());
 							ControlloFragment.appendControllo(controllo);
-							setupScrollViewControlli();							
 						}
 					}
 				}
+				setupScrollViewControlli();
 			}
 			
 			
@@ -1114,7 +1107,6 @@ public class MainActivity extends BaseActivity {
 				if(res.containsKey("mapped")){
 					Intervento intervento = new Intervento((SOAPIntervento) res.get("mapped"));
 					InterventoFragment.appendControllo(intervento);
-					setupScrollViewInterventi();
 				}else{
 					Set<Entry<String,Object>> entrySet = res.entrySet();
 					Iterator<Entry<String,Object>> iterator = entrySet.iterator();
@@ -1123,10 +1115,10 @@ public class MainActivity extends BaseActivity {
 						if(entry.getValue().getClass().equals(SOAPIntervento.class)){
 							Intervento intervento = new Intervento((SOAPIntervento) entry.getValue());
 							InterventoFragment.appendControllo(intervento);
-							setupScrollViewControlli();							
 						}
 					}
 				}
+                setupScrollViewInterventi();
 			}
 			
 			
