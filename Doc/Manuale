@@ -1,12 +1,27 @@
-la cifra fra parentesi indica il numero di record che devono ancora essere sincronizzati fra il palmare e il server
-I dati non ancora inviati sono sconosciuti al server
-le voci nel menu in alto corrispondono alle funzioni del programma
-voce :
-spiegazione ... 
-voce :
-spiegazione ...
-voce :
-spiegazione ...
-voce :
-spiegazione ...
+Installazione
+
+Per installare l'applicazione è necessario che venga abilitata l'installazione da fonti sconosciute
+Dalla schermata home la prassi standard è:
+Andare nelle impostazioni generali dell'apparecchio
+Selezionare la voce "Sicurezza"
+Abilitare la voce "Origini sconosciute"
+(il testo potrebbe cambiare leggermente in base alla versione di android)
+
+Fatto questo bisogna scaricare il file OCParchiTn.apk
+La cosa migliore è che il file venga fornito tramite una server web, anche locale.
+In questo caso alla fine del download il sistema chiederà all'utente se si vuole installare l'applicazione e forinrà l'elenco dei permessi connessi all'applicazione stessa
+Dopo aver dato conferma il programma viene installato ed è pronto per essere lanciato per la prima volta
+
+Al primo avvio l'applicazione impone l'immissione di credenziali da parte dell'utente
+Queste vanno immesse e una volta fatto l'applicazione effettua una prima sincronizzazione scaricando le tabelle di riferimento dal server del comune
+
+Nota per le eventuali installazioni di versioni successive
+Ad ogni rilascio di una nuova versione è necessario disinstallare la vecchia versione prima di installare la nuova
+
+Nota sulla disinstallazione su device con ver. android >= 4.2
+Sui device Android con versione >= 4.2 è stato introdotto il concetto di utenti
+Su quei device la disinstallazione deve essere effettuata dall'utente principale, con privilegi amministrativi
+Per disinstallare completamente l'applicazione in questo caso c'è un menu in alto a dx nella schermata di disinstallazione
+Cliccandolo appare la voce "Disinstalla per tutti gli utenti", va selezionata
+A questo punto il device elimina programma e relativo database e si può procedere all'installazione della nuova versione
 
