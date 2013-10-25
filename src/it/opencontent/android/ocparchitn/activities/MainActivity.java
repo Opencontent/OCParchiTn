@@ -151,7 +151,7 @@ public class MainActivity extends BaseActivity {
         prefs.registerOnSharedPreferenceChangeListener(mListener);
 
 
-        tipoDiLettore = Integer.parseInt(prefs.getString(Constants.PREFERENZE_LETTORE_NFC, Constants.LETTORE_NFC_INTERNO+""));
+        tipoDiLettore = Integer.parseInt(prefs.getString(getString(R.string.settings_key_reader), Constants.LETTORE_NFC_INTERNO+""));
 
 
 		db = new OCParchiDB(getApplicationContext());
@@ -621,6 +621,7 @@ public class MainActivity extends BaseActivity {
         partitiDaID = false;
         partitiDaRFID = true;
         mustResetPressedButton = v.isEnabled();
+
         switch(tipoDiLettore){
             case Constants.LETTORE_NFC_INTERNO:
                 v.setEnabled(false);
